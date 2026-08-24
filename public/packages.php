@@ -1,63 +1,84 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Vehicle Service Center
-| Service Packages Page
-|--------------------------------------------------------------------------
-|
-| This page currently uses static package information.
-| You can connect it to MySQL later.
-|
-*/
+require_once "config/database.php";
 
-$packages = [
-    [
-        "label" => "BASIC",
-        "name" => "Essential Care",
-        "price" => "Rs. 7,500",
-        "features" => [
-            "Engine inspection",
-            "Oil level check",
-            "Brake inspection",
-            "Tyre inspection"
-        ],
-        "featured" => false
-    ],
+/* =========================================================
+   GET ACTIVE PACKAGES
+   ========================================================= */
 
-    [
-        "label" => "POPULAR",
-        "name" => "Complete Care",
-        "price" => "Rs. 15,000",
-        "features" => [
-            "Full engine inspection",
-            "Engine oil replacement",
-            "Brake inspection",
-            "Tyre inspection",
-            "Battery check",
-            "AC inspection"
-        ],
-        "featured" => true
-    ],
+$packageStatus = 1;
 
-    [
-        "label" => "PREMIUM",
-        "name" => "Premium Care",
-        "price" => "Rs. 25,000",
-        "features" => [
-            "Complete vehicle inspection",
-            "Engine service",
-            "Oil and filter replacement",
-            "Brake inspection",
-            "Wheel alignment",
-            "AC service",
-            "Battery check"
-        ],
-        "featured" => false
-    ]
-];
+$packageSQL = "
+    SELECT
+        id,
+        package_name,
+        price,
+        duration
+    FROM service_packages
+    WHERE status = ?
+    ORDER BY id ASC
+";
+
+$packageStmt = $pdo->prepare($packageSQL);
+$packageStmt->execute([$packageStatus]);
+
+$packages = $packageStmt->fetchAll();
+
+
+/* =========================================================
+   GET SERVICES FOR EACH PACKAGE
+   ========================================================= */
+
+$serviceSQL = "
+    SELECT
+        s.id,
+        s.service_name
+    FROM package_services ps
+
+    INNER JOIN services s
+        ON ps.service_id = s.id
+
+    WHERE ps.package_id = ?
+
+    ORDER BY s.id ASC
+";
+
+$serviceStmt = $pdo->prepare($serviceSQL);
+
+
+/* =========================================================
+   ADD SERVICES TO EACH PACKAGE
+   ========================================================= */
+
+foreach ($packages as &$package) {
+
+    $packageId = $package['id'];
+
+    $serviceStmt->execute([$packageId]);
+
+    $package['services'] = $serviceStmt->fetchAll();
+}
+
+unset($package);
+
+
+/* =========================================================
+   FEATURED PACKAGE
+   ========================================================= */
+
+$featuredPackageId = null;
+
+if (isset($packages[1])) {
+
+    $featuredPackageId = $packages[1]['id'];
+}
 
 ?>
+
+
+<!-- =========================================================
+     PACKAGES SECTION
+     ========================================================= -->
 
 <section
     class="section packages-section"
@@ -67,7 +88,9 @@ $packages = [
     <div class="container">
 
 
-        <!-- ================= SECTION HEADING ================= -->
+        <!-- =================================================
+             SECTION HEADING
+             ================================================= -->
 
         <div class="section-heading">
 
@@ -87,91 +110,241 @@ $packages = [
         </div>
 
 
-        <!-- ================= PACKAGE GRID ================= -->
+        <!-- =================================================
+             PACKAGE GRID
+             ================================================= -->
 
         <div class="packages-grid">
 
 
-            <?php foreach ($packages as $package): ?>
-
-                <div
-                    class="package-card
-                    <?php echo $package['featured'] ? 'featured-package' : ''; ?>"
-                >
+            <?php if (!empty($packages)): ?>
 
 
-                    <?php if ($package['featured']): ?>
+                <?php foreach ($packages as $package): ?>
 
-                        <span class="popular-label">
-                            MOST POPULAR
+
+                    <?php
+
+                    $isFeatured =
+                        ($package['id'] == $featuredPackageId);
+
+                    ?>
+
+
+                    <!-- =================================================
+                         PACKAGE CARD
+                         ================================================= -->
+
+                    <div
+                        class="package-card
+                        <?php
+                        echo $isFeatured
+                            ? 'featured-package'
+                            : '';
+                        ?>"
+                    >
+
+
+                        <!-- =============================================
+                             POPULAR LABEL
+                             ============================================= -->
+
+                        <?php if ($isFeatured): ?>
+
+                            <span class="popular-label">
+                                MOST POPULAR
+                            </span>
+
+                        <?php endif; ?>
+
+
+                        <!-- =============================================
+                             PACKAGE LABEL
+                             ============================================= -->
+
+                        <span class="package-label">
+
+                            <?php
+
+                            if ($isFeatured) {
+
+                                echo "POPULAR";
+
+                            } elseif ($package['id'] == 1) {
+
+                                echo "BASIC";
+
+                            } else {
+
+                                echo "PREMIUM";
+
+                            }
+
+                            ?>
+
                         </span>
 
-                    <?php endif; ?>
+
+                        <!-- =============================================
+                             PACKAGE NAME
+                             ============================================= -->
+
+                        <h3>
+
+                            <?php
+
+                            echo htmlspecialchars(
+                                $package['package_name'],
+                                ENT_QUOTES,
+                                'UTF-8'
+                            );
+
+                            ?>
+
+                        </h3>
 
 
-                    <span class="package-label">
+                        <!-- =============================================
+                             PRICE
+                             ============================================= -->
 
-                        <?php
-                        echo htmlspecialchars($package['label']);
-                        ?>
+                        <div class="package-price">
 
-                    </span>
+                            Rs.
+
+                            <?php
+
+                            echo number_format(
+                                (float) $package['price'],
+                                2
+                            );
+
+                            ?>
+
+                        </div>
 
 
-                    <h3>
+                        <!-- =============================================
+                             DURATION
+                             ============================================= -->
 
-                        <?php
-                        echo htmlspecialchars($package['name']);
-                        ?>
+                        <div class="package-duration">
 
-                    </h3>
+                            Duration:
+
+                            <?php
+
+                            echo htmlspecialchars(
+                                $package['duration'],
+                                ENT_QUOTES,
+                                'UTF-8'
+                            );
+
+                            ?>
+
+                        </div>
 
 
-                    <div class="package-price">
+                        <!-- =============================================
+                             INCLUDED SERVICES
+                             ============================================= -->
 
-                        <?php
-                        echo htmlspecialchars($package['price']);
-                        ?>
+                        <ul>
+
+                            <?php if (!empty($package['services'])): ?>
+
+
+                                <?php foreach (
+                                    $package['services']
+                                    as $service
+                                ): ?>
+
+
+                                    <li>
+
+                                        ✓
+
+                                        <?php
+
+                                        echo htmlspecialchars(
+                                            $service['service_name'],
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        );
+
+                                        ?>
+
+                                    </li>
+
+
+                                <?php endforeach; ?>
+
+
+                            <?php else: ?>
+
+
+                                <li>
+                                    No services available
+                                </li>
+
+
+                            <?php endif; ?>
+
+                        </ul>
+
+
+                        <!-- =============================================
+                             CHOOSE PACKAGE BUTTON
+                             ============================================= -->
+
+                        <?php if ($isFeatured): ?>
+
+
+                            <a
+                                href="book-appointment.php?package_id=<?php echo (int) $package['id']; ?>"
+                                class="btn btn-red"
+                            >
+                                Choose Package
+                            </a>
+
+
+                        <?php else: ?>
+
+
+                            <a
+                                href="book-appointment.php?package_id=<?php echo (int) $package['id']; ?>"
+                                class="btn btn-outline-dark"
+                            >
+                                Choose Package
+                            </a>
+
+
+                        <?php endif; ?>
+
 
                     </div>
 
 
-                    <ul>
+                <?php endforeach; ?>
 
-                        <?php foreach ($package['features'] as $feature): ?>
 
-                            <li>
-                                ✓
-                                <?php
-                                echo htmlspecialchars($feature);
-                                ?>
-                            </li>
+            <?php else: ?>
 
-                        <?php endforeach; ?>
 
-                    </ul>
+                <!-- =============================================
+                     NO PACKAGES
+                     ============================================= -->
 
-                        <?php if ($package['label'] == 'POPULAR') : ?>
+                <div class="no-packages">
 
-                            <a href="book-appointment.html" class="btn btn-red">
-                                Choose Package
-                            </a>
-
-                        <?php else : ?>
-
-                            <a href="book-appointment.html" class="btn btn-outline-dark">
-                                Choose Package
-                            </a>
-
-                        <?php endif; ?>
-
-                            
-                   
-
+                    <p>
+                        No service packages are currently available.
+                    </p>
 
                 </div>
 
-            <?php endforeach; ?>
+
+            <?php endif; ?>
 
 
         </div>

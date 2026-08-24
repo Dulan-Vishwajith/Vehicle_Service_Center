@@ -2,6 +2,11 @@
 
 require_once "config/database.php";
 
+
+/* =========================================================
+   GET ACTIVE SERVICES
+   ========================================================= */
+
 $serviceQuery = "
     SELECT
         id,
@@ -11,21 +16,61 @@ $serviceQuery = "
         price,
         duration,
         icon
+
     FROM services
-    WHERE status = 1
+
+    WHERE status = :status
+
     ORDER BY id DESC
-    LIMIT 4
+
+    LIMIT :limit
 ";
 
-$serviceResult = $conn->query($serviceQuery);
+
+$serviceStmt = $pdo->prepare($serviceQuery);
+
+
+$status = 1;
+$limit = 4;
+
+
+$serviceStmt->bindValue(
+    ':status',
+    $status,
+    PDO::PARAM_INT
+);
+
+
+$serviceStmt->bindValue(
+    ':limit',
+    $limit,
+    PDO::PARAM_INT
+);
+
+
+$serviceStmt->execute();
+
+
+$serviceResult = $serviceStmt->fetchAll();
 
 ?>
 
-<!-- ================= SERVICES ================= -->
 
-<section class="section" id="services">
+<!-- =========================================================
+     SERVICES SECTION
+     ========================================================= -->
+
+<section
+    class="section"
+    id="services"
+>
 
     <div class="container">
+
+
+        <!-- =================================================
+             SECTION HEADING
+             ================================================= -->
 
         <div class="section-heading">
 
@@ -45,102 +90,185 @@ $serviceResult = $conn->query($serviceQuery);
         </div>
 
 
-        <!-- ================= SERVICES GRID ================= -->
+        <!-- =================================================
+             SERVICES GRID
+             ================================================= -->
 
         <div
             class="services-grid"
             id="servicesGrid"
         >
 
-            <?php if ($serviceResult && $serviceResult->num_rows > 0): ?>
 
-                <?php while ($service = $serviceResult->fetch_assoc()): ?>
+            <?php if (!empty($serviceResult)): ?>
+
+
+                <?php foreach ($serviceResult as $service): ?>
+
+
+                    <!-- =================================================
+                         SERVICE CARD
+                         ================================================= -->
 
                     <article
                         class="service-card"
-                        data-category="<?php echo htmlspecialchars($service['category']); ?>"
-                        data-name="<?php echo htmlspecialchars(strtolower($service['service_name'])); ?>"
+
+                        data-category="<?php
+
+                            echo htmlspecialchars(
+                                $service['category'],
+                                ENT_QUOTES,
+                                'UTF-8'
+                            );
+
+                        ?>"
+
+                        data-name="<?php
+
+                            echo htmlspecialchars(
+                                strtolower(
+                                    $service['service_name']
+                                ),
+                                ENT_QUOTES,
+                                'UTF-8'
+                            );
+
+                        ?>"
                     >
 
-                        <!-- Service Icon -->
+
+                        <!-- =============================================
+                             SERVICE ICON
+                             ============================================= -->
 
                         <div class="service-card-top">
 
                             <?php
-                            echo htmlspecialchars($service['icon']);
+
+                            echo htmlspecialchars(
+                                $service['icon'],
+                                ENT_QUOTES,
+                                'UTF-8'
+                            );
+
                             ?>
 
                         </div>
 
 
-                        <!-- Service Content -->
+                        <!-- =============================================
+                             SERVICE CONTENT
+                             ============================================= -->
 
                         <div class="service-card-content">
+
+
+                            <!-- SERVICE CATEGORY -->
 
                             <span class="service-tag">
 
                                 <?php
+
                                 echo htmlspecialchars(
-                                    ucfirst($service['category'])
+                                    ucfirst(
+                                        $service['category']
+                                    ),
+                                    ENT_QUOTES,
+                                    'UTF-8'
                                 );
+
                                 ?>
 
                             </span>
 
 
+                            <!-- SERVICE NAME -->
+
                             <h3>
 
                                 <?php
+
                                 echo htmlspecialchars(
-                                    $service['service_name']
+                                    $service['service_name'],
+                                    ENT_QUOTES,
+                                    'UTF-8'
                                 );
+
                                 ?>
 
                             </h3>
 
 
+                            <!-- SERVICE DESCRIPTION -->
+
                             <p>
 
                                 <?php
+
                                 echo htmlspecialchars(
-                                    $service['description']
+                                    $service['description'],
+                                    ENT_QUOTES,
+                                    'UTF-8'
                                 );
+
                                 ?>
 
                             </p>
 
 
+                            <!-- =========================================
+                                 PRICE AND DURATION
+                                 ========================================= -->
+
                             <div class="service-bottom">
+
+
+                                <!-- PRICE -->
 
                                 <strong>
 
                                     Rs.
+
                                     <?php
+
                                     echo number_format(
-                                        $service['price'],
+                                        (float) $service['price'],
                                         2
                                     );
+
                                     ?>
 
                                 </strong>
 
 
+                                <!-- DURATION -->
+
                                 <span>
 
                                     ⏱
+
                                     <?php
+
                                     echo htmlspecialchars(
-                                        $service['duration']
+                                        $service['duration'],
+                                        ENT_QUOTES,
+                                        'UTF-8'
                                     );
+
                                     ?>
 
                                 </span>
 
+
                             </div>
 
 
+                            <!-- =========================================
+                                 BOOK SERVICE
+                                 ========================================= -->
+
                             <a
-                                href="book-appointment.php?service_id=<?php echo $service['id']; ?>"
+                                href="book-appointment.php?service_id=<?php echo (int) $service['id']; ?>"
                                 class="service-link"
                             >
 
@@ -148,34 +276,51 @@ $serviceResult = $conn->query($serviceQuery);
 
                             </a>
 
+
                         </div>
 
                     </article>
 
-                <?php endwhile; ?>
+
+                <?php endforeach; ?>
+
 
             <?php else: ?>
 
+
+                <!-- =============================================
+                     NO SERVICES
+                     ============================================= -->
+
                 <p class="database-no-services">
+
                     No services are currently available.
+
                 </p>
 
+
             <?php endif; ?>
+
 
         </div>
 
 
-        <!-- ================= NO SEARCH RESULTS ================= -->
+        <!-- =================================================
+             NO SEARCH RESULTS
+             ================================================= -->
 
         <p
             class="no-results"
             id="noResults"
+            style="display: none;"
         >
             No services found.
         </p>
 
 
-        <!-- ================= VIEW ALL ================= -->
+        <!-- =================================================
+             VIEW ALL SERVICES
+             ================================================= -->
 
         <div class="center-button">
 
@@ -183,10 +328,13 @@ $serviceResult = $conn->query($serviceQuery);
                 href="services.php"
                 class="btn btn-dark"
             >
+
                 View All Services
+
             </a>
 
         </div>
+
 
     </div>
 
