@@ -3,91 +3,40 @@
    ========================================================= */
 
 .packages-section {
-    background: #f7f8fa;
-    padding: 80px 20px;
     min-height: 100vh;
+    padding: 80px 0;
+    background: var(--color-bg);
 }
 
-/* Main container */
-.container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* Section heading */
-.section-heading {
-    text-align: center;
-    margin-bottom: 50px;
-}
-
-.section-label {
-    display: inline-block;
-    color: #e63946;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    margin-bottom: 12px;
-}
-
-.section-heading h2 {
-    margin: 0 0 15px;
-    font-size: 38px;
-    font-weight: 800;
-    color: #1d252c;
-}
-
-.section-heading p {
-    margin: 0 auto;
-    max-width: 650px;
-    color: #626c76;
-    font-size: 16px;
-    line-height: 1.7;
-}
-
-
-/* =========================================================
-   PACKAGE GRID
-   ========================================================= */
 .packages-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 25px;
-
-    /* NEW */
     align-items: stretch;
 }
 
-
-/* =========================================================
-   PACKAGE CARD
-   ========================================================= */
-
 .package-card {
-    background: #ffffff;
-    border: 1px solid #e1e5e8;
-    border-radius: 15px;
-    padding: 32px;
     position: relative;
-    transition: 0.3s ease;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
     display: flex;
     flex-direction: column;
     height: 100%;
+    padding: 32px;
+    background: var(--color-white);
+    border: 1px solid #e1e5e8;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    transition:
+        transform var(--transition-normal),
+        box-shadow var(--transition-normal);
 }
 
 .package-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
 }
 
-
-/* =========================================================
-   FEATURED PACKAGE
-   ========================================================= */
-
 .featured-package {
-    border: 2px solid #e63946;
+    border: 2px solid var(--color-primary);
     transform: translateY(-8px);
 }
 
@@ -95,57 +44,45 @@
     transform: translateY(-14px);
 }
 
-
-/* Popular label */
 .popular-label {
     position: absolute;
     top: 0;
     right: 25px;
-    background: #e63946;
-    color: #ffffff;
     padding: 7px 14px;
+    background: var(--color-primary);
+    border-radius: 0 0 7px 7px;
+    color: var(--color-white);
     font-size: 10px;
     font-weight: 700;
-    border-radius: 0 0 7px 7px;
 }
-
-
-/* =========================================================
-   PACKAGE CONTENT
-   ========================================================= */
 
 .package-label {
     display: inline-block;
-    color: #e63946;
+    margin-bottom: 5px;
+    color: var(--color-primary);
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 1px;
-    margin-bottom: 5px;
 }
 
 .package-card h3 {
-    margin: 10px 0 0;
+    margin-top: 10px;
+    color: var(--color-dark-2);
     font-size: 24px;
-    color: #1d252c;
 }
 
 .package-price {
+    margin: 18px 0 22px;
+    color: var(--color-dark-2);
     font-size: 28px;
     font-weight: 800;
-    color: #1d252c;
-    margin: 18px 0 22px;
 }
 
-
-/* =========================================================
-   PACKAGE FEATURES
-   ========================================================= */
-
 .package-card ul {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 28px;
     flex-grow: 1;
+    margin: 0 0 28px;
+    padding: 0;
+    list-style: none;
 }
 
 .package-card li {
@@ -155,95 +92,55 @@
     line-height: 1.5;
 }
 
-
-/* =========================================================
-   BUTTON
-   ========================================================= */
-
-.btn {
-    display: inline-block;
-    box-sizing: border-box;
+/* IMPORTANT: scoped to prevent conflicts with CTA/Hero buttons */
+.packages-section .btn {
     width: 100%;
-    text-decoration: none;
-    text-align: center;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 12px 20px;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    transition: 0.3s ease;
-    cursor: pointer;
     margin-top: auto;
+    min-height: 46px;
 }
 
-.btn-outline-dark {
-    border-color: #1d252c;
-    color: #1d252c;
-    background: #ffffff;
+.packages-section .btn-outline-dark {
+    background: var(--color-white);
+    border: 1px solid var(--color-dark);
+    color: var(--color-dark);
 }
 
-.btn-outline-dark:hover {
-    background: #1d252c;
-    color: #ffffff;
+.packages-section .btn-outline-dark:hover {
+    background: var(--color-dark);
+    border-color: var(--color-dark);
+    color: var(--color-white);
 }
 
-.btn-red {
-    border-color: #e63946;
-    color: white;
-    background: #e63946;
+.packages-section .btn-red {
+    background: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    color: var(--color-white);
 }
 
-.btn-red:hover {
-    background: #ffffff;
-    color: #e63946;
+.packages-section .btn-red:hover {
+    background: var(--color-white);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
 }
 
-/* =========================================================
-   RESPONSIVE DESIGN
-   ========================================================= */
-
-/* Tablet */
 @media (max-width: 900px) {
-
     .packages-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .section-heading h2 {
-        font-size: 32px;
-    }
-
-    .featured-package {
-        transform: none;
-    }
-
+    .featured-package,
     .featured-package:hover {
-        transform: translateY(-6px);
+        transform: none;
     }
 }
 
-
-/* Mobile */
 @media (max-width: 600px) {
-
     .packages-section {
-        padding: 60px 15px;
+        padding: 60px 0;
     }
 
     .packages-grid {
         grid-template-columns: 1fr;
-    }
-
-    .section-heading {
-        margin-bottom: 35px;
-    }
-
-    .section-heading h2 {
-        font-size: 28px;
-    }
-
-    .section-heading p {
-        font-size: 14px;
     }
 
     .package-card {
@@ -256,13 +153,5 @@
 
     .package-price {
         font-size: 26px;
-    }
-
-    .featured-package {
-        transform: none;
-    }
-
-    .featured-package:hover {
-        transform: translateY(-6px);
     }
 }

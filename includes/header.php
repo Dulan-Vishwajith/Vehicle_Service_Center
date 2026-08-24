@@ -3,7 +3,7 @@
 ?>
 
 <header class="site-header">
-    <div class="header-container">
+    <div class="container header-container">
 
         <!-- Logo -->
         <a href="index.php" class="logo">

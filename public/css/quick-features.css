@@ -1,182 +1,85 @@
-
 /* =========================================================
    QUICK FEATURES
-========================================================= */
+   ========================================================= */
 
 .features {
-
-    background: #f7f8fa;
-
-    border-bottom: 1px solid #eeeeee;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border-light);
 }
 
-
 .features-grid {
-
     display: grid;
-
     grid-template-columns: repeat(4, 1fr);
 }
 
-
-/* =========================================================
-   FEATURE CARD
-========================================================= */
-
 .feature-card {
-
     display: flex;
-
     align-items: flex-start;
-
     gap: 15px;
-
     padding: 30px 22px;
-
-    border-right: 1px solid #e4e7ea;
+    border-right: 1px solid var(--color-border);
 }
 
-
 .feature-card:last-child {
-
     border-right: none;
 }
 
-
-/* =========================================================
-   FEATURE ICON
-========================================================= */
-
 .feature-icon {
-
     width: 48px;
-
     height: 48px;
-
-    flex-shrink: 0;
-
-    border-radius: 12px;
-
-    background: #fff0f1;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
+    flex-shrink: 0;
+    background: var(--color-primary-soft);
+    border-radius: 12px;
     font-size: 22px;
 }
 
-
-/* =========================================================
-   FEATURE TITLE
-========================================================= */
-
 .feature-card h3 {
-
+    margin-bottom: 4px;
+    color: var(--color-dark);
     font-size: 16px;
-
     line-height: 1.3;
-
-    margin: 0 0 4px 0;
-
-    color: #17202a;
 }
-
-
-/* =========================================================
-   FEATURE DESCRIPTION
-========================================================= */
 
 .feature-card p {
-
-    font-size: 13px;
-
-    line-height: 1.6;
-
     color: #707984;
-
-    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
 }
-/* =========================================================
-   RESPONSIVE - TABLET
-========================================================= */
 
 @media (max-width: 1000px) {
-
-    .hero {
-
-        min-height: 600px;
-    }
-
-
-    .hero-content {
-
-        max-width: 600px;
-
-        padding: 70px 0;
-    }
-
-
-    .hero h1 {
-
-        font-size: 58px;
-    }
-
-
     .features-grid {
-
         grid-template-columns: repeat(2, 1fr);
     }
 
-
-    .feature-card {
-
-        border-bottom: 1px solid #e4e7ea;
-    }
-
-
     .feature-card:nth-child(2) {
-
         border-right: none;
     }
-
 
     .feature-card:nth-child(3),
     .feature-card:nth-child(4) {
-
         border-bottom: none;
     }
 
+    .feature-card {
+        border-bottom: 1px solid var(--color-border);
+    }
 }
 
-
-/* =========================================================
-   RESPONSIVE - MOBILE
-========================================================= */
-
 @media (max-width: 700px) {
-
     .features-grid {
-
         grid-template-columns: 1fr;
     }
 
-
     .feature-card {
-
-        border-right: none;
-
-        border-bottom: 1px solid #e4e7ea;
-
         padding: 24px 18px;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
     }
-
 
     .feature-card:last-child {
-
         border-bottom: none;
     }
-
 }
