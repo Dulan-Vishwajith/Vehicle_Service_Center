@@ -53,59 +53,6 @@
 
 
 /* =========================================================
-   SERVICE SEARCH
-========================================================= */
-
-.service-tools {
-    display: flex;
-
-    justify-content: center;
-
-    gap: 12px;
-
-    margin-bottom: 35px;
-}
-
-.service-tools input,
-.service-tools select {
-    height: 48px;
-
-    border: 1px solid #dfe3e7;
-
-    border-radius: 8px;
-
-    padding: 0 16px;
-
-    outline: none;
-
-    background: #ffffff;
-
-    color: #17202a;
-
-    font-family: inherit;
-
-    font-size: 14px;
-
-    transition: border-color 0.2s ease;
-}
-
-.service-tools input {
-    width: 330px;
-}
-
-.service-tools select {
-    width: 200px;
-
-    cursor: pointer;
-}
-
-.service-tools input:focus,
-.service-tools select:focus {
-    border-color: #e63946;
-}
-
-
-/* =========================================================
    SERVICES GRID
 ========================================================= */
 
