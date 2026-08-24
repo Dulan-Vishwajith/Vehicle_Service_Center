@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="public/css/hero.css">
     <link rel="stylesheet" href="public/css/quick-features.css">
     <link rel="stylesheet" href="public/css/services.css">
+    <link rel="stylesheet" href="public/css/packages.css">
     <link rel="stylesheet" href="public/css/cta.css">
     <link rel="stylesheet" href="includes/css/footer.css">
 </head>
@@ -21,6 +22,7 @@
     <?php include 'public/hero.php'; ?>
     <?php include 'public/quick-features.php'; ?>
     <?php include 'public/services.php'; ?>
+    <?php include 'public/packages.php'; ?>
     <?php include 'public/cta.php'; ?>
     <?php include 'includes/footer.php'; ?>
 
