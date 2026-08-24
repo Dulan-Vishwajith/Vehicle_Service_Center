@@ -14,7 +14,7 @@ $serviceQuery = "
     FROM services
     WHERE status = 1
     ORDER BY id DESC
-    LIMIT 3
+    LIMIT 4
 ";
 
 $serviceResult = $conn->query($serviceQuery);
