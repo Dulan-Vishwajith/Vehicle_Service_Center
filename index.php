@@ -22,5 +22,6 @@
 
     <!-- Your page content here -->
 
+    <script src="public/js/services.js"></script>
 </body>
 </html>

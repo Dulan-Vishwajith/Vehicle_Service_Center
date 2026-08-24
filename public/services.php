@@ -1,3 +1,27 @@
+<?php
+
+require_once "config/database.php";
+
+$serviceQuery = "
+    SELECT
+        id,
+        service_name,
+        category,
+        description,
+        price,
+        duration,
+        icon
+    FROM services
+    WHERE status = 1
+    ORDER BY id DESC
+    LIMIT 3
+";
+
+$serviceResult = $conn->query($serviceQuery);
+
+?>
+
+
 <!-- ================= SERVICES ================= -->
 
 <section class="section" id="services">
@@ -205,3 +229,4 @@
     </div>
 
 </section>
+
