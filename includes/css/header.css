@@ -1,175 +1,192 @@
-/* ================================
-   VEYRO HEADER
-================================ */
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 .site-header {
     width: 100%;
-    height: 78px;
-    background: #ffffff;
-    border-top: 1px solid #eeeeee;
-    border-bottom: 1px solid #eeeeee;
+    min-height: 78px;
     display: flex;
     align-items: center;
+
+    background: var(--color-white);
+    border-top: 1px solid var(--color-border-light);
+    border-bottom: 1px solid var(--color-border-light);
+
     position: relative;
     z-index: 1000;
 }
 
 .header-container {
-    width: 100%;
-    max-width: 1200px;
-    height: 100%;
-    margin: 0 auto;
+    min-height: 78px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
+
+    gap: 20px;
 }
 
 
-/* ================================
+/* =========================================================
    LOGO
-================================ */
+   ========================================================= */
 
-.logo {
+.site-header .logo {
     display: flex;
     align-items: center;
+
     gap: 12px;
-
-    text-decoration: none;
-    color: #111827;
-
     flex-shrink: 0;
+
+    color: #111827;
 }
 
 .logo-icon {
     width: 38px;
     height: 38px;
 
-    background: #ed3443;
-    color: #ffffff;
-
-    border-radius: 9px;
-
     display: flex;
     align-items: center;
     justify-content: center;
+
+    flex-shrink: 0;
+
+    background: var(--color-primary);
+    color: var(--color-white);
+
+    border-radius: 9px;
 
     font-size: 20px;
     line-height: 1;
 }
 
 .logo-text {
+    color: #111827;
+
     font-size: 24px;
     font-weight: 800;
+
     letter-spacing: 0.5px;
 }
 
 
-/* ================================
+/* =========================================================
    NAVIGATION
-================================ */
+   ========================================================= */
 
 .main-nav {
     display: flex;
     align-items: center;
+
     gap: 28px;
 
     margin-left: auto;
-    margin-right: 55px;
 }
 
 .main-nav a {
     position: relative;
 
-    text-decoration: none;
-    color: #374151;
+    color: var(--color-text);
 
     font-size: 14px;
     font-weight: 600;
 
-    transition: color 0.2s ease;
+    white-space: nowrap;
+
+    transition:
+        color var(--transition-fast);
 }
 
-.main-nav a:hover {
-    color: #ed3443;
-}
-
+.main-nav a:hover,
 .main-nav a.active {
-    color: #ed3443;
+    color: var(--color-primary);
 }
 
 
-/* ================================
-   AUTH BUTTONS
-================================ */
+/* =========================================================
+   AUTHENTICATION
+   ========================================================= */
 
 .auth-buttons {
     display: flex;
     align-items: center;
+
     gap: 10px;
+
+    flex-shrink: 0;
 }
 
-.login-btn,
-.register-btn {
-    height: 50px;
+.auth-buttons .login-btn,
+.auth-buttons .register-btn {
+    min-height: 50px;
 
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 8px;
-
-    text-decoration: none;
+    border-radius: var(--radius-md);
 
     font-size: 15px;
     font-weight: 700;
 
-    transition: all 0.2s ease;
+    text-decoration: none;
+
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast);
 }
 
-.login-btn {
+
+/* LOGIN */
+
+.auth-buttons .login-btn {
     width: 89px;
 
-    background: #ffffff;
-    color: #111827;
+    background: var(--color-white);
 
     border: 1px solid #d9dee7;
+
+    color: #111827;
 }
 
-.login-btn:hover {
-    border-color: #ed3443;
-    color: #ed3443;
+.auth-buttons .login-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+
+    transform: translateY(-2px);
 }
 
-.register-btn {
+
+/* REGISTER */
+
+.auth-buttons .register-btn {
     width: 111px;
 
-    background: #ed3443;
-    color: #ffffff;
+    background: var(--color-primary);
 
-    border: 1px solid #ed3443;
+    border: 1px solid var(--color-primary);
+
+    color: var(--color-white);
 }
 
-.register-btn:hover {
-    background: #d92d3b;
-    border-color: #d92d3b;
+.auth-buttons .register-btn:hover {
+    background: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+
+    transform: translateY(-2px);
 }
 
 
-/* ================================
-   RESPONSIVE
-================================ */
+/* =========================================================
+   TABLET
+   ========================================================= */
 
-@media (max-width: 900px) {
-
-    .header-container {
-        padding: 0 15px;
-    }
+@media (max-width: 1000px) {
 
     .main-nav {
-        gap: 16px;
-        margin-right: 25px;
+        gap: 18px;
     }
 
     .main-nav a {
@@ -182,18 +199,64 @@
 }
 
 
+/* =========================================================
+   SMALL TABLET
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .header-container {
+        gap: 14px;
+    }
+
+    .main-nav {
+        gap: 12px;
+    }
+
+    .main-nav a {
+        font-size: 12px;
+    }
+
+    .auth-buttons {
+        gap: 6px;
+    }
+
+    .auth-buttons .login-btn,
+    .auth-buttons .register-btn {
+        min-height: 44px;
+        font-size: 13px;
+    }
+
+    .auth-buttons .login-btn {
+        width: 72px;
+    }
+
+    .auth-buttons .register-btn {
+        width: 88px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media (max-width: 700px) {
 
     .site-header {
-        height: auto;
-        min-height: 70px;
+        min-height: auto;
     }
 
     .header-container {
+        min-height: auto;
+
         flex-wrap: wrap;
-        padding: 12px 15px;
-        gap: 15px;
+
+        padding-top: 12px;
+        padding-bottom: 12px;
     }
+
+    /* Navigation moves to second row */
 
     .main-nav {
         order: 3;
@@ -202,36 +265,51 @@
 
         margin: 0;
 
-        justify-content: center;
+        display: flex;
+        justify-content: flex-start;
 
-        gap: 18px;
+        gap: 20px;
 
         overflow-x: auto;
-        padding-bottom: 5px;
+
+        padding: 5px 0 2px;
+
+        scrollbar-width: none;
+    }
+
+    .main-nav::-webkit-scrollbar {
+        display: none;
     }
 
     .main-nav a {
-        white-space: nowrap;
+        flex-shrink: 0;
+        font-size: 13px;
     }
+
+    /* Authentication */
 
     .auth-buttons {
         margin-left: auto;
     }
 
-    .login-btn,
-    .register-btn {
-        height: 42px;
+    .auth-buttons .login-btn,
+    .auth-buttons .register-btn {
+        min-height: 42px;
     }
 
-    .login-btn {
+    .auth-buttons .login-btn {
         width: 75px;
     }
 
-    .register-btn {
+    .auth-buttons .register-btn {
         width: 90px;
     }
 }
 
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
 
 @media (max-width: 450px) {
 
@@ -242,23 +320,31 @@
     .logo-icon {
         width: 35px;
         height: 35px;
+
+        font-size: 18px;
     }
 
     .auth-buttons {
-        gap: 6px;
+        gap: 5px;
     }
 
-    .login-btn {
+    .auth-buttons .login-btn {
         width: 65px;
-        font-size: 13px;
+
+        font-size: 12px;
     }
 
-    .register-btn {
-        width: 80px;
-        font-size: 13px;
+    .auth-buttons .register-btn {
+        width: 78px;
+
+        font-size: 12px;
     }
 
     .main-nav {
-        justify-content: flex-start;
+        gap: 17px;
+    }
+
+    .main-nav a {
+        font-size: 12px;
     }
 }

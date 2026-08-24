@@ -1,30 +1,12 @@
 /* =========================================================
-   GLOBAL CONTAINER
-========================================================= */
-
-.container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-
-/* =========================================================
-   HERO SECTION
-========================================================= */
+   HERO
+   ========================================================= */
 
 .hero {
-
     min-height: 650px;
-
     position: relative;
-
     display: flex;
-
     align-items: center;
-
     background:
         linear-gradient(
             90deg,
@@ -33,332 +15,107 @@
             rgba(10, 15, 20, 0.25)
         ),
         url("../images/hero-car.jpg") center/cover no-repeat;
-
-    color: #ffffff;
+    color: var(--color-white);
 }
-
-
-/* =========================================================
-   HERO OVERLAY
-========================================================= */
-
-.hero-overlay {
-
-    position: absolute;
-
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-
-    pointer-events: none;
-}
-
-
-/* =========================================================
-   HERO CONTAINER
-========================================================= */
 
 .hero-container {
-
     position: relative;
-
     z-index: 2;
 }
 
-
-/* =========================================================
-   HERO CONTENT
-========================================================= */
-
 .hero-content {
-
     max-width: 680px;
-
     padding: 80px 0;
 }
 
-
-/* =========================================================
-   HERO BADGE
-========================================================= */
-
 .hero-badge {
-
     display: inline-block;
-
-    padding: 8px 14px;
-
-    border-radius: 50px;
-
-    background: rgba(255, 255, 255, 0.12);
-
-    border: 1px solid rgba(255, 255, 255, 0.25);
-
-    font-size: 12px;
-
-    font-weight: 700;
-
-    letter-spacing: 1px;
-
     margin-bottom: 22px;
+    padding: 8px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.12);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 
-
-/* =========================================================
-   HERO TITLE
-========================================================= */
-
 .hero h1 {
-
+    margin-bottom: 22px;
     font-size: clamp(42px, 6vw, 72px);
-
     line-height: 1.05;
-
-    margin: 0 0 22px 0;
-
     font-weight: 800;
 }
 
-
-/* =========================================================
-   HERO DESCRIPTION
-========================================================= */
-
 .hero p {
-
     max-width: 600px;
-
-    font-size: 18px;
-
-    line-height: 1.7;
-
+    margin-bottom: 32px;
     color: #e7eaed;
-
-    margin: 0 0 32px 0;
+    font-size: 18px;
+    line-height: 1.7;
 }
-
-
-/* =========================================================
-   HERO BUTTONS
-========================================================= */
 
 .hero-buttons {
-
     display: flex;
-
-    gap: 14px;
-
     flex-wrap: wrap;
+    gap: 14px;
 }
 
-
-/* =========================================================
-   GENERAL BUTTON
-========================================================= */
-
-.btn {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    text-decoration: none;
-
-    font-weight: 700;
-
-    border-radius: 8px;
-
-    transition:
-        background 0.2s ease,
-        color 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-
-.btn:hover {
-
-    transform: translateY(-2px);
-}
-
-
-/* =========================================================
-   LARGE BUTTON
-========================================================= */
-
-.btn-large {
-
+.hero-buttons .btn {
     min-width: 180px;
-
-    height: 52px;
-
-    padding: 0 24px;
-
+    min-height: 52px;
     font-size: 15px;
 }
 
-
-/* =========================================================
-   PRIMARY BUTTON
-========================================================= */
-
-.btn-primary {
-
-    background: #ed3443;
-
-    color: #ffffff;
-
-    border: 1px solid #ed3443;
-}
-
-
-.btn-primary:hover {
-
-    background: #d92d3b;
-
-    border-color: #d92d3b;
-}
-
-
-/* =========================================================
-   LIGHT BUTTON
-========================================================= */
-
-.btn-light {
-
-    background: #ffffff;
-
+/* Hero-specific light button behavior */
+.hero-buttons .btn-light {
+    background: var(--color-white);
+    border-color: var(--color-white);
     color: #111827;
-
-    border: 1px solid #ffffff;
 }
 
-
-.btn-light:hover {
-
+.hero-buttons .btn-light:hover {
     background: #f1f1f1;
-
     border-color: #f1f1f1;
 }
 
-
-/* =========================================================
-   HERO STATS
-========================================================= */
-
 .hero-stats {
-
     display: flex;
-
     gap: 45px;
-
     margin-top: 55px;
 }
 
-
 .hero-stat {
-
     display: flex;
-
     flex-direction: column;
 }
 
-
 .hero-stat strong {
-
     font-size: 28px;
-
     line-height: 1.2;
-
     font-weight: 800;
 }
 
-
 .hero-stat span {
-
-    font-size: 13px;
-
-    color: #cbd0d5;
-
     margin-top: 5px;
+    color: #cbd0d5;
+    font-size: 13px;
 }
-
-
-/* =========================================================
-   RESPONSIVE - TABLET
-========================================================= */
 
 @media (max-width: 1000px) {
-
     .hero {
-
         min-height: 600px;
     }
-
 
     .hero-content {
-
         max-width: 600px;
-
         padding: 70px 0;
     }
-
-
-    .hero h1 {
-
-        font-size: 58px;
-    }
-
-
-    .features-grid {
-
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-
-    .feature-card {
-
-        border-bottom: 1px solid #e4e7ea;
-    }
-
-
-    .feature-card:nth-child(2) {
-
-        border-right: none;
-    }
-
-
-    .feature-card:nth-child(3),
-    .feature-card:nth-child(4) {
-
-        border-bottom: none;
-    }
-
 }
 
-
-/* =========================================================
-   RESPONSIVE - MOBILE
-========================================================= */
-
 @media (max-width: 700px) {
-
-    .container {
-
-        padding-left: 16px;
-
-        padding-right: 16px;
-    }
-
-
     .hero {
-
         min-height: 600px;
-
         background:
             linear-gradient(
                 90deg,
@@ -368,134 +125,69 @@
             url("../images/hero-car.jpg") center/cover no-repeat;
     }
 
-
     .hero-content {
-
         padding: 60px 0;
     }
 
-
     .hero h1 {
-
         font-size: 45px;
-
         line-height: 1.08;
     }
 
-
     .hero p {
-
         font-size: 16px;
-
-        line-height: 1.6;
     }
 
-
     .hero-buttons {
-
         flex-direction: column;
-
         align-items: stretch;
     }
 
-
-    .btn-large {
-
+    .hero-buttons .btn {
         width: 100%;
     }
 
-
     .hero-stats {
-
         gap: 25px;
-
         margin-top: 40px;
     }
 
-
     .hero-stat strong {
-
         font-size: 24px;
     }
 
-
     .hero-stat span {
-
         font-size: 11px;
     }
-
-
-    .features-grid {
-
-        grid-template-columns: 1fr;
-    }
-
-
-    .feature-card {
-
-        border-right: none;
-
-        border-bottom: 1px solid #e4e7ea;
-
-        padding: 24px 18px;
-    }
-
-
-    .feature-card:last-child {
-
-        border-bottom: none;
-    }
-
 }
 
-
-/* =========================================================
-   SMALL MOBILE
-========================================================= */
-
 @media (max-width: 450px) {
-
     .hero {
-
         min-height: 580px;
     }
 
-
     .hero-badge {
-
-        font-size: 10px;
-
         padding: 7px 11px;
+        font-size: 10px;
     }
 
-
     .hero h1 {
-
         font-size: 38px;
     }
 
-
     .hero p {
-
         font-size: 15px;
     }
 
-
     .hero-stats {
-
         gap: 18px;
     }
 
-
     .hero-stat strong {
-
         font-size: 21px;
     }
 
-
     .hero-stat span {
-
         font-size: 10px;
     }
-
 }

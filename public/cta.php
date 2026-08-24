@@ -25,7 +25,7 @@
 
         <a
             href="book-appointment.php"
-            class="cta-btn btn-light btn-large"
+            class="btn btn-light btn-large"
         >
             Book Appointment <span>→</span>
         </a>

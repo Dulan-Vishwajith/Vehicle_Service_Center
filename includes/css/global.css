@@ -1,11 +1,44 @@
 /* =========================================================
-   GLOBAL
-========================================================= */
+   GLOBAL / DESIGN SYSTEM
+   ========================================================= */
 
-* {
+:root {
+    --color-primary: #e63946;
+    --color-primary-dark: #d92d3b;
+    --color-primary-soft: #fff0f1;
+
+    --color-dark: #17202a;
+    --color-dark-2: #1d252c;
+    --color-text: #374151;
+    --color-muted: #6d7680;
+    --color-muted-light: #9ca5ad;
+
+    --color-white: #ffffff;
+    --color-bg: #f7f8fa;
+    --color-border: #e4e7eb;
+    --color-border-light: #eeeeee;
+
+    --container-width: 1200px;
+    --container-padding: 20px;
+
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 14px;
+    --radius-xl: 15px;
+
+    --shadow-sm: 0 5px 20px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 15px 35px rgba(0, 0, 0, 0.08);
+
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
 html {
@@ -14,28 +47,140 @@ html {
 
 body {
     font-family: Arial, Helvetica, sans-serif;
-    background: #ffffff;
-    color: #17202a;
+    background: var(--color-white);
+    color: var(--color-dark);
     line-height: 1.6;
 }
 
 a {
-    text-decoration: none;
     color: inherit;
+    text-decoration: none;
 }
 
 button,
 input,
-select {
+select,
+textarea {
     font: inherit;
 }
 
-.container {
-    width: min(1180px, 92%);
-    margin: 0 auto;
-    width: 100%;
-    max-width: 1180px;
-    padding-left: 20px;
-    padding-right: 20px;
+img {
+    max-width: 100%;
+    display: block;
 }
 
+/* Shared container */
+.container {
+    width: min(100% - 40px, var(--container-width));
+    margin-inline: auto;
+}
+
+/* Shared section heading */
+.section-heading {
+    max-width: 700px;
+    margin: 0 auto 45px;
+    text-align: center;
+}
+
+.section-label {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.section-heading h2 {
+    margin-bottom: 14px;
+    color: var(--color-dark);
+    font-size: clamp(30px, 4vw, 44px);
+    line-height: 1.15;
+}
+
+.section-heading p {
+    color: var(--color-muted);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+/* Shared button base */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 24px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.btn-primary:hover {
+    background: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+}
+
+.btn-dark {
+    background: var(--color-dark);
+    border-color: var(--color-dark);
+    color: var(--color-white);
+}
+
+.btn-dark:hover {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn-light {
+    background: var(--color-white);
+    border-color: var(--color-white);
+    color: var(--color-dark);
+}
+
+.btn-light:hover {
+    background: #f1f1f1;
+    border-color: #f1f1f1;
+}
+
+.btn-outline-dark {
+    background: transparent;
+    border-color: var(--color-dark);
+    color: var(--color-dark);
+}
+
+.btn-outline-dark:hover {
+    background: var(--color-dark);
+    border-color: var(--color-dark);
+    color: var(--color-white);
+}
+
+@media (max-width: 700px) {
+    .container {
+        width: min(100% - 32px, var(--container-width));
+    }
+
+    .section-heading {
+        margin-bottom: 30px;
+    }
+}

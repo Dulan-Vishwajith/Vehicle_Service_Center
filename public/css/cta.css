@@ -1,11 +1,11 @@
 /* =========================================================
-   CTA SECTION
-========================================================= */
+   CTA
+   ========================================================= */
 
 .cta-section {
-    background: #e63946;
-    color: #ffffff;
     padding: 47px 0;
+    background: var(--color-primary);
+    color: var(--color-white);
 }
 
 .cta-container {
@@ -15,11 +15,6 @@
     gap: 40px;
 }
 
-
-/* =========================================================
-   CTA CONTENT
-========================================================= */
-
 .cta-content {
     flex: 1;
 }
@@ -27,92 +22,79 @@
 .cta-container .section-label {
     display: block;
     margin-bottom: 10px;
-
-    color: #ffffff;
-
-    font-size: 13px;
-    font-weight: 700;
-
-    letter-spacing: 1px;
-
+    color: var(--color-white);
     opacity: 0.85;
 }
 
-
 .cta-container h2 {
-    margin: 0 0 10px;
-
-    color: #ffffff;
-
+    margin-bottom: 10px;
+    color: var(--color-white);
     font-size: 38px;
     font-weight: 700;
-
     line-height: 1.15;
 }
 
-
 .cta-container p {
-    margin: 0;
-
-    color: #ffffff;
-
+    color: var(--color-white);
     font-size: 16px;
     line-height: 1.6;
-
     opacity: 0.92;
 }
 
-
-/* =========================================================
-   CTA BUTTON
-========================================================= */
-
-.cta-btn {
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    text-decoration: none;
-
-    border: none;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
-}
-
-
-.btn-light {
-    background: #ffffff;
-    color: #11171c;
-}
-
-
-.btn-large {
+/* Scoped CTA button - no global .btn override */
+.cta-section .btn-light {
     min-width: 222px;
-    height: 56px;
-
+    min-height: 56px;
     padding: 0 28px;
-
     border-radius: 7px;
-
+    background: var(--color-white);
+    border: 1px solid var(--color-white);
+    color: #11171c;
     font-size: 15px;
     font-weight: 700;
 }
 
+.cta-section .btn-light:hover {
+    background: #f1f1f1;
+    border-color: #f1f1f1;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
 
-.btn-large span {
+.cta-section .btn-light span {
     margin-left: 4px;
 }
 
+@media (max-width: 900px) {
+    .cta-container {
+        gap: 25px;
+    }
 
-.btn-large:hover {
-    transform: translateY(-2px);
+    .cta-container h2 {
+        font-size: 32px;
+    }
+}
 
-    box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.15);
+@media (max-width: 650px) {
+    .cta-section {
+        padding: 45px 0;
+    }
+
+    .cta-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 25px;
+    }
+
+    .cta-container h2 {
+        font-size: 29px;
+    }
+
+    .cta-container p {
+        font-size: 14px;
+    }
+
+    .cta-section .btn-light {
+        width: 100%;
+        min-width: 0;
+    }
 }
