@@ -49,11 +49,13 @@
 /* =========================================================
    PACKAGE GRID
    ========================================================= */
-
 .packages-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 25px;
+
+    /* NEW */
+    align-items: stretch;
 }
 
 
@@ -69,6 +71,9 @@
     position: relative;
     transition: 0.3s ease;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .package-card:hover {
@@ -140,6 +145,7 @@
     list-style: none;
     padding: 0;
     margin: 0 0 28px;
+    flex-grow: 1;
 }
 
 .package-card li {
@@ -156,36 +162,40 @@
 
 .btn {
     display: inline-block;
+    box-sizing: border-box;
+    width: 100%;
     text-decoration: none;
     text-align: center;
     font-size: 14px;
     font-weight: 700;
     padding: 12px 20px;
     border-radius: 8px;
+    border: 1px solid transparent;
     transition: 0.3s ease;
     cursor: pointer;
+    margin-top: auto;
 }
 
 .btn-outline-dark {
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid #1d252c;
+    border-color: #1d252c;
     color: #1d252c;
     background: #ffffff;
-}
-
-.btn-red{
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid #e63946;
-    color: white;
-    background: #e63946;
-
 }
 
 .btn-outline-dark:hover {
     background: #1d252c;
     color: #ffffff;
+}
+
+.btn-red {
+    border-color: #e63946;
+    color: white;
+    background: #e63946;
+}
+
+.btn-red:hover {
+    background: #ffffff;
+    color: #e63946;
 }
 
 /* =========================================================
