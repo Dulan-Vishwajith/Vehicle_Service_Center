@@ -33,4 +33,10 @@ select {
 .container {
     width: min(1180px, 92%);
     margin: 0 auto;
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
 }
+

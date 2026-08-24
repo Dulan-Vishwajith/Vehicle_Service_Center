@@ -1,0 +1,118 @@
+/* =========================================================
+   CTA SECTION
+========================================================= */
+
+.cta-section {
+    background: #e63946;
+    color: #ffffff;
+    padding: 47px 0;
+}
+
+.cta-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+
+/* =========================================================
+   CTA CONTENT
+========================================================= */
+
+.cta-content {
+    flex: 1;
+}
+
+.cta-container .section-label {
+    display: block;
+    margin-bottom: 10px;
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    opacity: 0.85;
+}
+
+
+.cta-container h2 {
+    margin: 0 0 10px;
+
+    color: #ffffff;
+
+    font-size: 38px;
+    font-weight: 700;
+
+    line-height: 1.15;
+}
+
+
+.cta-container p {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 16px;
+    line-height: 1.6;
+
+    opacity: 0.92;
+}
+
+
+/* =========================================================
+   CTA BUTTON
+========================================================= */
+
+.btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+
+    border: none;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.btn-light {
+    background: #ffffff;
+    color: #11171c;
+}
+
+
+.btn-large {
+    min-width: 222px;
+    height: 56px;
+
+    padding: 0 28px;
+
+    border-radius: 7px;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+
+.btn-large span {
+    margin-left: 4px;
+}
+
+
+.btn-large:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.15);
+}
