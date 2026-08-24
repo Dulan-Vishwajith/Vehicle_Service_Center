@@ -1,3 +1,26 @@
+<?php
+
+require_once "config/database.php";
+
+$serviceQuery = "
+    SELECT
+        id,
+        service_name,
+        category,
+        description,
+        price,
+        duration,
+        icon
+    FROM services
+    WHERE status = 1
+    ORDER BY id DESC
+    LIMIT 3
+";
+
+$serviceResult = $conn->query($serviceQuery);
+
+?>
+
 <!-- ================= SERVICES ================= -->
 
 <section class="section" id="services">
@@ -18,43 +41,6 @@
                 Professional services designed to keep
                 your vehicle safe and reliable.
             </p>
-
-        </div>
-
-
-        <!-- ================= SEARCH ================= -->
-
-        <div class="service-tools">
-
-            <input
-                type="text"
-                id="serviceSearch"
-                placeholder="Search services..."
-            >
-
-            <select id="serviceCategory">
-
-                <option value="all">
-                    All Categories
-                </option>
-
-                <option value="maintenance">
-                    Maintenance
-                </option>
-
-                <option value="repair">
-                    Repair
-                </option>
-
-                <option value="inspection">
-                    Inspection & Diagnostics
-                </option>
-
-                <option value="other">
-                    Other Services
-                </option>
-
-            </select>
 
         </div>
 
