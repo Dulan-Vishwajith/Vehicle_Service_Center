@@ -7,6 +7,14 @@ require_once "config/database.php";
    GET ACTIVE SERVICES
    ========================================================= */
 
+// Check whether all services should be displayed
+$showAll = isset($_GET['all']) && $_GET['all'] == '1';
+
+
+/* =========================================================
+   SERVICE QUERY
+   ========================================================= */
+
 $serviceQuery = "
     SELECT
         id,
@@ -22,9 +30,13 @@ $serviceQuery = "
     WHERE status = :status
 
     ORDER BY id DESC
-
-    LIMIT :limit
 ";
+
+
+// Show only 4 services normally
+if (!$showAll) {
+    $serviceQuery .= " LIMIT :limit";
+}
 
 
 $serviceStmt = $pdo->prepare($serviceQuery);
@@ -41,11 +53,16 @@ $serviceStmt->bindValue(
 );
 
 
-$serviceStmt->bindValue(
-    ':limit',
-    $limit,
-    PDO::PARAM_INT
-);
+// Bind limit only when showing 4 services
+if (!$showAll) {
+
+    $serviceStmt->bindValue(
+        ':limit',
+        $limit,
+        PDO::PARAM_INT
+    );
+
+}
 
 
 $serviceStmt->execute();
@@ -316,19 +333,38 @@ $serviceResult = $serviceStmt->fetchAll();
 
 
         <!-- =================================================
-             VIEW ALL SERVICES
+             VIEW ALL / HIDE SERVICES BUTTON
              ================================================= -->
 
         <div class="center-button">
 
-            <a
-                href="services.php"
-                class="btn btn-dark"
-            >
+            <?php if (!$showAll): ?>
 
-                View All Services
+                <!-- VIEW ALL SERVICES -->
 
-            </a>
+                <a
+                    href="index.php?all=1#services"
+                    class="btn btn-dark"
+                >
+
+                    View All Services
+
+                </a>
+
+            <?php else: ?>
+
+                <!-- HIDE SERVICES -->
+
+                <a
+                    href="index.php#services"
+                    class="btn btn-dark"
+                >
+
+                    Hide Services
+
+                </a>
+
+            <?php endif; ?>
 
         </div>
 
