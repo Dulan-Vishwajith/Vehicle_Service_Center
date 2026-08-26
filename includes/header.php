@@ -18,8 +18,8 @@
 
         <!-- Authentication Buttons -->
         <div class="auth-buttons">
-            <a href="login.php" class="login-btn">Login</a>
-            <a href="register.php" class="register-btn">Register</a>
+            <a href="./public/login.php" class="login-btn">Login</a>
+            <a href="./public/register.php" class="register-btn">Register</a>
         </div>
 
     </div>
