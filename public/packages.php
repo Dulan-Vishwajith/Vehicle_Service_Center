@@ -80,10 +80,7 @@ if (isset($packages[1])) {
      PACKAGES SECTION
      ========================================================= -->
 
-<section
-    class="section packages-section"
-    id="packages"
->
+<section class="section packages-section" id="packages">
 
     <div class="container">
 

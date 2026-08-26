@@ -2,7 +2,7 @@
     // hero.php
 ?>
 <main>
-    <section class="hero">
+    <section id="home" class="hero">
         <div class="hero-overlay"></div>
         <div class="container hero-container">
             <div class="hero-content">

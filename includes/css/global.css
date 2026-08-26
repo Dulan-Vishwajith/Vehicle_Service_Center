@@ -50,6 +50,8 @@ body {
     background: var(--color-white);
     color: var(--color-dark);
     line-height: 1.6;
+
+    padding-top: 78px;
 }
 
 a {

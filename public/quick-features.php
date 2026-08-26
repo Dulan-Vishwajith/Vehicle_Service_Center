@@ -1,7 +1,7 @@
 <?php
     // quick-features.php
 ?>
-    <section class="features">
+    <section id="features"c class="features">
 
         <div class="container features-grid">
 
