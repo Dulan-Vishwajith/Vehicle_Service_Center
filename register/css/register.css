@@ -1,0 +1,287 @@
+/* =========================================================
+   REGISTER PAGE
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   PAGE
+   --------------------------------------------------------- */
+
+.register-page {
+    min-height: calc(100vh);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px 20px;
+
+    background: var(--color-bg);
+}
+
+
+/* ---------------------------------------------------------
+   REGISTER CARD
+   --------------------------------------------------------- */
+
+.register-card {
+    width: 100%;
+    max-width: 520px;
+
+    padding: 40px;
+
+    background: var(--color-white);
+
+    border: 1px solid var(--color-border);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-md);
+}
+
+/* ---------------------------------------------------------
+   BACK BUTTON
+   --------------------------------------------------------- */
+.register-back {
+    margin-bottom: 20px;
+}
+
+.back-btn {
+    display: inline-block;
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.back-btn:hover {
+    color: #000;
+}
+
+/* ---------------------------------------------------------
+   HEADING
+   --------------------------------------------------------- */
+
+.register-heading {
+    margin-bottom: 28px;
+
+    text-align: center;
+}
+
+
+.register-heading .section-label {
+    display: inline-block;
+
+    margin-bottom: 8px;
+}
+
+
+.register-heading h1 {
+    margin-bottom: 8px;
+
+    color: var(--color-dark);
+
+    font-size: 32px;
+    line-height: 1.2;
+}
+
+
+.register-heading p {
+    color: var(--color-muted);
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* ---------------------------------------------------------
+   MESSAGE
+   --------------------------------------------------------- */
+
+.register-message {
+    margin-bottom: 20px;
+
+    padding: 12px 14px;
+
+    border-radius: var(--radius-md);
+
+    font-size: 14px;
+}
+
+
+.register-message.error {
+    background: var(--color-primary-soft);
+
+    color: #c82032;
+}
+
+
+.register-message.success {
+    background: #eefbf2;
+
+    color: #23733b;
+}
+
+
+/* ---------------------------------------------------------
+   FORM
+   --------------------------------------------------------- */
+
+.register-form {
+    width: 100%;
+}
+
+
+.form-group {
+    margin-bottom: 17px;
+}
+
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--color-dark);
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+.form-group input {
+    width: 100%;
+    min-height: 48px;
+
+    padding: 0 14px;
+
+    border: 1px solid var(--color-border);
+
+    border-radius: var(--radius-md);
+
+    background: var(--color-white);
+
+    color: var(--color-dark);
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+
+.form-group input::placeholder {
+    color: var(--color-muted-light);
+}
+
+
+.form-group input:focus {
+    border-color: var(--color-primary);
+
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.10);
+}
+
+
+/* ---------------------------------------------------------
+   SUBMIT BUTTON
+   --------------------------------------------------------- */
+
+.register-submit {
+    width: 100%;
+
+    margin-top: 5px;
+}
+
+
+/* ---------------------------------------------------------
+   BOTTOM TEXT
+   --------------------------------------------------------- */
+
+.register-bottom-text {
+    margin-top: 22px;
+
+    text-align: center;
+
+    color: var(--color-muted);
+
+    font-size: 14px;
+}
+
+
+.register-bottom-text a {
+    color: var(--color-primary);
+
+    font-weight: 700;
+
+    transition: color var(--transition-fast);
+}
+
+
+.register-bottom-text a:hover {
+    color: var(--color-primary-dark);
+}
+
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    .register-page {
+        min-height: calc(100vh - 78px);
+
+        padding: 30px 16px;
+    }
+
+
+    .register-card {
+        padding: 30px 22px;
+    }
+
+
+    .register-heading h1 {
+        font-size: 28px;
+    }
+
+}
+
+
+@media (max-width: 450px) {
+
+    .register-page {
+        padding: 25px 12px;
+    }
+
+
+    .register-card {
+        padding: 25px 18px;
+
+        border-radius: var(--radius-md);
+    }
+
+
+    .register-heading h1 {
+        font-size: 26px;
+    }
+
+
+    .register-heading p {
+        font-size: 13px;
+    }
+
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+
+    .form-group input {
+        min-height: 46px;
+    }
+
+}
