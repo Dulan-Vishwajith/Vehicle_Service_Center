@@ -60,10 +60,7 @@ $serviceResult = $serviceStmt->fetchAll();
      SERVICES SECTION
      ========================================================= -->
 
-<section
-    class="section"
-    id="services"
->
+<section class="section" id="services">
 
     <div class="container">
 
