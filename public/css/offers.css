@@ -1,0 +1,501 @@
+/* =========================================================
+   OFFERS SECTION
+   ========================================================= */
+
+.offers-section {
+    background: var(--color-white);
+    padding: 90px 0;
+}
+
+
+/* =========================================================
+   OFFERS HEADING
+   Uses the existing global .section-heading
+   ========================================================= */
+
+.offers-section .section-heading {
+    margin-bottom: 48px;
+}
+
+.offers-section .section-label {
+    color: var(--color-primary);
+}
+
+.offers-section .section-heading h2 {
+    color: var(--color-dark);
+}
+
+.offers-section .section-heading p {
+    color: var(--color-muted);
+}
+
+
+/* =========================================================
+   OFFERS GRID
+   ========================================================= */
+
+.offers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    align-items: stretch;
+}
+
+
+/* =========================================================
+   OFFER CARD
+   ========================================================= */
+
+.offer-card {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 450px;
+
+    padding: 30px;
+
+    border-radius: var(--radius-xl);
+
+    color: var(--color-white);
+
+    overflow: hidden;
+
+    box-shadow: var(--shadow-md);
+
+    transition:
+        transform var(--transition-normal),
+        box-shadow var(--transition-normal);
+}
+
+
+/* =========================================================
+   DECORATIVE BACKGROUND CIRCLES
+   ========================================================= */
+
+.offer-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    right: -90px;
+    top: -90px;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+.offer-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 110px;
+    height: 110px;
+
+    right: -55px;
+    top: -55px;
+
+    border: 1px solid rgba(255, 255, 255, 0.09);
+
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   CARD HOVER
+   ========================================================= */
+
+.offer-card:hover {
+    transform: translateY(-7px);
+
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.14);
+}
+
+
+/* =========================================================
+   CARD COLORS
+   Based on your required original CSS
+   ========================================================= */
+
+.offer-card.dark-card {
+    background: var(--color-dark);
+}
+
+.offer-card.red-card {
+    background: var(--color-primary);
+}
+
+.offer-card.navy-card {
+    background: #293641;
+}
+
+
+/* =========================================================
+   OFFER ICON
+   ========================================================= */
+
+.offer-icon {
+    position: relative;
+    z-index: 2;
+
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 15px;
+
+    border-radius: var(--radius-lg);
+
+   
+
+    
+
+    font-size: 32px;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
+   OFFER TYPE
+   ========================================================= */
+
+.offer-type {
+    position: relative;
+    z-index: 2;
+
+    display: inline-block;
+
+    margin-bottom: 5px;
+
+    color: rgba(255, 255, 255, 0.78);
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    opacity: 0.9;
+}
+
+
+/* =========================================================
+   OFFER TITLE
+   ========================================================= */
+
+.offer-card h3 {
+    position: relative;
+    z-index: 2;
+
+    color: var(--color-white);
+
+    font-size: 23px;
+
+    font-weight: 800;
+
+    line-height: 1.3;
+
+    margin: 8px 0;
+}
+
+
+/* =========================================================
+   DISCOUNT
+   ========================================================= */
+
+.discount {
+    position: relative;
+    z-index: 2;
+
+    color: var(--color-white);
+
+    font-size: 34px;
+
+    font-weight: 900;
+
+    line-height: 1;
+
+    margin: 12px 0;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.offer-card p {
+    position: relative;
+    z-index: 2;
+
+    max-width: 340px;
+
+    color: #e0e4e7;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+    margin-bottom: 15px;
+}
+
+
+/* =========================================================
+   VALID / TERMS
+   ========================================================= */
+
+.offer-card small {
+    position: relative;
+    z-index: 2;
+
+    display: block;
+
+    color: #cdd2d6;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    margin-top: auto;
+
+    margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   OFFER BUTTON
+   ========================================================= */
+
+.offer-button {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    width: 100%;
+
+    min-height: 44px;
+
+    padding: 0 15px;
+
+    border-radius: var(--radius-md);
+
+    color: var(--color-white);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+
+/* =========================================================
+   BUTTON ARROW
+   ========================================================= */
+
+.offer-button::after {
+    content: "→";
+
+    font-size: 18px;
+
+    transition:
+        transform var(--transition-fast);
+}
+
+
+/* =========================================================
+   BUTTON HOVER
+   ========================================================= */
+
+.offer-button:hover {
+    background: var(--color-white);
+
+    border-color: var(--color-white);
+
+    color: var(--color-dark);
+
+    transform: translateY(-2px);
+}
+
+.offer-button:hover::after {
+    transform: translateX(5px);
+}
+
+
+/* =========================================================
+   RED CARD BUTTON
+   ========================================================= */
+
+.offer-card.red-card .offer-button {
+    background: var(--color-white);
+
+    border-color: var(--color-white);
+
+    color: var(--color-primary);
+}
+
+.offer-card.red-card .offer-button:hover {
+    background: var(--color-dark);
+
+    border-color: var(--color-dark);
+
+    color: var(--color-white);
+}
+
+
+/* =========================================================
+   CENTER BUTTON
+   Uses the existing global .btn and .btn-dark
+   ========================================================= */
+
+.offers-section .center-button {
+    display: flex;
+
+    justify-content: center;
+
+    margin-top: 42px;
+}
+
+
+/*
+   We do NOT redefine:
+       .btn
+       .btn-dark
+       .btn-dark:hover
+
+   because those already exist in global.css.
+*/
+
+.offers-section .btn-dark::after {
+    content: "→";
+
+    margin-left: 10px;
+
+    font-size: 17px;
+
+    transition:
+        transform var(--transition-fast);
+}
+
+.offers-section .btn-dark:hover::after {
+    transform: translateX(4px);
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .offers-section {
+        padding: 75px 0;
+    }
+
+    .offers-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .offer-card {
+        min-height: 440px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .offers-section {
+        padding: 60px 0;
+    }
+
+    .offers-section .section-heading {
+        margin-bottom: 35px;
+    }
+
+    .offers-grid {
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+    }
+
+    .offer-card {
+        min-height: 430px;
+
+        padding: 28px;
+    }
+
+    .offer-card h3 {
+        font-size: 23px;
+    }
+
+    .discount {
+        font-size: 30px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 450px) {
+
+    .offers-section {
+        padding: 50px 0;
+    }
+
+    .offer-card {
+        min-height: 420px;
+
+        padding: 24px;
+    }
+
+    .offer-icon {
+        width: 52px;
+        height: 52px;
+
+        font-size: 28px;
+    }
+
+    .offer-card h3 {
+        font-size: 21px;
+    }
+
+    .discount {
+        font-size: 28px;
+    }
+
+    .offer-button {
+        padding: 0 14px;
+    }
+
+}

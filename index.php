@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="public/css/packages.css">
     <link rel="stylesheet" href="public/css/cta.css">
     <link rel="stylesheet" href="includes/css/footer.css">
+    <link rel="stylesheet" href="public/css/offers.css">
 </head>
 
 <body>
@@ -23,6 +24,7 @@
     <?php include 'public/quick-features.php'; ?>
     <?php include 'public/services.php'; ?>
     <?php include 'public/packages.php'; ?>
+    <?php include 'public/offers.php'; ?>
     <?php include 'public/cta.php'; ?>
     <?php include 'includes/footer.php'; ?>
 
