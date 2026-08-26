@@ -25,6 +25,7 @@
     <?php include 'public/packages.php'; ?>
     <?php include 'public/cta.php'; ?>
     <?php include 'includes/footer.php'; ?>
+    
 
     <!-- Your page content here -->
 
