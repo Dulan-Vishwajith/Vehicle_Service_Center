@@ -1,6 +1,12 @@
 <?php
 session_start();
 
+// If user is already logged in, don't allow access to login page
+if (isset($_SESSION["user_id"])) {
+    header("Location: ../index.php");
+    exit;
+}
+
 $message = $_SESSION["login_message"] ?? "";
 unset($_SESSION["login_message"]);
 ?>
@@ -24,6 +30,15 @@ unset($_SESSION["login_message"]);
 
     <div class="login-card">
 
+        <!-- Back Button -->
+        <div class="login-back">
+            <a href="../index.php" class="back-btn">
+                ← Back to Home
+            </a>
+        </div>
+
+
+        <!-- Heading -->
         <div class="login-heading">
 
             <div class="login-label">
@@ -38,6 +53,8 @@ unset($_SESSION["login_message"]);
 
         </div>
 
+
+        <!-- Message -->
         <?php if ($message !== ""): ?>
 
             <div class="login-message">
@@ -46,8 +63,14 @@ unset($_SESSION["login_message"]);
 
         <?php endif; ?>
 
-        <form method="POST" action="login-validation.php">
 
+        <!-- Login Form -->
+        <form
+            method="POST"
+            action="login-validation.php"
+        >
+
+            <!-- Email -->
             <div class="login-form-group">
 
                 <label for="email">
@@ -65,6 +88,8 @@ unset($_SESSION["login_message"]);
 
             </div>
 
+
+            <!-- Password -->
             <div class="login-form-group">
 
                 <label for="password">
@@ -82,6 +107,8 @@ unset($_SESSION["login_message"]);
 
             </div>
 
+
+            <!-- Submit -->
             <button
                 type="submit"
                 class="login-submit"
@@ -91,11 +118,13 @@ unset($_SESSION["login_message"]);
 
         </form>
 
+
+        <!-- Register Link -->
         <div class="login-bottom-text">
 
             Don't have an account?
 
-            <a href="register.php">
+            <a href="../register/register-form.php">
                 Register here
             </a>
 

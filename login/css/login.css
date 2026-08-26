@@ -1,13 +1,20 @@
 /* =========================================================
    LOGIN PAGE
    ========================================================= */
+/* Remove global header spacing on login page */
+body {
+    padding-top: 0;
+}
 
 .login-page {
-    min-height: calc(100vh - 78px);
+    min-height: 100vh;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     padding: 50px 20px;
+
     background: var(--color-bg);
 }
 
@@ -22,6 +29,23 @@
     box-shadow: var(--shadow-md);
 }
 
+/* Back Button */
+.login-back {
+    margin-bottom: 20px;
+}
+
+.back-btn {
+    display: inline-block;
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.back-btn:hover {
+    color: #000;
+}
 /* Heading */
 .login-heading {
     margin-bottom: 28px;
