@@ -96,17 +96,15 @@ $profileImage = "./public/images/profile.jpg";
             <?php else: ?>
 
                 <!-- Not Logged In -->
-
                 <a
-                    href="./public/login.php"
+                    href="./login/login-form.php"
                     class="login-btn"
                 >
                     Login
                 </a>
 
-
                 <a
-                    href="./public/register.php"
+                    href="./register/register-form.php"
                     class="register-btn"
                 >
                     Register
