@@ -1,0 +1,582 @@
+/*
+|--------------------------------------------------------------------------
+| VEYRO Dashboard Styles
+|--------------------------------------------------------------------------
+*/
+
+
+/*
+|--------------------------------------------------------------------------
+| Global Styles
+|--------------------------------------------------------------------------
+*/
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    margin: 0;
+    background: #f5f6f8;
+    color: #101820;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard Header
+|--------------------------------------------------------------------------
+*/
+
+.dash-header {
+    height: 72px;
+    background: #fff;
+    border-bottom: 1px solid #e1e5ea;
+
+    padding: 0 8%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| VEYRO Logo
+|--------------------------------------------------------------------------
+*/
+
+.logo {
+    font-size: 23px;
+    font-weight: 800;
+
+    text-decoration: none;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.logo span {
+    background: #ed3344;
+    color: #fff;
+
+    padding: 8px 10px;
+
+    border-radius: 8px;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| User Information
+|--------------------------------------------------------------------------
+*/
+
+.user-area {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    font-size: 14px;
+}
+
+
+.user-area span {
+    background: #f0f2f4;
+
+    padding: 7px 11px;
+
+    border-radius: 20px;
+}
+
+
+.user-area a {
+    background: #ed3344;
+    color: #fff;
+
+    text-decoration: none;
+
+    padding: 9px 14px;
+
+    border-radius: 7px;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Main Dashboard Container
+|--------------------------------------------------------------------------
+*/
+
+.dashboard {
+    width: min(1200px, 92%);
+
+    margin: auto;
+
+    padding: 35px 0 60px;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Welcome Section
+|--------------------------------------------------------------------------
+*/
+
+.welcome {
+    background: #111820;
+    color: #fff;
+
+    border-radius: 14px;
+
+    padding: 32px;
+
+    margin-bottom: 22px;
+}
+
+
+.welcome small {
+    color: #ff6472;
+
+    letter-spacing: 2px;
+
+    font-weight: 700;
+}
+
+
+.welcome h1 {
+    margin: 10px 0 5px;
+
+    font-size: 31px;
+}
+
+
+.welcome p {
+    color: #c9d0d8;
+
+    margin: 0;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Action Message
+|--------------------------------------------------------------------------
+*/
+
+.message {
+    background: #edf9f0;
+
+    border: 1px solid #b9ddc0;
+
+    color: #28633a;
+
+    padding: 13px 16px;
+
+    border-radius: 8px;
+
+    margin-bottom: 20px;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard Statistics
+|--------------------------------------------------------------------------
+*/
+
+.stats {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 16px;
+
+    margin-bottom: 20px;
+}
+
+
+.stats > div {
+    background: #fff;
+
+    border: 1px solid #e1e5ea;
+
+    border-radius: 11px;
+
+    padding: 20px;
+}
+
+
+.stats span {
+    display: block;
+
+    color: #687386;
+
+    font-size: 13px;
+
+    margin-bottom: 8px;
+}
+
+
+.stats b {
+    font-size: 23px;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard Cards
+|--------------------------------------------------------------------------
+*/
+
+.card {
+    background: #fff;
+
+    border: 1px solid #e1e5ea;
+
+    border-radius: 11px;
+
+    padding: 25px;
+
+    margin-bottom: 20px;
+}
+
+
+.card h2 {
+    margin: 0 0 18px;
+
+    font-size: 21px;
+}
+
+
+.card h3 {
+    margin-top: 0;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Title Row
+|--------------------------------------------------------------------------
+*/
+
+.title-row {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Buttons
+|--------------------------------------------------------------------------
+*/
+
+.button,
+.small-button {
+    border: 0;
+
+    background: #ed3344;
+
+    color: #fff;
+
+    padding: 10px 15px;
+
+    border-radius: 7px;
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.small-button {
+    padding: 7px 10px;
+
+    font-size: 12px;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Tables
+|--------------------------------------------------------------------------
+*/
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+
+th {
+    background: #f5f6f8;
+
+    color: #566171;
+
+    text-align: left;
+
+    font-size: 12px;
+
+    padding: 11px;
+}
+
+
+td {
+    border-top: 1px solid #e7eaee;
+
+    padding: 12px;
+
+    font-size: 13px;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Empty / Muted Text
+|--------------------------------------------------------------------------
+*/
+
+.empty,
+.muted {
+    color: #758091;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Grid
+|--------------------------------------------------------------------------
+*/
+
+.grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 15px;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Offer / Small Cards
+|--------------------------------------------------------------------------
+*/
+
+.mini {
+    border: 1px solid #e1e5ea;
+
+    border-radius: 9px;
+
+    padding: 17px;
+}
+
+
+.mini small {
+    color: #ed3344;
+
+    font-weight: 700;
+}
+
+
+.mini h3 {
+    margin: 8px 0;
+}
+
+
+.mini p {
+    color: #687386;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Forms
+|--------------------------------------------------------------------------
+*/
+
+.forms {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 9px;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Inline Forms
+|--------------------------------------------------------------------------
+*/
+
+.inline-form {
+    display: grid;
+
+    grid-template-columns:
+        150px
+        180px
+        1fr
+        auto;
+
+    gap: 10px;
+
+    align-items: center;
+
+    border: 1px solid #e4e7eb;
+
+    border-radius: 8px;
+
+    padding: 9px;
+}
+
+
+.inline-form input,
+.inline-form select,
+.form-grid input,
+.form-grid select {
+    width: 100%;
+
+    padding: 10px;
+
+    border: 1px solid #ccd2da;
+
+    border-radius: 7px;
+
+    background: #fff;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Form Grid
+|--------------------------------------------------------------------------
+*/
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 14px;
+}
+
+
+.form-grid label {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Two Column Layout
+|--------------------------------------------------------------------------
+*/
+
+.two {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 35px;
+}
+
+
+.two li {
+    margin-bottom: 8px;
+
+    color: #687386;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Tablet / Small Screen
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 800px) {
+
+    .dash-header {
+        padding: 0 4%;
+    }
+
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+
+    .grid,
+    .two {
+        grid-template-columns: 1fr;
+    }
+
+
+    .inline-form,
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Mobile Screen
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 520px) {
+
+    .user-area b {
+        display: none;
+    }
+
+
+    .dashboard {
+        width: 94%;
+    }
+
+
+    .welcome h1 {
+        font-size: 25px;
+    }
+
+
+    .card {
+        padding: 18px;
+    }
+
+}
