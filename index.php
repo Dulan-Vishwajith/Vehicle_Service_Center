@@ -1,8 +1,5 @@
-<?php
 
-$_SESSION["redirect_after_login"] = "index.php";
 
-?>
 
 
 <!DOCTYPE html>
