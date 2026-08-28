@@ -7,10 +7,24 @@ if (session_status() === PHP_SESSION_NONE) {
 $isLoggedIn = isset($_SESSION["user_id"]);
 
 /*
- * Default profile image
- * Change this path if your image is stored somewhere else.
- */
-$profileImage = "./public/images/profile.jpg";
+|--------------------------------------------------------------------------
+| Project Root
+|--------------------------------------------------------------------------
+| Your project folder is:
+| Vehicle_Service_Center
+|
+| If you rename the project folder, change this value.
+|--------------------------------------------------------------------------
+*/
+$basePath = "/Vehicle_Service_Center";
+
+
+/*
+|--------------------------------------------------------------------------
+| Profile Image
+|--------------------------------------------------------------------------
+*/
+$profileImage = $basePath . "/public/images/profile.jpg";
 
 ?>
 
@@ -21,7 +35,7 @@ $profileImage = "./public/images/profile.jpg";
         <!-- =====================================================
              LOGO
              ===================================================== -->
-        <a href="#home" class="logo">
+        <a href="<?= $basePath ?>/index.php#home" class="logo">
 
             <span class="logo-icon">⚙</span>
 
@@ -37,23 +51,38 @@ $profileImage = "./public/images/profile.jpg";
              ===================================================== -->
         <nav class="main-nav">
 
-            <a href="#home" class="active">
+            <a
+                href="<?= $basePath ?>/index.php#home"
+                class="active"
+            >
                 Home
             </a>
 
-            <a href="#services">
+
+            <a
+                href="<?= $basePath ?>/index.php#services"
+            >
                 Services
             </a>
 
-            <a href="#packages">
+
+            <a
+                href="<?= $basePath ?>/index.php#packages"
+            >
                 Packages
             </a>
 
-            <a href="#offers">
+
+            <a
+                href="<?= $basePath ?>/index.php#offers"
+            >
                 Offers
             </a>
 
-            <a href="#contact">
+
+            <a
+                href="<?= $basePath ?>/index.php#contact"
+            >
                 Contact
             </a>
 
@@ -70,7 +99,7 @@ $profileImage = "./public/images/profile.jpg";
                 <!-- Logged In -->
 
                 <a
-                    href="./public/dashboard.php"
+                    href="<?= $basePath ?>/public/dashboard.php"
                     class="dashboard-btn"
                 >
                     Dashboard
@@ -80,13 +109,13 @@ $profileImage = "./public/images/profile.jpg";
                 <!-- Profile Picture -->
 
                 <a
-                    href="./public/profile.php"
+                    href="<?= $basePath ?>/public/profile.php"
                     class="profile-avatar"
                     title="Profile"
                 >
 
                     <img
-                        src="<?php echo htmlspecialchars($profileImage); ?>"
+                        src="<?= htmlspecialchars($profileImage) ?>"
                         alt="Profile"
                     >
 
@@ -96,15 +125,17 @@ $profileImage = "./public/images/profile.jpg";
             <?php else: ?>
 
                 <!-- Not Logged In -->
+
                 <a
-                    href="./login/login-form.php"
+                    href="<?= $basePath ?>/login/login-form.php"
                     class="login-btn"
                 >
                     Login
                 </a>
 
+
                 <a
-                    href="./register/register-form.php"
+                    href="<?= $basePath ?>/register/register-form.php"
                     class="register-btn"
                 >
                     Register
