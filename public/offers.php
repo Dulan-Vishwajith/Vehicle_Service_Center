@@ -9,7 +9,6 @@ $offers = [
         "discount" => "15% OFF",
         "description" => "Get 15% off your next full vehicle service.",
         "valid" => "Valid until 31 August 2026",
-        "button" => "Book This Offer",
         "link" => "book-appointment.php"
     ],
 
@@ -21,7 +20,6 @@ $offers = [
         "discount" => "10% OFF",
         "description" => "Special discount for returning customers.",
         "valid" => "Terms and conditions apply",
-        "button" => "Login To Check",
         "link" => "login.php"
     ],
 
@@ -33,7 +31,6 @@ $offers = [
         "discount" => "Rs. 4,500",
         "description" => "Complete AC inspection and service at a special price.",
         "valid" => "Limited time offer",
-        "button" => "Book This Offer",
         "link" => "book-appointment.php"
     ]
 ];
@@ -92,12 +89,7 @@ $offers = [
                         <?= $offer['valid']; ?>
                     </small>
 
-                    <a
-                        href="<?= $offer['link']; ?>"
-                        class="offer-button"
-                    >
-                        <?= $offer['button']; ?> 
-                    </a>
+                    
 
                 </div>
 
@@ -106,16 +98,7 @@ $offers = [
         </div>
 
 
-        <div class="center-button">
-
-            <a
-                href="offers.php"
-                class="btn btn-dark"
-            >
-                View All Offers
-            </a>
-
-        </div>
+        
 
     </div>
 
