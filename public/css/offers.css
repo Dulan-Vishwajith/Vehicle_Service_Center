@@ -52,7 +52,7 @@
     display: flex;
     flex-direction: column;
 
-    min-height: 450px;
+    min-height: 400px;
 
     padding: 30px;
 
@@ -125,7 +125,6 @@
 
 /* =========================================================
    CARD COLORS
-   Based on your required original CSS
    ========================================================= */
 
 .offer-card.dark-card {
@@ -159,10 +158,6 @@
     margin-bottom: 15px;
 
     border-radius: var(--radius-lg);
-
-   
-
-    
 
     font-size: 32px;
 
@@ -250,7 +245,7 @@
 
     line-height: 1.7;
 
-    margin-bottom: 15px;
+    margin-bottom: 0;
 }
 
 
@@ -270,138 +265,11 @@
 
     line-height: 1.5;
 
+    /* Align all valid/terms lines */
     margin-top: auto;
 
-    margin-bottom: 22px;
-}
-
-
-/* =========================================================
-   OFFER BUTTON
-   ========================================================= */
-
-.offer-button {
-    position: relative;
-    z-index: 2;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    width: 100%;
-
-    min-height: 44px;
-
-    padding: 0 15px;
-
-    border-radius: var(--radius-md);
-
-    color: var(--color-white);
-
-    font-size: 13px;
-
-    font-weight: 700;
-
-    transition:
-        background var(--transition-fast),
-        color var(--transition-fast),
-        border-color var(--transition-fast),
-        transform var(--transition-fast);
-}
-
-
-/* =========================================================
-   BUTTON ARROW
-   ========================================================= */
-
-.offer-button::after {
-    content: "→";
-
-    font-size: 18px;
-
-    transition:
-        transform var(--transition-fast);
-}
-
-
-/* =========================================================
-   BUTTON HOVER
-   ========================================================= */
-
-.offer-button:hover {
-    background: var(--color-white);
-
-    border-color: var(--color-white);
-
-    color: var(--color-dark);
-
-    transform: translateY(-2px);
-}
-
-.offer-button:hover::after {
-    transform: translateX(5px);
-}
-
-
-/* =========================================================
-   RED CARD BUTTON
-   ========================================================= */
-
-.offer-card.red-card .offer-button {
-    background: var(--color-white);
-
-    border-color: var(--color-white);
-
-    color: var(--color-primary);
-}
-
-.offer-card.red-card .offer-button:hover {
-    background: var(--color-dark);
-
-    border-color: var(--color-dark);
-
-    color: var(--color-white);
-}
-
-
-/* =========================================================
-   CENTER BUTTON
-   Uses the existing global .btn and .btn-dark
-   ========================================================= */
-
-.offers-section .center-button {
-    display: flex;
-
-    justify-content: center;
-
-    margin-top: 42px;
-}
-
-
-/*
-   We do NOT redefine:
-       .btn
-       .btn-dark
-       .btn-dark:hover
-
-   because those already exist in global.css.
-*/
-
-.offers-section .btn-dark::after {
-    content: "→";
-
-    margin-left: 10px;
-
-    font-size: 17px;
-
-    transition:
-        transform var(--transition-fast);
-}
-
-.offers-section .btn-dark:hover::after {
-    transform: translateX(4px);
+    /* Reduce unnecessary space after valid line */
+    margin-bottom: 0;
 }
 
 
@@ -420,7 +288,7 @@
     }
 
     .offer-card {
-        min-height: 440px;
+        min-height: 400px;
     }
 
 }
@@ -442,13 +310,11 @@
 
     .offers-grid {
         grid-template-columns: 1fr;
-
         gap: 20px;
     }
 
     .offer-card {
-        min-height: 430px;
-
+        min-height: 390px;
         padding: 28px;
     }
 
@@ -474,8 +340,7 @@
     }
 
     .offer-card {
-        min-height: 420px;
-
+        min-height: 380px;
         padding: 24px;
     }
 
@@ -492,10 +357,6 @@
 
     .discount {
         font-size: 28px;
-    }
-
-    .offer-button {
-        padding: 0 14px;
     }
 
 }
