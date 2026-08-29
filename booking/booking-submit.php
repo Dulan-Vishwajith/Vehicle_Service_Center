@@ -1,263 +1,610 @@
 <?php
-session_start();
+
+/*
+|--------------------------------------------------------------------------
+| START SESSION
+|--------------------------------------------------------------------------
+*/
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| REQUIRE LOGIN
+|--------------------------------------------------------------------------
+*/
+
+if (!isset($_SESSION["user_id"])) {
+
+    $_SESSION["redirect_after_login"] =
+        "../booking/booking.php";
+
+    header("Location: ../login/login-form.php");
+    exit();
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| DATABASE
+|--------------------------------------------------------------------------
+*/
 
 require_once "../config/database.php";
 
+
 /*
 |--------------------------------------------------------------------------
-| Only accept POST requests
+| ERROR REDIRECT
 |--------------------------------------------------------------------------
 */
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: booking_form.php");
-    exit;
+
+function bookingError($message, $old = [])
+{
+    $_SESSION["booking_message"] = $message;
+
+    $_SESSION["booking_message_type"] =
+        "error";
+
+    $_SESSION["booking_old"] =
+        $old;
+
+    header("Location: booking.php");
+    exit();
 }
 
-/*
-|--------------------------------------------------------------------------
-| Get form values
-|--------------------------------------------------------------------------
-*/
-$fullName      = trim($_POST["fullName"] ?? "");
-$phone         = trim($_POST["phone"] ?? "");
-$email         = trim($_POST["email"] ?? "");
-$vehicleModel  = trim($_POST["vehicleModel"] ?? "");
-$licensePlate  = trim($_POST["licensePlate"] ?? "");
-$vehicleYear   = trim($_POST["vehicleYear"] ?? "");
-$vehicleType   = trim($_POST["vehicleType"] ?? "");
-$bookingDate   = trim($_POST["bookingDate"] ?? "");
-$timeSlot      = trim($_POST["timeSlot"] ?? "");
-$notes         = trim($_POST["notes"] ?? "");
-$terms         = $_POST["terms"] ?? "";
 
 /*
 |--------------------------------------------------------------------------
-| Keep form values if validation fails
+| POST ONLY
 |--------------------------------------------------------------------------
 */
-$_SESSION["booking_old"] = [
-    "fullName"     => $fullName,
-    "phone"        => $phone,
-    "email"        => $email,
-    "vehicleModel" => $vehicleModel,
-    "licensePlate" => $licensePlate,
-    "vehicleYear"  => $vehicleYear,
-    "vehicleType"  => $vehicleType,
-    "bookingDate"  => $bookingDate,
-    "timeSlot"     => $timeSlot,
-    "notes"        => $notes
+
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+
+    header("Location: booking-form.php");
+    exit();
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| LOGGED-IN USER
+|--------------------------------------------------------------------------
+*/
+
+$userId =
+    (int) $_SESSION["user_id"];
+
+
+/*
+|--------------------------------------------------------------------------
+| GET FORM DATA
+|--------------------------------------------------------------------------
+*/
+
+$services =
+    $_POST["services"] ?? [];
+
+$services =
+    array_map(
+        "intval",
+        (array) $services
+    );
+
+$services =
+    array_values(
+        array_unique(
+            array_filter(
+                $services,
+                function ($id) {
+                    return $id > 0;
+                }
+            )
+        )
+    );
+
+
+$vehicleModel =
+    trim(
+        $_POST["vehicleModel"] ?? ""
+    );
+
+
+$licensePlate =
+    trim(
+        $_POST["licensePlate"] ?? ""
+    );
+
+
+$vehicleYear =
+    $_POST["vehicleYear"] ?? null;
+
+
+if ($vehicleYear === "") {
+    $vehicleYear = null;
+}
+
+
+$vehicleType =
+    trim(
+        $_POST["vehicleType"] ?? ""
+    );
+
+
+$bookingDate =
+    $_POST["bookingDate"] ?? "";
+
+
+$timeSlot =
+    (int) (
+        $_POST["timeSlot"] ?? 0
+    );
+
+
+$notes =
+    trim(
+        $_POST["notes"] ?? ""
+    );
+
+
+$terms =
+    $_POST["terms"] ?? "";
+
+
+/*
+|--------------------------------------------------------------------------
+| OLD VALUES
+|--------------------------------------------------------------------------
+*/
+
+$old = [
+
+    "services" =>
+        $services,
+
+    "vehicleModel" =>
+        $vehicleModel,
+
+    "licensePlate" =>
+        $licensePlate,
+
+    "vehicleYear" =>
+        $vehicleYear,
+
+    "vehicleType" =>
+        $vehicleType,
+
+    "bookingDate" =>
+        $bookingDate,
+
+    "timeSlot" =>
+        $timeSlot,
+
+    "notes" =>
+        $notes
 ];
 
+
 /*
 |--------------------------------------------------------------------------
-| Validation
+| VALIDATION
 |--------------------------------------------------------------------------
 */
-$errors = [];
 
-if ($fullName === "") {
-    $errors[] = "Full name is required.";
-} elseif (strlen($fullName) > 100) {
-    $errors[] = "Full name is too long.";
+if (empty($services)) {
+
+    bookingError(
+        "Please select at least one service.",
+        $old
+    );
 }
 
-if ($phone === "") {
-    $errors[] = "Contact number is required.";
-} elseif (!preg_match('/^[0-9+\-\s()]{7,20}$/', $phone)) {
-    $errors[] = "Please enter a valid contact number.";
-}
-
-if ($email === "") {
-    $errors[] = "Email address is required.";
-} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $errors[] = "Please enter a valid email address.";
-}
 
 if ($vehicleModel === "") {
-    $errors[] = "Vehicle make and model is required.";
+
+    bookingError(
+        "Please enter your vehicle make and model.",
+        $old
+    );
 }
+
 
 if ($licensePlate === "") {
-    $errors[] = "Registration number is required.";
+
+    bookingError(
+        "Please enter your registration number.",
+        $old
+    );
 }
 
-$allowedVehicleTypes = ["", "Car", "SUV", "Van", "Pickup", "Motorcycle"];
-
-if (!in_array($vehicleType, $allowedVehicleTypes, true)) {
-    $errors[] = "Invalid vehicle type.";
-}
-
-if ($vehicleYear !== "") {
-    $year = (int)$vehicleYear;
-
-    if ($year < 2010 || $year > (int)date("Y")) {
-        $errors[] = "Invalid vehicle year.";
-    }
-}
 
 if ($bookingDate === "") {
-    $errors[] = "Service date is required.";
-} else {
-    $date = DateTime::createFromFormat("Y-m-d", $bookingDate);
 
-    if (!$date || $date->format("Y-m-d") !== $bookingDate) {
-        $errors[] = "Invalid service date.";
-    } elseif ($bookingDate < date("Y-m-d")) {
-        $errors[] = "Service date cannot be in the past.";
-    }
+    bookingError(
+        "Please select a service date.",
+        $old
+    );
 }
 
-$allowedTimeSlots = [
-    "08:00-10:00",
-    "10:00-12:00",
-    "13:00-15:00",
-    "15:00-17:00"
-];
 
-if (!in_array($timeSlot, $allowedTimeSlots, true)) {
-    $errors[] = "Please select a valid time slot.";
+if ($bookingDate < date("Y-m-d")) {
+
+    bookingError(
+        "Please select a valid service date.",
+        $old
+    );
 }
+
+
+if ($timeSlot <= 0) {
+
+    bookingError(
+        "Please select a time slot.",
+        $old
+    );
+}
+
 
 if ($terms !== "1") {
-    $errors[] = "You must agree to the booking terms.";
+
+    bookingError(
+        "Please agree to the booking terms.",
+        $old
+    );
 }
 
-if (strlen($notes) > 1000) {
-    $errors[] = "Additional notes are too long.";
-}
 
 /*
 |--------------------------------------------------------------------------
-| Return validation errors
+| GET TIME SLOT
 |--------------------------------------------------------------------------
 */
-if (!empty($errors)) {
-    $_SESSION["booking_message"] = implode(" ", $errors);
-    $_SESSION["booking_message_type"] = "error";
 
-    header("Location: booking_form.php");
-    exit;
+$stmt = $pdo->prepare("
+    SELECT
+        id,
+        slot_name,
+        start_time,
+        end_time,
+        max_bookings
+    FROM time_slots
+    WHERE id = ?
+      AND status = 1
+    LIMIT 1
+");
+
+$stmt->execute([
+    $timeSlot
+]);
+
+$slot =
+    $stmt->fetch();
+
+
+if (!$slot) {
+
+    bookingError(
+        "The selected time slot is not available.",
+        $old
+    );
 }
 
-/*
-|--------------------------------------------------------------------------
-| Booking values
-|--------------------------------------------------------------------------
-*/
-$serviceName = "Standard Care";
-$servicePrice = 11500.00;
-$depositAmount = 2500.00;
-
-$userId = $_SESSION["user_id"] ?? null;
 
 /*
 |--------------------------------------------------------------------------
-| Insert booking
+| CHECK SLOT CAPACITY
+|--------------------------------------------------------------------------
+*/
+
+$stmt = $pdo->prepare("
+    SELECT COUNT(*) AS booking_count
+    FROM bookings
+    WHERE booking_date = ?
+      AND time_slot_id = ?
+      AND status IN ('pending', 'confirmed')
+");
+
+$stmt->execute([
+    $bookingDate,
+    $timeSlot
+]);
+
+$bookingCount =
+    (int) $stmt->fetchColumn();
+
+
+if (
+    $bookingCount
+    >= (int) $slot["max_bookings"]
+) {
+
+    bookingError(
+        "Sorry, this time slot is fully booked. Please select another time.",
+        $old
+    );
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| GET SERVICES FROM DATABASE
 |--------------------------------------------------------------------------
 |
-| Expected table:
-|
-| bookings
-| - id
-| - user_id
-| - full_name
-| - phone
-| - email
-| - vehicle_model
-| - license_plate
-| - vehicle_year
-| - vehicle_type
-| - service_name
-| - booking_date
-| - time_slot
-| - notes
-| - service_price
-| - deposit_amount
-| - status
-| - created_at
+| IMPORTANT:
+| Never trust prices from JavaScript.
+| We get the real prices from MySQL.
 |
 */
+
+$placeholders =
+    implode(
+        ",",
+        array_fill(
+            0,
+            count($services),
+            "?"
+        )
+    );
+
+
+$sql = "
+    SELECT
+        id,
+        service_name,
+        price,
+        duration_minutes
+    FROM services
+    WHERE id IN ($placeholders)
+      AND status = 1
+";
+
+
+$stmt =
+    $pdo->prepare($sql);
+
+
+$stmt->execute(
+    $services
+);
+
+
+$selectedServices =
+    $stmt->fetchAll();
+
+
+/*
+|--------------------------------------------------------------------------
+| MAKE SURE ALL SERVICES ARE VALID
+|--------------------------------------------------------------------------
+*/
+
+if (
+    count($selectedServices)
+    !== count($services)
+) {
+
+    bookingError(
+        "One or more selected services are not available.",
+        $old
+    );
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| CALCULATE TOTALS
+|--------------------------------------------------------------------------
+*/
+
+$totalPrice = 0;
+
+$totalDuration = 0;
+
+
+foreach (
+    $selectedServices as $service
+) {
+
+    $totalPrice +=
+        (float) $service["price"];
+
+    $totalDuration +=
+        (int) $service["duration_minutes"];
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| DEPOSIT
+|--------------------------------------------------------------------------
+*/
+
+$depositAmount =
+    2500.00;
+
+
+/*
+|--------------------------------------------------------------------------
+| CREATE BOOKING
+|--------------------------------------------------------------------------
+*/
+
 try {
-    /*
-     * Change this query only if your bookings table
-     * uses different column names.
-     */
-    $sql = "INSERT INTO bookings
-            (
-                user_id,
-                full_name,
-                phone,
-                email,
-                vehicle_model,
-                license_plate,
-                vehicle_year,
-                vehicle_type,
-                service_name,
-                booking_date,
-                time_slot,
-                notes,
-                service_price,
-                deposit_amount,
-                status
-            )
-            VALUES
-            (
-                :user_id,
-                :full_name,
-                :phone,
-                :email,
-                :vehicle_model,
-                :license_plate,
-                :vehicle_year,
-                :vehicle_type,
-                :service_name,
-                :booking_date,
-                :time_slot,
-                :notes,
-                :service_price,
-                :deposit_amount,
-                'Pending Payment'
-            )";
 
-    $stmt = $pdo->prepare($sql);
+    $pdo->beginTransaction();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | INSERT BOOKING
+    |--------------------------------------------------------------------------
+    */
+
+    $stmt = $pdo->prepare("
+        INSERT INTO bookings
+        (
+            user_id,
+            vehicle_model,
+            license_plate,
+            vehicle_year,
+            vehicle_type,
+            booking_date,
+            time_slot_id,
+            notes,
+            total_price,
+            total_duration_minutes,
+            deposit_amount,
+            status,
+            payment_status
+        )
+        VALUES
+        (
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+            'pending',
+            'unpaid'
+        )
+    ");
+
 
     $stmt->execute([
-        ":user_id"        => $userId,
-        ":full_name"      => $fullName,
-        ":phone"          => $phone,
-        ":email"          => $email,
-        ":vehicle_model"  => $vehicleModel,
-        ":license_plate"  => strtoupper($licensePlate),
-        ":vehicle_year"   => $vehicleYear !== "" ? (int)$vehicleYear : null,
-        ":vehicle_type"   => $vehicleType !== "" ? $vehicleType : null,
-        ":service_name"   => $serviceName,
-        ":booking_date"   => $bookingDate,
-        ":time_slot"      => $timeSlot,
-        ":notes"          => $notes !== "" ? $notes : null,
-        ":service_price"  => $servicePrice,
-        ":deposit_amount" => $depositAmount
+
+        $userId,
+
+        $vehicleModel,
+
+        $licensePlate,
+
+        $vehicleYear,
+
+        $vehicleType,
+
+        $bookingDate,
+
+        $timeSlot,
+
+        $notes,
+
+        $totalPrice,
+
+        $totalDuration,
+
+        $depositAmount
+
     ]);
 
-    $bookingId = $pdo->lastInsertId();
-
-    unset($_SESSION["booking_old"]);
 
     /*
-     * Send the user to your payment page.
-     * Change payment.php if your payment page has another name.
-     */
-    header("Location: payment.php?booking_id=" . urlencode($bookingId));
-    exit;
+    |--------------------------------------------------------------------------
+    | GET BOOKING ID
+    |--------------------------------------------------------------------------
+    */
+
+    $bookingId =
+        $pdo->lastInsertId();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | INSERT SERVICES
+    |--------------------------------------------------------------------------
+    */
+
+    $stmt = $pdo->prepare("
+        INSERT INTO booking_services
+        (
+            booking_id,
+            service_id,
+            service_price,
+            service_duration_minutes
+        )
+        VALUES
+        (?, ?, ?, ?)
+    ");
+
+
+    foreach (
+        $selectedServices as $service
+    ) {
+
+        $stmt->execute([
+
+            $bookingId,
+
+            $service["id"],
+
+            $service["price"],
+
+            $service["duration_minutes"]
+
+        ]);
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | COMMIT
+    |--------------------------------------------------------------------------
+    */
+
+    $pdo->commit();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SAVE BOOKING ID
+    |--------------------------------------------------------------------------
+    */
+
+    $_SESSION["booking_id"] =
+        $bookingId;
+
+
+    unset(
+        $_SESSION["booking_old"]
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | GO TO PAYMENT
+    |--------------------------------------------------------------------------
+    */
+
+    header(
+        "Location: payment.php"
+    );
+
+    exit();
+
 
 } catch (PDOException $e) {
 
-    error_log("VEYRO booking error: " . $e->getMessage());
 
-    $_SESSION["booking_message"] =
-        "Unable to save your booking right now. Please try again.";
+    /*
+    |--------------------------------------------------------------------------
+    | ROLLBACK
+    |--------------------------------------------------------------------------
+    */
 
-    $_SESSION["booking_message_type"] = "error";
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
 
-    header("Location: booking_form.php");
-    exit;
+
+    /*
+    |--------------------------------------------------------------------------
+    | SHOW ERROR
+    |--------------------------------------------------------------------------
+    */
+
+    bookingError(
+        "Unable to create your booking. Please try again.",
+        $old
+    );
 }

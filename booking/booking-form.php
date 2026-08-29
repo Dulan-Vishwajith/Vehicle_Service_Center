@@ -2,9 +2,8 @@
 
 /*
 |--------------------------------------------------------------------------
-| START SESSION SAFELY
+| START SESSION
 |--------------------------------------------------------------------------
-| header.php may already have started the session.
 */
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -16,22 +15,39 @@ if (session_status() === PHP_SESSION_NONE) {
 |--------------------------------------------------------------------------
 | REQUIRE LOGIN
 |--------------------------------------------------------------------------
-| If the user is not logged in, remember the booking page
-| and redirect them to the login page.
 */
+
 
 if (!isset($_SESSION["user_id"])) {
 
-    $_SESSION["redirect_after_login"] = "../booking/booking.php";
+    // Build redirect URL
+    $redirectUrl = "../booking/booking.php";
 
+    if ($serviceId > 0) {
+        $redirectUrl .= "?service_id=" . $serviceId;
+    }
+
+    // Save redirect URL for after login
+    $_SESSION["redirect_after_login"] = $redirectUrl;
+
+    // Redirect to login
     header("Location: ../login/login-form.php");
-    exit();
+    exit;
 }
 
 
 /*
 |--------------------------------------------------------------------------
-| BOOKING MESSAGE
+| DATABASE CONNECTION
+|--------------------------------------------------------------------------
+*/
+
+require_once "../config/database.php";
+
+
+/*
+|--------------------------------------------------------------------------
+| BOOKING ERROR / OLD DATA
 |--------------------------------------------------------------------------
 */
 
@@ -40,9 +56,12 @@ $messageType = "";
 
 if (isset($_SESSION["booking_message"])) {
 
-    $message = $_SESSION["booking_message"];
+    $message =
+        $_SESSION["booking_message"];
 
-    $messageType = $_SESSION["booking_message_type"] ?? "error";
+    $messageType =
+        $_SESSION["booking_message_type"]
+        ?? "error";
 
     unset(
         $_SESSION["booking_message"],
@@ -51,27 +70,122 @@ if (isset($_SESSION["booking_message"])) {
 }
 
 
+$old =
+    $_SESSION["booking_old"]
+    ?? [];
+
+unset($_SESSION["booking_old"]);
+
+
 /*
 |--------------------------------------------------------------------------
-| OLD FORM VALUES
+| OLD SERVICES
 |--------------------------------------------------------------------------
 */
 
-$old = $_SESSION["booking_old"] ?? [];
+$oldServices =
+    array_map(
+        "intval",
+        $old["services"] ?? []
+    );
+
+
+/*
+|--------------------------------------------------------------------------
+| GET SERVICES
+|--------------------------------------------------------------------------
+*/
+
+$services = [];
+
+try {
+
+    $stmt = $pdo->prepare("
+        SELECT
+            id,
+            service_name,
+            category,
+            description,
+            price,
+            duration,
+            duration_minutes,
+            icon
+        FROM services
+        WHERE status = 1
+        ORDER BY category ASC, service_name ASC
+    ");
+
+    $stmt->execute();
+
+    $services =
+        $stmt->fetchAll();
+
+} catch (PDOException $e) {
+
+    $message =
+        "Unable to load services.";
+
+    $messageType =
+        "error";
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| GET TIME SLOTS
+|--------------------------------------------------------------------------
+*/
+
+$timeSlots = [];
+
+try {
+
+    $stmt = $pdo->prepare("
+        SELECT
+            id,
+            slot_name,
+            start_time,
+            end_time,
+            max_bookings
+        FROM time_slots
+        WHERE status = 1
+        ORDER BY start_time ASC
+    ");
+
+    $stmt->execute();
+
+    $timeSlots =
+        $stmt->fetchAll();
+
+} catch (PDOException $e) {
+
+    $message =
+        "Unable to load time slots.";
+
+    $messageType =
+        "error";
+}
 
 ?>
 
-<main class="booking-section">
 
-    <!-- =========================================================
-         BOOKING MESSAGE
-         ========================================================= -->
+<main class="booking-page">
+
+
+    <!-- =====================================================
+         MESSAGE
+         ===================================================== -->
 
     <?php if ($message !== ""): ?>
 
-        <div class="container">
+        <div
+            class="container"
+            id="bookingMessageContainer"
+        >
 
-            <div class="booking-message <?= htmlspecialchars($messageType) ?>">
+            <div
+                class="booking-message <?= htmlspecialchars($messageType) ?>"
+            >
 
                 <?= htmlspecialchars($message) ?>
 
@@ -82,268 +196,145 @@ $old = $_SESSION["booking_old"] ?? [];
     <?php endif; ?>
 
 
-    <!-- =========================================================
-         BOOKING FORM
-         ========================================================= -->
+    <!-- =====================================================
+         BOOKING CONTAINER
+         ===================================================== -->
 
-    <form
-        action="booking-submit.php"
-        method="POST"
-        class="container booking-layout"
-    >
+    <div class="container">
 
-        <!-- =====================================================
-             LEFT SIDE
-             ===================================================== -->
-
-        <div class="booking-form-card">
+        <div class="booking-layout">
 
 
             <!-- =================================================
-                 FORM HEADER
+                 LEFT SIDE
                  ================================================= -->
 
-            <div class="form-header">
-
-                <span class="section-tag">
-                    SERVICE BOOKING
-                </span>
-
-                <h2>
-                    Tell Us About Your Vehicle
-                </h2>
-
-                <p>
-                    Please provide accurate information so our
-                    VEYRO service team can prepare for your visit.
-                </p>
-
-            </div>
+            <form
+                action="booking-submit.php"
+                method="POST"
+                id="bookingForm"
+                class="booking-form-card"
+            >
 
 
-            <!-- =================================================
-                 01. CUSTOMER INFORMATION
-                 ================================================= -->
+                <!-- =============================================
+                     FORM HEADER
+                     ============================================= -->
 
-            <div class="form-section">
+                <div class="booking-form-header">
 
-                <h3>
-                    01. Customer Information
-                </h3>
+                    <span class="booking-label">
+                        SERVICE BOOKING
+                    </span>
 
+                    <h1>
+                        Book Your Vehicle Service
+                    </h1>
 
-                <div class="form-grid">
-
-
-                    <!-- Full Name -->
-
-                    <div class="form-group">
-
-                        <label for="fullName">
-                            Full Name <span>*</span>
-                        </label>
-
-                        <input
-                            type="text"
-                            id="fullName"
-                            name="fullName"
-                            placeholder="Enter your full name"
-                            maxlength="100"
-                            value="<?= htmlspecialchars($old["fullName"] ?? "") ?>"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- Phone -->
-
-                    <div class="form-group">
-
-                        <label for="phone">
-                            Contact Number <span>*</span>
-                        </label>
-
-                        <input
-                            type="tel"
-                            id="phone"
-                            name="phone"
-                            placeholder="e.g. 077 123 4567"
-                            maxlength="20"
-                            value="<?= htmlspecialchars($old["phone"] ?? "") ?>"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- Email -->
-
-                    <div class="form-group full-width">
-
-                        <label for="email">
-                            Email Address <span>*</span>
-                        </label>
-
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="example@email.com"
-                            maxlength="150"
-                            value="<?= htmlspecialchars($old["email"] ?? "") ?>"
-                            required
-                        >
-
-                    </div>
+                    <p>
+                        Select the services and appointment
+                        time for your vehicle.
+                    </p>
 
                 </div>
 
-            </div>
+
+                <!-- =============================================
+                     01. SELECT SERVICES
+                     ============================================= -->
+
+                <section class="booking-section">
 
 
-            <!-- =================================================
-                 02. VEHICLE INFORMATION
-                 ================================================= -->
+                    <div class="section-title">
 
-            <div class="form-section">
+                        <span>
+                            01.
+                        </span>
 
-                <h3>
-                    02. Vehicle Information
-                </h3>
-
-
-                <div class="form-grid">
-
-
-                    <!-- Vehicle Model -->
-
-                    <div class="form-group">
-
-                        <label for="vehicleModel">
-                            Vehicle Make & Model <span>*</span>
-                        </label>
-
-                        <input
-                            type="text"
-                            id="vehicleModel"
-                            name="vehicleModel"
-                            placeholder="e.g. Toyota Aqua"
-                            maxlength="100"
-                            value="<?= htmlspecialchars($old["vehicleModel"] ?? "") ?>"
-                            required
-                        >
+                        Select Services
 
                     </div>
 
 
-                    <!-- Registration Number -->
+                    <p class="section-description">
+
+                        Select a service from the dropdown.
+                        You can add multiple services.
+
+                    </p>
+
 
                     <div class="form-group">
 
-                        <label for="licensePlate">
-                            Registration Number <span>*</span>
+
+                        <label for="serviceSelector">
+
+                            Services
+                            <span class="required">*</span>
+
                         </label>
 
-                        <input
-                            type="text"
-                            id="licensePlate"
-                            name="licensePlate"
-                            placeholder="e.g. ABC-1234"
-                            maxlength="20"
-                            value="<?= htmlspecialchars($old["licensePlate"] ?? "") ?>"
-                            required
-                        >
 
-                    </div>
+                        <!--
+                        IMPORTANT:
 
+                        This is NOT a multiple select.
 
-                    <!-- Vehicle Year -->
+                        Customer selects one service,
+                        it gets added below,
+                        then the dropdown resets.
+                        -->
 
-                    <div class="form-group">
-
-                        <label for="vehicleYear">
-                            Vehicle Year
-                        </label>
 
                         <select
-                            id="vehicleYear"
-                            name="vehicleYear"
+                            id="serviceSelector"
+                            class="form-control service-selector"
                         >
 
                             <option value="">
-                                Select year
+                                Select a service...
                             </option>
 
-                            <?php
 
-                            $currentYear = (int) date("Y");
-
-                            for (
-                                $year = $currentYear;
-                                $year >= 2010;
-                                $year--
-                            ):
-
-                            ?>
+                            <?php foreach ($services as $service): ?>
 
                                 <option
-                                    value="<?= $year ?>"
-                                    <?= (($old["vehicleYear"] ?? "") == $year)
-                                        ? "selected"
-                                        : "" ?>
-                                >
+                                        value="<?= (int)$service["id"] ?>"
+                                        data-name="<?= htmlspecialchars(
+                                            $service["service_name"],
+                                            ENT_QUOTES
+                                        ) ?>"
+                                        data-price="<?= htmlspecialchars(
+                                            $service["price"],
+                                            ENT_QUOTES
+                                        ) ?>"
+                                        data-duration="<?= (int)$service["duration_minutes"] ?>"
+                                        data-duration-text="<?= htmlspecialchars(
+                                            $service["duration"],
+                                            ENT_QUOTES
+                                        ) ?>"
+                                        <?= (
+                                            isset($serviceId) &&
+                                            $serviceId == $service["id"]
+                                        ) ? "selected" : "" ?>
+                                    >
 
-                                    <?= $year ?>
+                                    <?= htmlspecialchars(
+                                        $service["service_name"]
+                                    ) ?>
 
-                                </option>
+                                    -
+                                    Rs.
+                                    <?= number_format(
+                                        (float)$service["price"],
+                                        2
+                                    ) ?>
 
-                            <?php endfor; ?>
-
-                        </select>
-
-                    </div>
-
-
-                    <!-- Vehicle Type -->
-
-                    <div class="form-group">
-
-                        <label for="vehicleType">
-                            Vehicle Type
-                        </label>
-
-                        <select
-                            id="vehicleType"
-                            name="vehicleType"
-                        >
-
-                            <option value="">
-                                Select vehicle type
-                            </option>
-
-                            <?php
-
-                            $vehicleTypes = [
-                                "Car",
-                                "SUV",
-                                "Van",
-                                "Pickup",
-                                "Motorcycle"
-                            ];
-
-                            foreach ($vehicleTypes as $type):
-
-                            ?>
-
-                                <option
-                                    value="<?= htmlspecialchars($type) ?>"
-                                    <?= (($old["vehicleType"] ?? "") === $type)
-                                        ? "selected"
-                                        : "" ?>
-                                >
-
-                                    <?= htmlspecialchars($type) ?>
+                                    -
+                                    <?= htmlspecialchars(
+                                        $service["duration"]
+                                    ) ?>
 
                                 </option>
 
@@ -351,344 +342,652 @@ $old = $_SESSION["booking_old"] ?? [];
 
                         </select>
 
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================================
-                 03. APPOINTMENT DETAILS
-                 ================================================= -->
-
-            <div class="form-section">
-
-                <h3>
-                    03. Appointment Details
-                </h3>
-
-
-                <div class="form-grid">
-
-
-                    <!-- Service Date -->
-
-                    <div class="form-group">
-
-                        <label for="bookingDate">
-                            Preferred Service Date <span>*</span>
-                        </label>
-
-                        <input
-                            type="date"
-                            id="bookingDate"
-                            name="bookingDate"
-                            min="<?= date("Y-m-d") ?>"
-                            value="<?= htmlspecialchars($old["bookingDate"] ?? "") ?>"
-                            required
-                        >
 
                     </div>
 
 
-                    <!-- Time Slot -->
+                    <!-- =========================================
+                         SELECTED SERVICES
+                         ========================================= -->
 
-                    <div class="form-group">
-
-                        <label for="timeSlot">
-                            Preferred Time <span>*</span>
-                        </label>
-
-                        <select
-                            id="timeSlot"
-                            name="timeSlot"
-                            required
-                        >
-
-                            <option value="">
-                                Select a time
-                            </option>
-
-                            <?php
-
-                            $timeSlots = [
-
-                                "08:00-10:00"
-                                    => "08:00 AM - 10:00 AM",
-
-                                "10:00-12:00"
-                                    => "10:00 AM - 12:00 PM",
-
-                                "13:00-15:00"
-                                    => "01:00 PM - 03:00 PM",
-
-                                "15:00-17:00"
-                                    => "03:00 PM - 05:00 PM"
-
-                            ];
-
-                            foreach ($timeSlots as $value => $label):
-
-                            ?>
-
-                                <option
-                                    value="<?= htmlspecialchars($value) ?>"
-                                    <?= (($old["timeSlot"] ?? "") === $value)
-                                        ? "selected"
-                                        : "" ?>
-                                >
-
-                                    <?= htmlspecialchars($label) ?>
-
-                                </option>
-
-                            <?php endforeach; ?>
-
-                        </select>
-
-                    </div>
-
-
-                    <!-- Notes -->
-
-                    <div class="form-group full-width">
-
-                        <label for="notes">
-                            Additional Notes
-                        </label>
-
-                        <textarea
-                            id="notes"
-                            name="notes"
-                            maxlength="1000"
-                            placeholder="Tell us about any specific vehicle problem or service requirement..."
-                        ><?= htmlspecialchars($old["notes"] ?? "") ?></textarea>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================================
-                 TERMS AND CONDITIONS
-                 ================================================= -->
-
-            <div class="terms">
-
-                <label class="checkbox-container">
-
-                    <input
-                        type="checkbox"
-                        id="terms"
-                        name="terms"
-                        value="1"
-                        required
+                    <div
+                        id="selectedServices"
+                        class="selected-services"
                     >
 
-                    <span class="terms-text">
+                        <div class="no-services">
 
-                        I confirm that the information provided is
-                        correct and I agree to the VEYRO booking
-                        terms and conditions.
+                            No services selected yet.
 
-                    </span>
+                        </div>
 
-                </label>
+                    </div>
 
-            </div>
+
+                    <!--
+                    JavaScript creates:
+
+                    <input
+                        type="hidden"
+                        name="services[]"
+                        value="1"
+                    >
+
+                    for every selected service.
+                    -->
+
+                    <div
+                        id="serviceInputs"
+                    ></div>
+
+
+                </section>
+
+
+                <!-- =============================================
+                     02. VEHICLE INFORMATION
+                     ============================================= -->
+
+                <section class="booking-section">
+
+
+                    <div class="section-title">
+
+                        <span>
+                            02.
+                        </span>
+
+                        Vehicle Information
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                        <!-- VEHICLE MODEL -->
+
+                        <div class="form-group">
+
+                            <label for="vehicleModel">
+
+                                Vehicle Make & Model
+                                <span class="required">*</span>
+
+                            </label>
+
+
+                            <input
+                                type="text"
+                                id="vehicleModel"
+                                name="vehicleModel"
+                                class="form-control"
+                                placeholder="e.g. Toyota Aqua"
+                                maxlength="100"
+                                value="<?= htmlspecialchars(
+                                    $old["vehicleModel"] ?? ""
+                                ) ?>"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- REGISTRATION -->
+
+                        <div class="form-group">
+
+                            <label for="licensePlate">
+
+                                Registration Number
+                                <span class="required">*</span>
+
+                            </label>
+
+
+                            <input
+                                type="text"
+                                id="licensePlate"
+                                name="licensePlate"
+                                class="form-control"
+                                placeholder="e.g. ABC-1234"
+                                maxlength="20"
+                                value="<?= htmlspecialchars(
+                                    $old["licensePlate"] ?? ""
+                                ) ?>"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- VEHICLE YEAR -->
+
+                        <div class="form-group">
+
+                            <label for="vehicleYear">
+
+                                Vehicle Year
+
+                            </label>
+
+
+                            <select
+                                id="vehicleYear"
+                                name="vehicleYear"
+                                class="form-control"
+                            >
+
+                                <option value="">
+                                    Select year
+                                </option>
+
+
+                                <?php
+
+                                $currentYear =
+                                    (int)date("Y");
+
+                                for (
+                                    $year = $currentYear;
+                                    $year >= 2010;
+                                    $year--
+                                ):
+
+                                ?>
+
+                                    <option
+                                        value="<?= $year ?>"
+                                        <?= (
+                                            ($old["vehicleYear"] ?? "")
+                                            == $year
+                                        )
+                                            ? "selected"
+                                            : "" ?>
+                                    >
+
+                                        <?= $year ?>
+
+                                    </option>
+
+                                <?php endfor; ?>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- VEHICLE TYPE -->
+
+                        <div class="form-group">
+
+                            <label for="vehicleType">
+
+                                Vehicle Type
+
+                            </label>
+
+
+                            <select
+                                id="vehicleType"
+                                name="vehicleType"
+                                class="form-control"
+                            >
+
+                                <option value="">
+                                    Select vehicle type
+                                </option>
+
+
+                                <?php
+
+                                $vehicleTypes = [
+                                    "Car",
+                                    "SUV",
+                                    "Van",
+                                    "Pickup",
+                                    "Motorcycle"
+                                ];
+
+                                foreach (
+                                    $vehicleTypes as $type
+                                ):
+
+                                ?>
+
+                                    <option
+                                        value="<?= htmlspecialchars($type) ?>"
+                                        <?= (
+                                            ($old["vehicleType"] ?? "")
+                                            === $type
+                                        )
+                                            ? "selected"
+                                            : "" ?>
+                                    >
+
+                                        <?= htmlspecialchars($type) ?>
+
+                                    </option>
+
+                                <?php endforeach; ?>
+
+                            </select>
+
+                        </div>
+
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     03. APPOINTMENT
+                     ============================================= -->
+
+                <section class="booking-section">
+
+
+                    <div class="section-title">
+
+                        <span>
+                            03.
+                        </span>
+
+                        Appointment Details
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                        <!-- DATE -->
+
+                        <div class="form-group">
+
+                            <label for="bookingDate">
+
+                                Service Date
+                                <span class="required">*</span>
+
+                            </label>
+
+
+                            <input
+                                type="date"
+                                id="bookingDate"
+                                name="bookingDate"
+                                class="form-control"
+                                min="<?= date("Y-m-d") ?>"
+                                value="<?= htmlspecialchars(
+                                    $old["bookingDate"] ?? ""
+                                ) ?>"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- TIME SLOT -->
+
+                        <div class="form-group">
+
+                            <label for="timeSlot">
+
+                                Time Slot
+                                <span class="required">*</span>
+
+                            </label>
+
+
+                            <select
+                                id="timeSlot"
+                                name="timeSlot"
+                                class="form-control"
+                                required
+                            >
+
+                                <option value="">
+                                    Select a time slot
+                                </option>
+
+
+                                <?php foreach (
+                                    $timeSlots as $slot
+                                ): ?>
+
+
+                                    <?php
+
+                                    $startTime =
+                                        date(
+                                            "h:i A",
+                                            strtotime(
+                                                $slot["start_time"]
+                                            )
+                                        );
+
+                                    $endTime =
+                                        date(
+                                            "h:i A",
+                                            strtotime(
+                                                $slot["end_time"]
+                                            )
+                                        );
+
+                                    ?>
+
+
+                                    <option
+                                        value="<?= (int)$slot["id"] ?>"
+                                        <?= (
+                                            ($old["timeSlot"] ?? "")
+                                            == $slot["id"]
+                                        )
+                                            ? "selected"
+                                            : "" ?>
+                                    >
+
+                                        <?= htmlspecialchars(
+                                            $slot["slot_name"]
+                                        ) ?>
+
+                                        -
+                                        <?= $startTime ?>
+                                        -
+                                        <?= $endTime ?>
+
+                                    </option>
+
+
+                                <?php endforeach; ?>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- NOTES -->
+
+                        <div class="form-group full-width">
+
+                            <label for="notes">
+
+                                Additional Notes
+
+                            </label>
+
+
+                            <textarea
+                                id="notes"
+                                name="notes"
+                                class="form-control"
+                                maxlength="1000"
+                                placeholder="Tell us about any specific vehicle problem or service requirement..."
+                            ><?= htmlspecialchars(
+                                $old["notes"] ?? ""
+                            ) ?></textarea>
+
+                        </div>
+
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     TERMS
+                     ============================================= -->
+
+                <div class="booking-terms">
+
+                    <label class="terms-label">
+
+                        <input
+                            type="checkbox"
+                            name="terms"
+                            value="1"
+                            required
+                        >
+
+                        <span>
+
+                            I confirm that the information provided
+                            is correct and I agree to the booking
+                            terms and conditions.
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- =============================================
+                     BUTTONS
+                     ============================================= -->
+
+                <div class="booking-actions">
+
+
+                    <a
+                        href="../index.php"
+                        class="back-link"
+                    >
+
+                        ← Back
+
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary booking-submit"
+                    >
+
+                        Continue to Payment →
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
 
 
             <!-- =================================================
-                 FORM BUTTONS
+                 RIGHT SIDE - SUMMARY
                  ================================================= -->
 
-            <div class="form-actions">
-
-                <a
-                    href="services.php"
-                    class="back-button"
-                >
-                    ← Back to Services
-                </a>
+            <aside class="booking-summary">
 
 
-                <button
-                    type="submit"
-                    class="continue-button"
-                >
+                <!-- HEADER -->
 
-                    Continue to Payment
+                <div class="summary-header">
 
-                    <span>
-                        →
+                    <span class="summary-label">
+
+                        YOUR BOOKING
+
                     </span>
 
-                </button>
 
-            </div>
+                    <h2>
+
+                        Service Summary
+
+                    </h2>
+
+                </div>
+
+
+                <!-- =============================================
+                     SELECTED SERVICES
+                     ============================================= -->
+
+                <div
+                    id="selectedServicesSummary"
+                    class="summary-services"
+                >
+
+                    <p class="empty-summary">
+
+                        Select one or more services.
+
+                    </p>
+
+                </div>
+
+
+                <!-- =============================================
+                     DETAILS
+                     ============================================= -->
+
+                <div class="summary-details">
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Estimated Time
+                        </span>
+
+                        <strong id="totalDuration">
+                            0 Minutes
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Service Price
+                        </span>
+
+                        <strong id="servicePrice">
+                            Rs. 0.00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Booking Deposit
+                        </span>
+
+                        <strong>
+                            Rs. 2,500.00
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- =============================================
+                     TOTAL
+                     ============================================= -->
+
+                <div class="summary-total">
+
+
+                    <div class="total-row">
+
+                        <span>
+                            Service Total
+                        </span>
+
+                        <strong id="serviceTotal">
+                            Rs. 0.00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="pay-row">
+
+                        <span>
+                            Pay Now
+                        </span>
+
+                        <strong>
+                            Rs. 2,500.00
+                        </strong>
+
+                    </div>
+
+
+                    <p class="remaining-text">
+
+                        The remaining amount will be payable
+                        at the VEYRO service centre.
+
+                    </p>
+
+
+                </div>
+
+
+                <!-- =============================================
+                     SECURE BOOKING
+                     ============================================= -->
+
+                <div class="secure-booking">
+
+                    <div class="secure-icon">
+                        🔒
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Secure Booking
+                        </strong>
+
+                        <p>
+                            Your information is securely protected.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </aside>
 
 
         </div>
 
-
-        <!-- =====================================================
-             RIGHT SIDE - SERVICE SUMMARY
-             ===================================================== -->
-
-        <aside class="summary-card">
-
-
-            <div class="summary-header">
-
-                <span class="small-label">
-                    YOUR BOOKING
-                </span>
-
-                <h2>
-                    Service Summary
-                </h2>
-
-            </div>
-
-
-            <div class="selected-service">
-
-                <div class="service-icon">
-                    🔧
-                </div>
-
-
-                <div>
-
-                    <span class="service-category">
-                        MOST POPULAR
-                    </span>
-
-                    <h3>
-                        Standard Care
-                    </h3>
-
-                    <p>
-                        Complete maintenance and inspection
-                        for your vehicle.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="summary-details">
-
-
-                <div class="summary-row">
-
-                    <span>
-                        Estimated Time
-                    </span>
-
-                    <strong>
-                        2 - 3 Hours
-                    </strong>
-
-                </div>
-
-
-                <div class="summary-row">
-
-                    <span>
-                        Service Price
-                    </span>
-
-                    <strong>
-                        Rs. 11,500
-                    </strong>
-
-                </div>
-
-
-                <div class="summary-row">
-
-                    <span>
-                        Booking Deposit
-                    </span>
-
-                    <strong>
-                        Rs. 2,500
-                    </strong>
-
-                </div>
-
-
-            </div>
-
-
-            <div class="payment-summary">
-
-
-                <div class="payment-row">
-
-                    <span>
-                        Service Total
-                    </span>
-
-                    <strong>
-                        Rs. 11,500
-                    </strong>
-
-                </div>
-
-
-                <div class="payment-row deposit">
-
-                    <span>
-                        Pay Now
-                    </span>
-
-                    <strong>
-                        Rs. 2,500
-                    </strong>
-
-                </div>
-
-
-                <p>
-                    The remaining amount will be payable
-                    at the VEYRO service centre.
-                </p>
-
-
-            </div>
-
-
-            <div class="secure-box">
-
-                <span class="secure-icon">
-                    🔒
-                </span>
-
-
-                <div>
-
-                    <strong>
-                        Secure Booking
-                    </strong>
-
-                    <p>
-                        Your information is securely protected.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-        </aside>
-
-
-    </form>
+    </div>
 
 </main>
+
+
+<!-- =========================================================
+     OLD SELECTED SERVICES
+     ========================================================= -->
+
+<script>
+
+window.oldSelectedServices =
+    <?= json_encode(
+        $oldServices,
+        JSON_UNESCAPED_UNICODE
+    ) ?>;
+
+</script>
+
+
+
+</body>
+
+</html>

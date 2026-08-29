@@ -24,7 +24,7 @@
         </div>
 
         <a
-            href="book-appointment.php"
+            href="booking/booking.php"
             class="btn btn-light btn-large"
         >
             Book Appointment <span>→</span>

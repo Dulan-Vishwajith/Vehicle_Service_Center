@@ -26,7 +26,7 @@
                 <div class="hero-buttons">
 
                     <a
-                        href="book-appointment.php"
+                        href="booking/booking.php"
                         class="btn btn-primary btn-large"
                     >
                         Book Appointment

@@ -282,12 +282,10 @@ $serviceResult = $serviceStmt->fetchAll();
                                  ========================================= -->
 
                             <a
-                                href="book-appointment.php?service_id=<?php echo (int) $service['id']; ?>"
+                                href="booking/booking.php?service_id=<?php echo (int) $service['id']; ?>"
                                 class="service-link"
                             >
-
                                 Book Service →
-
                             </a>
 
 
