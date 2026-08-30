@@ -294,29 +294,27 @@ if (isset($packages[1])) {
                              CHOOSE PACKAGE BUTTON
                              ============================================= -->
 
-                        <?php if ($isFeatured): ?>
+                       <?php
+                        $packageServiceIds = array_map(
+                            'intval',
+                            array_column($package['services'] ?? [], 'id')
+                        );
 
+                        $packageQuery = '';
 
-                            <a
-                                href="book-appointment.php?package_id=<?php echo (int) $package['id']; ?>"
-                                class="btn btn-red"
-                            >
-                                Choose Package
-                            </a>
+                        if (!empty($packageServiceIds)) {
+                            $packageQuery = '?' . http_build_query([
+                                'services' => $packageServiceIds
+                            ]);
+                        }
+                        ?>
 
-
-                        <?php else: ?>
-
-
-                            <a
-                                href="book-appointment.php?package_id=<?php echo (int) $package['id']; ?>"
-                                class="btn btn-outline-dark"
-                            >
-                                Choose Package
-                            </a>
-
-
-                        <?php endif; ?>
+                        <a
+                            href="booking/booking.php<?= htmlspecialchars($packageQuery, ENT_QUOTES, 'UTF-8') ?>"
+                            class="btn <?= $isFeatured ? 'btn-red' : 'btn-outline-dark' ?>"
+                        >
+                            Book Package
+                        </a>
 
 
                     </div>
