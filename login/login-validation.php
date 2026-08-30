@@ -154,7 +154,7 @@ if ($user && password_verify($password, $user["password"])) {
     |--------------------------------------------------------------------------
     */
 
-    header("Location: ../dashboard/dashboard.php");
+    header("Location: ../index.php");
     exit();
 }
 
