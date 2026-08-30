@@ -4,10 +4,15 @@
 
     <div class="container footer-grid">
 
-        <!-- BRAND -->
+        <!-- =====================================================
+             BRAND
+             ===================================================== -->
         <div class="footer-brand">
 
-            <a href="index.php" class="logo">
+            <a
+                href="<?= $basePath ?>/index.php#home"
+                class="logo"
+            >
 
                 <span class="logo-icon">
                     ⚙
@@ -27,51 +32,93 @@
         </div>
 
 
-        <!-- SERVICES -->
+        <!-- =====================================================
+             SERVICES
+             ===================================================== -->
         <div class="footer-column">
 
             <h3>
                 Services
             </h3>
 
-            <a href="services.php">
+            <a
+                href="<?= $basePath ?>/index.php?all=1#services"
+            >
                 All Services
             </a>
 
-            <a href="packages.php">
+            <a
+                href="<?= $basePath ?>/index.php#packages"
+            >
                 Service Packages
             </a>
 
-            <a href="offers.php">
+            <a
+                href="<?= $basePath ?>/index.php#offers"
+            >
                 Special Offers
             </a>
 
         </div>
 
 
-        <!-- CUSTOMER -->
+        <!-- =====================================================
+             CUSTOMER
+             ===================================================== -->
         <div class="footer-column">
 
             <h3>
                 Customer
             </h3>
 
-            <a href="register.php">
-                Register
-            </a>
+            <?php if ($isLoggedIn): ?>
 
-            <a href="login.php">
-                Login
-            </a>
+                <a
+                    href="<?= $basePath ?>/public/dashboard.php"
+                >
+                    Dashboard
+                </a>
 
-            <a href="book-appointment.php">
-                Book Appointment
-            </a>
+                <a
+                    href="<?= $basePath ?>/public/profile.php"
+                >
+                    Profile
+                </a>
+
+                <a
+                    href="<?= $basePath ?>/booking/booking.php"
+                >
+                    Book Appointment
+                </a>
+
+            <?php else: ?>
+
+                <a
+                    href="<?= $basePath ?>/register/register-form.php"
+                >
+                    Register
+                </a>
+
+                <a
+                    href="<?= $basePath ?>/login/login-form.php"
+                >
+                    Login
+                </a>
+
+                <a
+                    href="<?= $basePath ?>/public/booking.php"
+                >
+                    Book Appointment
+                </a>
+
+            <?php endif; ?>
 
         </div>
 
 
-        <!-- CONTACT -->
+        <!-- =====================================================
+             CONTACT
+             ===================================================== -->
         <div class="footer-column">
 
             <h3>
@@ -98,14 +145,16 @@
     </div>
 
 
-    <!-- FOOTER BOTTOM -->
+    <!-- =====================================================
+         FOOTER BOTTOM
+         ===================================================== -->
 
     <div class="footer-bottom">
 
         <div class="container">
 
             <p>
-                © <?php echo date("Y"); ?>
+                © <?= date("Y"); ?>
                 VEYRO Vehicle Service Centre.
                 All Rights Reserved.
             </p>

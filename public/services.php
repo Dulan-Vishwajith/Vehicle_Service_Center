@@ -316,20 +316,6 @@ $serviceResult = $serviceStmt->fetchAll();
 
         </div>
 
-
-        <!-- =================================================
-             NO SEARCH RESULTS
-             ================================================= -->
-
-        <p
-            class="no-results"
-            id="noResults"
-            style="display: none;"
-        >
-            No services found.
-        </p>
-
-
         <!-- =================================================
              VIEW ALL / HIDE SERVICES BUTTON
              ================================================= -->
