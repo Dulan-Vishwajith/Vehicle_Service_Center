@@ -98,12 +98,12 @@ $profileImage = $basePath . "/public/images/profile.png";
 
             <!-- Logged In -->
 
-            <a
-                href="<?= $basePath ?>/public/dashboard.php"
-                class="dashboard-btn"
-            >
-                Dashboard
-            </a>
+                <a
+                    href="<?= $basePath ?>/dashboard/dashboard.php"
+                    class="dashboard-btn"
+                >
+                    Dashboard
+                </a>
 
 
             <!-- Profile Dropdown -->
