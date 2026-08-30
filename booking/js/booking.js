@@ -1,6 +1,5 @@
-
 document.addEventListener("DOMContentLoaded", function () {
-    
+
     /*
     |--------------------------------------------------------------------------
     | ELEMENTS
@@ -187,6 +186,70 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     |--------------------------------------------------------------------------
+    | BUILD SERVICE FROM OPTION
+    |--------------------------------------------------------------------------
+    |
+    | Turns a <option> element (with its data-* attributes) into the
+    | plain service object used throughout this file. Used by:
+    |   - the dropdown "change" handler
+    |   - restoring old selected services after a failed submit,
+    |     and preselecting services passed in via ?services[]=X
+    |     (used for both a single service card and a package)
+    |
+    */
+
+    function buildServiceFromOption(option) {
+
+        return {
+
+            id:
+                parseInt(option.value),
+
+            name:
+                option.dataset.name,
+
+            price:
+                parseFloat(
+                    option.dataset.price
+                ) || 0,
+
+            duration:
+                parseInt(
+                    option.dataset.duration
+                ) || 0,
+
+            durationText:
+                option.dataset.durationText
+
+        };
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | IS SERVICE ALREADY SELECTED
+    |--------------------------------------------------------------------------
+    */
+
+    function isServiceAlreadySelected(serviceId) {
+
+        return selectedServices.some(
+            function (service) {
+
+                return (
+                    service.id ===
+                    serviceId
+                );
+
+            }
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
     | ADD SERVICE
     |--------------------------------------------------------------------------
     */
@@ -223,20 +286,9 @@ document.addEventListener("DOMContentLoaded", function () {
             |--------------------------------------------------------------------------
             */
 
-            const alreadyExists =
-                selectedServices.some(
-                    function (service) {
-
-                        return (
-                            service.id ===
-                            serviceId
-                        );
-
-                    }
-                );
-
-
-            if (alreadyExists) {
+            if (
+                isServiceAlreadySelected(serviceId)
+            ) {
 
                 alert(
                     "This service has already been added."
@@ -254,42 +306,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
             /*
             |--------------------------------------------------------------------------
-            | CREATE SERVICE
-            |--------------------------------------------------------------------------
-            */
-
-            const service = {
-
-                id:
-                    serviceId,
-
-                name:
-                    option.dataset.name,
-
-                price:
-                    parseFloat(
-                        option.dataset.price
-                    ) || 0,
-
-                duration:
-                    parseInt(
-                        option.dataset.duration
-                    ) || 0,
-
-                durationText:
-                    option.dataset.durationText
-
-            };
-
-
-            /*
-            |--------------------------------------------------------------------------
             | ADD SERVICE
             |--------------------------------------------------------------------------
             */
 
             selectedServices.push(
-                service
+                buildServiceFromOption(option)
             );
 
 
@@ -754,313 +776,314 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /*
-|--------------------------------------------------------------------------
-| LICENSE PLATE VALIDATION
-|--------------------------------------------------------------------------
-|
-| Allowed formats:
-|
-| 50-1234
-| 256-2134
-| AB-1234
-| ABC-1234
-|
-| Also accepts:
-|
-| 50 1234
-| 256 2134
-| AB 1234
-| ABC 1234
-| 501234
-| 2562134
-| AB1234
-| ABC1234
-|
-|--------------------------------------------------------------------------
-*/
-
-
-function validateLicensePlate() {
-
-    if (!licensePlate) {
-        return true;
-    }
-
-
-    /*
     |--------------------------------------------------------------------------
-    | Get value
-    |--------------------------------------------------------------------------
-    */
-
-    let value =
-        licensePlate.value
-            .trim()
-            .toUpperCase();
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Remove spaces and hyphens
-    | before checking
-    |--------------------------------------------------------------------------
-    */
-
-    const cleanPlate =
-        value.replace(
-            /[\s-]/g,
-            ""
-        );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | EMPTY
-    |--------------------------------------------------------------------------
-    */
-
-    if (cleanPlate === "") {
-
-        return setError(
-            licensePlate,
-            "Please enter your vehicle registration number."
-        );
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | LICENSE PLATE PATTERN
+    | LICENSE PLATE VALIDATION
     |--------------------------------------------------------------------------
     |
-    | 2 or 3 NUMBERS + 4 NUMBERS
+    | Allowed formats:
     |
-    | Example:
     | 50-1234
     | 256-2134
-    |
-    |
-    | OR
-    |
-    | 2 or 3 LETTERS + 4 NUMBERS
-    |
-    | Example:
     | AB-1234
     | ABC-1234
     |
+    | Also accepts:
+    |
+    | 50 1234
+    | 256 2134
+    | AB 1234
+    | ABC 1234
+    | 501234
+    | 2562134
+    | AB1234
+    | ABC1234
+    |
+    |--------------------------------------------------------------------------
     */
 
-    const platePattern =
-        /^(?:[0-9]{2,3}|[A-Z]{2,3})[0-9]{4}$/;
+
+    function validateLicensePlate() {
+
+        if (!licensePlate) {
+            return true;
+        }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | CHECK PATTERN
-    |--------------------------------------------------------------------------
-    */
+        /*
+        |--------------------------------------------------------------------------
+        | Get value
+        |--------------------------------------------------------------------------
+        */
 
-    if (
-        !platePattern.test(
-            cleanPlate
-        )
-    ) {
+        let value =
+            licensePlate.value
+                .trim()
+                .toUpperCase();
 
-        return setError(
-            licensePlate,
-            "Invalid registration number. Examples: 50-1234, 256-2134, AB-1234, ABC-1234."
+
+        /*
+        |--------------------------------------------------------------------------
+        | Remove spaces and hyphens
+        | before checking
+        |--------------------------------------------------------------------------
+        */
+
+        const cleanPlate =
+            value.replace(
+                /[\s-]/g,
+                ""
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | EMPTY
+        |--------------------------------------------------------------------------
+        */
+
+        if (cleanPlate === "") {
+
+            return setError(
+                licensePlate,
+                "Please enter your vehicle registration number."
+            );
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | LICENSE PLATE PATTERN
+        |--------------------------------------------------------------------------
+        |
+        | 2 or 3 NUMBERS + 4 NUMBERS
+        |
+        | Example:
+        | 50-1234
+        | 256-2134
+        |
+        |
+        | OR
+        |
+        | 2 or 3 LETTERS + 4 NUMBERS
+        |
+        | Example:
+        | AB-1234
+        | ABC-1234
+        |
+        */
+
+        const platePattern =
+            /^(?:[0-9]{2,3}|[A-Z]{2,3})[0-9]{4}$/;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CHECK PATTERN
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !platePattern.test(
+                cleanPlate
+            )
+        ) {
+
+            return setError(
+                licensePlate,
+                "Invalid registration number. Examples: 50-1234, 256-2134, AB-1234, ABC-1234."
+            );
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALID
+        |--------------------------------------------------------------------------
+        */
+
+        clearError(
+            licensePlate
         );
+
+
+        return true;
 
     }
 
 
     /*
     |--------------------------------------------------------------------------
-    | VALID
+    | LICENSE PLATE INPUT
     |--------------------------------------------------------------------------
     */
 
-    clearError(
-        licensePlate
-    );
+    if (licensePlate) {
+
+        licensePlate.addEventListener(
+            "input",
+            function () {
 
 
-    return true;
+                /*
+                |--------------------------------------------------------------------------
+                | Convert to uppercase
+                |--------------------------------------------------------------------------
+                */
 
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| LICENSE PLATE INPUT
-|--------------------------------------------------------------------------
-*/
-
-if (licensePlate) {
-
-    licensePlate.addEventListener(
-        "input",
-        function () {
+                let value =
+                    this.value.toUpperCase();
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Convert to uppercase
-            |--------------------------------------------------------------------------
-            */
+                /*
+                |--------------------------------------------------------------------------
+                | Allow only:
+                |
+                | A-Z
+                | 0-9
+                | spaces
+                | hyphens
+                |--------------------------------------------------------------------------
+                */
 
-            let value =
-                this.value.toUpperCase();
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Allow only:
-            |
-            | A-Z
-            | 0-9
-            | spaces
-            | hyphens
-            |--------------------------------------------------------------------------
-            */
-
-            value =
-                value.replace(
-                    /[^A-Z0-9\s-]/g,
-                    ""
-                );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Remove existing spaces and hyphens
-            | temporarily
-            |--------------------------------------------------------------------------
-            */
-
-            let cleanValue =
-                value.replace(
-                    /[\s-]/g,
-                    ""
-                );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Maximum 7 characters
-            |
-            | ABC1234 = 7
-            | 2561234 = 7
-            |--------------------------------------------------------------------------
-            */
-
-            cleanValue =
-                cleanValue.substring(
-                    0,
-                    7
-                );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Automatically add hyphen
-            |--------------------------------------------------------------------------
-            |
-            | Examples:
-            |
-            | 501234
-            | becomes
-            | 50-1234
-            |
-            | 2561234
-            | becomes
-            | 256-1234
-            |
-            | AB1234
-            | becomes
-            | AB-1234
-            |
-            | ABC1234
-            | becomes
-            | ABC-1234
-            |
-            |--------------------------------------------------------------------------
-            */
-
-            const firstPart =
-                cleanValue.match(
-                    /^[A-Z]{2,3}|^[0-9]{2,3}/
-                );
-
-
-            if (firstPart) {
-
-                const prefix =
-                    firstPart[0];
-
-                const numbers =
-                    cleanValue.substring(
-                        prefix.length
+                value =
+                    value.replace(
+                        /[^A-Z0-9\s-]/g,
+                        ""
                     );
 
 
                 /*
                 |--------------------------------------------------------------------------
-                | Only add hyphen when there are numbers
+                | Remove existing spaces and hyphens
+                | temporarily
                 |--------------------------------------------------------------------------
                 */
 
-                if (numbers.length > 0) {
+                let cleanValue =
+                    value.replace(
+                        /[\s-]/g,
+                        ""
+                    );
 
-                    this.value =
-                        prefix +
-                        "-" +
-                        numbers;
+
+                /*
+                |--------------------------------------------------------------------------
+                | Maximum 7 characters
+                |
+                | ABC1234 = 7
+                | 2561234 = 7
+                |--------------------------------------------------------------------------
+                */
+
+                cleanValue =
+                    cleanValue.substring(
+                        0,
+                        7
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Automatically add hyphen
+                |--------------------------------------------------------------------------
+                |
+                | Examples:
+                |
+                | 501234
+                | becomes
+                | 50-1234
+                |
+                | 2561234
+                | becomes
+                | 256-1234
+                |
+                | AB1234
+                | becomes
+                | AB-1234
+                |
+                | ABC1234
+                | becomes
+                | ABC-1234
+                |
+                |--------------------------------------------------------------------------
+                */
+
+                const firstPart =
+                    cleanValue.match(
+                        /^[A-Z]{2,3}|^[0-9]{2,3}/
+                    );
+
+
+                if (firstPart) {
+
+                    const prefix =
+                        firstPart[0];
+
+                    const numbers =
+                        cleanValue.substring(
+                            prefix.length
+                        );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Only add hyphen when there are numbers
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (numbers.length > 0) {
+
+                        this.value =
+                            prefix +
+                            "-" +
+                            numbers;
+
+                    } else {
+
+                        this.value =
+                            prefix;
+
+                    }
 
                 } else {
 
                     this.value =
-                        prefix;
+                        cleanValue;
 
                 }
 
-            } else {
 
-                this.value =
-                    cleanValue;
+                /*
+                |--------------------------------------------------------------------------
+                | Validate while typing
+                |--------------------------------------------------------------------------
+                */
+
+                validateLicensePlate();
 
             }
+        );
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Validate while typing
-            |--------------------------------------------------------------------------
-            */
+        /*
+        |--------------------------------------------------------------------------
+        | Validate when leaving the field
+        |--------------------------------------------------------------------------
+        */
 
-            validateLicensePlate();
+        licensePlate.addEventListener(
+            "blur",
+            function () {
 
-        }
-    );
+                validateLicensePlate();
 
+            }
+        );
 
-    /*
-    |--------------------------------------------------------------------------
-    | Validate when leaving the field
-    |--------------------------------------------------------------------------
-    */
+    }
 
-    licensePlate.addEventListener(
-        "blur",
-        function () {
-
-            validateLicensePlate();
-
-        }
-    );
-
-}
 
     /*
     |--------------------------------------------------------------------------
@@ -1679,48 +1702,18 @@ if (licensePlate) {
                 | Avoid duplicates
                 */
 
-                const exists =
-                    selectedServices.some(
-                        function (service) {
-
-                            return (
-                                service.id ===
-                                serviceId
-                            );
-
-                        }
-                    );
-
-
-                if (exists) {
+                if (
+                    isServiceAlreadySelected(serviceId)
+                ) {
 
                     return;
 
                 }
 
 
-                selectedServices.push({
-
-                    id:
-                        serviceId,
-
-                    name:
-                        option.dataset.name,
-
-                    price:
-                        parseFloat(
-                            option.dataset.price
-                        ) || 0,
-
-                    duration:
-                        parseInt(
-                            option.dataset.duration
-                        ) || 0,
-
-                    durationText:
-                        option.dataset.durationText
-
-                });
+                selectedServices.push(
+                    buildServiceFromOption(option)
+                );
 
             }
         );
@@ -1730,89 +1723,14 @@ if (licensePlate) {
 
     /*
     |--------------------------------------------------------------------------
-    | ADD SERVICE FROM "BOOK SERVICE" BUTTON
-    |--------------------------------------------------------------------------
-    |
-    | booking.php reads ?service_id=X from the URL and
-    | booking-form.php marks the matching <option> as
-    | "selected" on the server side.
-    |
-    | The dropdown being pre-selected does not by itself
-    | add the service to the list/summary, so we do that
-    | here on page load, the same way a manual dropdown
-    | selection would.
-    |
-    */
-
-    if (serviceSelector.value) {
-
-
-        const preselectedOption =
-            serviceSelector.options[
-                serviceSelector.selectedIndex
-            ];
-
-
-        const preselectedId =
-            parseInt(serviceSelector.value);
-
-
-        const alreadyAdded =
-            selectedServices.some(
-                function (service) {
-
-                    return (
-                        service.id ===
-                        preselectedId
-                    );
-
-                }
-            );
-
-
-        if (!alreadyAdded) {
-
-            selectedServices.push({
-
-                id:
-                    preselectedId,
-
-                name:
-                    preselectedOption.dataset.name,
-
-                price:
-                    parseFloat(
-                        preselectedOption.dataset.price
-                    ) || 0,
-
-                duration:
-                    parseInt(
-                        preselectedOption.dataset.duration
-                    ) || 0,
-
-                durationText:
-                    preselectedOption.dataset.durationText
-
-            });
-
-        }
-
-
-        /*
-        | Reset the dropdown back to the placeholder
-        | so it behaves like the normal add flow.
-        */
-
-        serviceSelector.value =
-            "";
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
     | INITIAL UPDATE
     |--------------------------------------------------------------------------
+    |
+    | Both single-service and package preselection are already handled
+    | above by the "RESTORE OLD SELECTED SERVICES" loop, since both
+    | arrive as window.oldSelectedServices (built from services[] in
+    | booking-form.php). Nothing else to add here.
+    |
     */
 
     updateBooking();

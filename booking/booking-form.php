@@ -17,14 +17,14 @@ if (session_status() === PHP_SESSION_NONE) {
 |--------------------------------------------------------------------------
 */
 
-
 if (!isset($_SESSION["user_id"])) {
 
-    // Build redirect URL
+    // Build redirect URL, carrying the services[] selection
+    // through login (works for both a single service and a package)
     $redirectUrl = "../booking/booking.php";
 
-    if ($serviceId > 0) {
-        $redirectUrl .= "?service_id=" . $serviceId;
+    if (!empty($_SERVER["QUERY_STRING"])) {
+        $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
     }
 
     // Save redirect URL for after login
@@ -166,8 +166,38 @@ try {
         "error";
 }
 
-?>
 
+/*
+|--------------------------------------------------------------------------
+| SELECTED SERVICES FROM URL
+|--------------------------------------------------------------------------
+|
+| Single source of truth for preselection: ?services[]=1 (one service,
+| from a service card) and ?services[]=1&services[]=2 (a package) both
+| arrive here as the same $_GET['services'] array.
+|
+*/
+
+$urlServices = $_GET['services'] ?? [];
+
+$urlServices = array_map(
+    'intval',
+    (array) $urlServices
+);
+
+$urlServices = array_values(
+    array_unique(
+        array_filter(
+            $urlServices,
+            function ($id) {
+                return $id > 0;
+            }
+        )
+    )
+);
+
+
+?>
 
 <main class="booking-page">
 
@@ -184,10 +214,10 @@ try {
         >
 
             <div
-                class="booking-message <?= htmlspecialchars($messageType) ?>"
+                class="booking-message <?= htmlspecialchars($messageType, ENT_QUOTES, 'UTF-8') ?>"
             >
 
-                <?= htmlspecialchars($message) ?>
+                <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>
 
             </div>
 
@@ -314,10 +344,6 @@ try {
                                             $service["duration"],
                                             ENT_QUOTES
                                         ) ?>"
-                                        <?= (
-                                            isset($serviceId) &&
-                                            $serviceId == $service["id"]
-                                        ) ? "selected" : "" ?>
                                     >
 
                                     <?= htmlspecialchars(
@@ -980,7 +1006,9 @@ try {
 
 window.oldSelectedServices =
     <?= json_encode(
-        $oldServices,
+        !empty($oldServices)
+            ? $oldServices
+            : $urlServices,
         JSON_UNESCAPED_UNICODE
     ) ?>;
 

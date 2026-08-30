@@ -1,13 +1,3 @@
-<?php
-
-// Get service ID from URL
-$serviceId = isset($_GET['service_id'])
-    ? (int) $_GET['service_id']
-    : 0;
-
-// Pass selected service ID to booking form
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
