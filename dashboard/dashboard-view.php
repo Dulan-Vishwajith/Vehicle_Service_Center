@@ -1,37 +1,50 @@
-<!DOCTYPE html>
+<?php
 
+/*
+|--------------------------------------------------------------------------
+| VEYRO - Dashboard View
+|--------------------------------------------------------------------------
+| This file contains the dashboard page structure only.
+| Authentication, role detection and action handling are performed by
+| dashboard.php. Role-specific content is rendered by the files loaded
+| through the customer, salesAssistant and managementEmployee folders.
+|--------------------------------------------------------------------------
+*/
+
+?>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
 
     <meta charset="UTF-8">
 
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
 
-
     <title>
         VEYRO Dashboard
     </title>
 
-
-    <!-- ================================================================
-         MAIN WEBSITE STYLESHEET
-         ================================================================ -->
+    <!-- Main website styles -->
+    <link
+        rel="stylesheet"
+        href="../includes/css/header.css"
+    >
 
     <link
         rel="stylesheet"
-        href="../assets/css/style.css"
+        href="../includes/css/global.css"
     >
 
+    <link
+        rel="stylesheet"
+        href="../includes/css/footer.css"
+    >
 
-    <!-- ================================================================
-         DASHBOARD STYLESHEET
-         ================================================================ -->
-
+    <!-- Dashboard styles -->
     <link
         rel="stylesheet"
         href="dashboard.css"
@@ -39,233 +52,130 @@
 
 </head>
 
-
 <body>
-
-
-<!-- =====================================================================
-     WEBSITE HEADER
-     ===================================================================== -->
 
 <?php
 
+/* Main website header */
 require_once "../includes/header.php";
 
 ?>
 
-
-
 <!-- =====================================================================
-     MAIN DASHBOARD
+     MAIN DASHBOARD CONTENT
      ===================================================================== -->
 
 <main class="dashboard">
 
-
-    <!-- =================================================================
-         WELCOME SECTION
-         ================================================================= -->
-
+    <!-- Welcome section -->
     <section class="welcome">
-
 
         <small>
             VEYRO VEHICLE SERVICE CENTER
         </small>
 
-
         <h1>
-
             Welcome,
-
             <?php
-
             echo htmlspecialchars(
-                $user['name'],
+                $user["name"],
                 ENT_QUOTES,
-                'UTF-8'
+                "UTF-8"
             );
-
             ?>
-
         </h1>
 
-
         <p>
-
             <?php
-
             echo htmlspecialchars(
-                $user['role_name'] ?? 'User',
+                $user["role_name"] ?? "User",
                 ENT_QUOTES,
-                'UTF-8'
+                "UTF-8"
             );
-
             ?>
-
             Dashboard
-
         </p>
-
 
     </section>
 
-
-
-    <!-- =================================================================
-         ACTION MESSAGE
-         ================================================================= -->
-
+    <!-- Action message -->
     <?php if (!empty($message)): ?>
 
-
         <div class="message">
-
             <?php
-
             echo htmlspecialchars(
                 $message,
                 ENT_QUOTES,
-                'UTF-8'
+                "UTF-8"
             );
-
             ?>
-
         </div>
-
 
     <?php endif; ?>
 
-
-
     <!-- =================================================================
-         DISPLAY ROLE-SPECIFIC DASHBOARD
+         ROLE-SPECIFIC DASHBOARD
          ================================================================= -->
 
     <?php
 
+    switch ($roleId) {
 
-    /*
-    |--------------------------------------------------------------------------
-    | Customer Dashboard
-    |--------------------------------------------------------------------------
-    */
+        case 1:
+            renderCustomer($pdo, $userId);
+            break;
 
-    if ($roleId === 1) {
+        case 2:
+            renderSalesAssistant($pdo, $userId);
+            break;
 
-        renderCustomer(
-            $pdo,
-            $userId
-        );
+        case 3:
+            renderManagement($pdo, $userId);
+            break;
 
-    }
+        case 4:
+            ?>
+            <section class="card">
 
+                <h2>
+                    Admin Dashboard
+                </h2>
 
-    /*
-    |--------------------------------------------------------------------------
-    | Service Assistant Dashboard
-    |--------------------------------------------------------------------------
-    */
+                <p class="empty">
+                    Admin functionality is not included in this dashboard.
+                </p>
 
-    elseif ($roleId === 2) {
+            </section>
+            <?php
+            break;
 
-        renderSalesAssistant(
-            $pdo,
-            $userId
-        );
+        default:
+            ?>
+            <section class="card">
 
-    }
+                <h2>
+                    Dashboard Not Available
+                </h2>
 
+                <p class="empty">
+                    Your account role is not configured correctly.
+                </p>
 
-    /*
-    |--------------------------------------------------------------------------
-    | Management Dashboard
-    |--------------------------------------------------------------------------
-    */
-
-    elseif ($roleId === 3) {
-
-        renderManagement(
-            $pdo,
-            $userId
-        );
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Admin Dashboard
-    |--------------------------------------------------------------------------
-    */
-
-    elseif ($roleId === 4) {
-
-        ?>
-
-        <section class="card">
-
-            <h2>
-                Admin Dashboard
-            </h2>
-
-
-            <p>
-                Admin dashboard functionality is not available yet.
-            </p>
-
-        </section>
-
-        <?php
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Unknown Role
-    |--------------------------------------------------------------------------
-    */
-
-    else {
-
-        ?>
-
-        <section class="card">
-
-            <h2>
-                Dashboard Not Available
-            </h2>
-
-
-            <p>
-                Your account role is not configured correctly.
-            </p>
-
-        </section>
-
-        <?php
-
+            </section>
+            <?php
+            break;
     }
 
     ?>
 
-
 </main>
-
-
-
-<!-- =====================================================================
-     WEBSITE FOOTER
-     ===================================================================== -->
 
 <?php
 
+/* Main website footer */
 require_once "../includes/footer.php";
 
 ?>
 
-
 </body>
-
 </html>

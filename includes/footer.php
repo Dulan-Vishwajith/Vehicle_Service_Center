@@ -7,7 +7,7 @@
         <!-- BRAND -->
         <div class="footer-brand">
 
-            <a href="index.php" class="logo">
+            <a href="<?= $basePath ?>/index.php" class="logo">
 
                 <span class="logo-icon">
                     ⚙
@@ -34,15 +34,15 @@
                 Services
             </h3>
 
-            <a href="services.php">
+            <a href="<?= $basePath ?>/services.php">
                 All Services
             </a>
 
-            <a href="packages.php">
+            <a href="<?= $basePath ?>/packages.php">
                 Service Packages
             </a>
 
-            <a href="offers.php">
+            <a href="<?= $basePath ?>/offers.php">
                 Special Offers
             </a>
 
@@ -56,15 +56,15 @@
                 Customer
             </h3>
 
-            <a href="register.php">
+            <a href="<?= $basePath ?>/register/register-form.php">
                 Register
             </a>
 
-            <a href="login.php">
+            <a href="<?= $basePath ?>/login/login-form.php">
                 Login
             </a>
 
-            <a href="book-appointment.php">
+            <a href="<?= $basePath ?>/book-appointment.php">
                 Book Appointment
             </a>
 

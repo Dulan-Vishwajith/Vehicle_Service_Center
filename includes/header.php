@@ -99,7 +99,7 @@ $profileImage = $basePath . "/public/images/profile.jpg";
                 <!-- Logged In -->
 
                 <a
-                    href="<?= $basePath ?>/public/dashboard.php"
+                    href="<?= $basePath ?>/dashboard/dashboard.php"
                     class="dashboard-btn"
                 >
                     Dashboard
