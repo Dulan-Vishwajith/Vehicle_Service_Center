@@ -282,12 +282,10 @@ $serviceResult = $serviceStmt->fetchAll();
                                  ========================================= -->
 
                             <a
-                                href="book-appointment.php?service_id=<?php echo (int) $service['id']; ?>"
+                                href="booking/booking.php?services[]=<?php echo (int) $service['id']; ?>"
                                 class="service-link"
                             >
-
                                 Book Service →
-
                             </a>
 
 
@@ -317,20 +315,6 @@ $serviceResult = $serviceStmt->fetchAll();
 
 
         </div>
-
-
-        <!-- =================================================
-             NO SEARCH RESULTS
-             ================================================= -->
-
-        <p
-            class="no-results"
-            id="noResults"
-            style="display: none;"
-        >
-            No services found.
-        </p>
-
 
         <!-- =================================================
              VIEW ALL / HIDE SERVICES BUTTON

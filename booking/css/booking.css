@@ -1,471 +1,972 @@
 /* =========================================================
-   VEYRO - BOOKING PAGE CSS
-   Uses variables from global.css
+   BOOKING PAGE
    ========================================================= */
 
-.page-header {
-    background-color: var(--color-primary-soft);
-    padding: 50px 0 55px;
+.booking-page {
+
+    padding: 45px 0 70px;
+
+    background: var(--color-bg);
+
+    min-height: calc(100vh - 78px);
+
 }
 
-.breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    font-size: 13px;
-    color: var(--color-muted);
-    margin-bottom: 18px;
-}
 
-.breadcrumb a {
-    color: var(--color-primary);
-}
+/* =========================================================
+   MESSAGE
+   ========================================================= */
 
-.breadcrumb a:hover {
-    color: var(--color-primary-dark);
-}
-
-.page-header h1 {
-    color: var(--color-dark);
-    font-size: 40px;
-    line-height: 1.2;
-    margin-bottom: 10px;
-}
-
-.page-header p {
-    color: var(--color-muted);
-    font-size: 15px;
-}
-
-.booking-section {
-    background-color: var(--color-bg);
-    padding: 65px 0 90px;
-}
-
-.booking-layout {
-    display: grid;
-    grid-template-columns: 1.55fr 0.8fr;
-    gap: 40px;
-    align-items: start;
-}
-
-.booking-form-card {
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: 35px;
-    background-color: var(--color-white);
-    box-shadow: var(--shadow-sm);
-}
-
-.form-header {
-    padding-bottom: 28px;
-    border-bottom: 1px solid var(--color-border-light);
-    margin-bottom: 28px;
-}
-
-.section-tag {
-    color: var(--color-primary);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-}
-
-.form-header h2 {
-    color: var(--color-dark);
-    font-size: 26px;
-    margin: 7px 0;
-}
-
-.form-header p {
-    color: var(--color-muted);
-    font-size: 13px;
-}
-
-.form-section {
-    padding-bottom: 30px;
-    margin-bottom: 30px;
-    border-bottom: 1px solid var(--color-border-light);
-}
-
-.form-section h3 {
-    font-size: 17px;
-    margin-bottom: 22px;
-    color: var(--color-dark);
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-}
-
-.full-width {
-    grid-column: 1 / -1;
-}
-
-.form-group label {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--color-text);
-}
-
-.form-group label span {
-    color: var(--color-primary);
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: 12px 13px;
-    outline: none;
-    background-color: var(--color-white);
-    color: var(--color-dark);
-    font-size: 13px;
-    transition: var(--transition-fast);
-}
-
-.form-group input,
-.form-group select {
-    height: 45px;
-}
-
-.form-group textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-    color: var(--color-muted-light);
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.10);
-}
-
-.terms {
-    margin-bottom: 25px;
-}
-
-.checkbox-container {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    cursor: pointer;
-}
-
-.checkbox-container input {
-    width: 17px;
-    height: 17px;
-    margin-top: 2px;
-    accent-color: var(--color-primary);
-    cursor: pointer;
-}
-
-.terms-text {
-    color: var(--color-muted);
-    font-size: 12px;
-    line-height: 1.5;
-}
-
-.form-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-}
-
-.back-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 20px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    color: var(--color-muted);
-    background-color: var(--color-white);
-    font-size: 13px;
-    font-weight: 700;
-    transition: var(--transition-normal);
-}
-
-.back-button:hover {
-    border-color: var(--color-primary);
-    background-color: var(--color-primary-soft);
-    color: var(--color-primary);
-}
-
-.continue-button {
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 13px 24px;
-    background-color: var(--color-primary);
-    color: var(--color-white);
-    border-radius: var(--radius-md);
-    font-size: 13px;
-    font-weight: 700;
-    transition: var(--transition-normal);
-}
-
-.continue-button:hover {
-    background-color: var(--color-primary-dark);
-    transform: translateY(-2px);
-}
-
-.continue-button span {
-    font-size: 17px;
-}
-
-.summary-card {
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: 27px;
-    background-color: var(--color-white);
-    position: sticky;
-    top: 105px;
-    box-shadow: var(--shadow-md);
-}
-
-.summary-header {
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--color-border-light);
-}
-
-.small-label {
-    color: var(--color-primary);
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1.4px;
-}
-
-.summary-header h2 {
-    color: var(--color-dark);
-    font-size: 22px;
-    margin-top: 5px;
-}
-
-.selected-service {
-    display: flex;
-    gap: 13px;
-    padding: 20px 0;
-    border-bottom: 1px solid var(--color-border-light);
-}
-
-.service-icon {
-    width: 72px;
-    height: 72px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--color-primary-soft);
-    border-radius: var(--radius-md);
-    font-size: 28px;
-}
-
-.selected-service h3 {
-    color: var(--color-dark);
-    font-size: 14px;
-    margin: 2px 0 3px;
-}
-
-.selected-service p {
-    color: var(--color-muted);
-    font-size: 11px;
-    line-height: 1.4;
-}
-
-.service-category {
-    color: var(--color-primary);
-    font-size: 9px;
-    font-weight: 800;
-    text-transform: uppercase;
-}
-
-.summary-details {
-    padding: 17px 0;
-    border-bottom: 1px solid var(--color-border-light);
-}
-
-.summary-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 7px 0;
-    gap: 10px;
-}
-
-.summary-row span {
-    color: var(--color-muted);
-    font-size: 12px;
-}
-
-.summary-row strong {
-    font-size: 12px;
-    color: var(--color-dark);
-}
-
-.payment-summary {
-    padding: 20px 0;
-}
-
-.payment-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-}
-
-.payment-row span {
-    color: var(--color-text);
-    font-size: 13px;
-}
-
-.payment-row strong {
-    font-size: 17px;
-    color: var(--color-dark);
-}
-
-.payment-row.deposit {
-    margin-top: 10px;
-    padding: 12px;
-    background-color: var(--color-primary-soft);
-    border-radius: var(--radius-md);
-}
-
-.payment-row.deposit span {
-    color: var(--color-primary);
-    font-weight: 700;
-}
-
-.payment-row.deposit strong {
-    color: var(--color-primary);
-    font-size: 20px;
-}
-
-.payment-summary > p {
-    color: var(--color-muted-light);
-    font-size: 10px;
-    margin-top: 10px;
-    line-height: 1.5;
-}
-
-.secure-box {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px;
-    background-color: var(--color-primary-soft);
-    border: 1px solid rgba(230, 57, 70, 0.18);
-    border-radius: var(--radius-md);
-}
-
-.secure-icon {
-    font-size: 18px;
-}
-
-.secure-box strong {
-    display: block;
-    font-size: 12px;
-    color: var(--color-dark);
-}
-
-.secure-box p {
-    color: var(--color-muted);
-    font-size: 10px;
-    margin-top: 2px;
-}
-
-/* Validation / server message */
 .booking-message {
-    max-width: 1200px;
-    margin: 0 auto 25px;
+
+    margin-bottom: 25px;
+
     padding: 14px 18px;
+
     border-radius: var(--radius-md);
-    font-size: 13px;
-    font-weight: 600;
+
+    font-size: 14px;
+
 }
+
 
 .booking-message.error {
-    background-color: #fff1f2;
-    border: 1px solid #fecdd3;
-    color: #be123c;
+
+    background: var(--color-primary-soft);
+
+    border: 1px solid #ffc5ca;
+
+    color: var(--color-primary-dark);
+
 }
+
 
 .booking-message.success {
-    background-color: #f0fdf4;
-    border: 1px solid #bbf7d0;
-    color: #15803d;
+
+    background: #eef9f1;
+
+    border: 1px solid #bfe5c7;
+
+    color: #26733a;
+
 }
 
-@media (max-width: 950px) {
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
+
+.booking-layout {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        390px;
+
+    gap: 30px;
+
+    align-items: start;
+
+}
+
+
+/* =========================================================
+   FORM CARD
+   ========================================================= */
+
+.booking-form-card {
+
+    background: var(--color-white);
+
+    border: 1px solid var(--color-border);
+
+    border-radius: var(--radius-lg);
+
+    padding: 32px;
+
+    box-shadow: var(--shadow-sm);
+
+}
+
+
+/* =========================================================
+   FORM HEADER
+   ========================================================= */
+
+.booking-form-header {
+
+    padding-bottom: 25px;
+
+    border-bottom:
+        1px solid var(--color-border-light);
+
+}
+
+
+.booking-label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--color-primary);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+}
+
+
+.booking-form-header h1 {
+
+    margin-bottom: 8px;
+
+    color: var(--color-dark);
+
+    font-size: 28px;
+
+    line-height: 1.2;
+
+}
+
+
+.booking-form-header p {
+
+    color: var(--color-muted);
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   BOOKING SECTION
+   ========================================================= */
+
+.booking-section {
+
+    padding: 28px 0;
+
+    border-bottom:
+        1px solid var(--color-border-light);
+
+}
+
+
+.section-title {
+
+    margin-bottom: 8px;
+
+    color: var(--color-dark);
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+}
+
+
+.section-title span {
+
+    margin-right: 5px;
+
+    color: var(--color-dark);
+
+}
+
+
+.section-description {
+
+    margin-bottom: 20px;
+
+    color: var(--color-muted);
+
+    font-size: 13px;
+
+}
+
+
+/* =========================================================
+   FORM GROUP
+   ========================================================= */
+
+.form-group {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+}
+
+
+.form-group label {
+
+    color: var(--color-text);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+}
+
+
+.required {
+
+    color: var(--color-primary);
+
+}
+
+
+/* =========================================================
+   FORM CONTROLS
+   ========================================================= */
+
+.form-control {
+
+    width: 100%;
+
+    min-height: 48px;
+
+    padding: 0 14px;
+
+    border: 1px solid var(--color-border);
+
+    border-radius: var(--radius-md);
+
+    background: var(--color-white);
+
+    color: var(--color-dark);
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+
+}
+
+
+textarea.form-control {
+
+    min-height: 110px;
+
+    padding: 13px 14px;
+
+    resize: vertical;
+
+}
+
+
+.form-control:focus {
+
+    border-color: var(--color-primary);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(230, 57, 70, 0.08);
+
+}
+
+
+/* =========================================================
+   SERVICE SELECTOR
+   ========================================================= */
+
+.service-selector {
+
+    cursor: pointer;
+
+}
+
+
+/* =========================================================
+   SELECTED SERVICES
+   ========================================================= */
+
+.selected-services {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    margin-top: 15px;
+
+}
+
+
+.no-services {
+
+    padding: 15px;
+
+    border: 1px dashed var(--color-border);
+
+    border-radius: var(--radius-md);
+
+    color: var(--color-muted);
+
+    font-size: 13px;
+
+    text-align: center;
+
+}
+
+
+/* =========================================================
+   SELECTED SERVICE ITEM
+   ========================================================= */
+
+.selected-service-item {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 14px;
+
+    background: var(--color-primary-soft);
+
+    border: 1px solid #ffd3d7;
+
+    border-radius: var(--radius-md);
+
+}
+
+
+.selected-service-info {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+    min-width: 0;
+
+}
+
+
+.selected-service-name {
+
+    color: var(--color-dark);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+}
+
+
+.selected-service-duration {
+
+    color: var(--color-muted);
+
+    font-size: 12px;
+
+}
+
+
+.selected-service-right {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    flex-shrink: 0;
+
+}
+
+
+.selected-service-price {
+
+    color: var(--color-dark);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+}
+
+
+.remove-service {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 28px;
+
+    height: 28px;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #ffe0e4;
+
+    color: var(--color-primary);
+
+    font-size: 19px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition-fast),
+        transform var(--transition-fast);
+
+}
+
+
+.remove-service:hover {
+
+    background: #ffcdd2;
+
+    transform: scale(1.05);
+
+}
+
+
+/* =========================================================
+   FORM GRID
+   ========================================================= */
+
+.form-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 18px;
+
+}
+
+
+.full-width {
+
+    grid-column: 1 / -1;
+
+}
+
+
+/* =========================================================
+   TERMS
+   ========================================================= */
+
+.booking-terms {
+
+    padding: 25px 0;
+
+}
+
+
+.terms-label {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    color: var(--color-muted);
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    cursor: pointer;
+
+}
+
+
+.terms-label input {
+
+    margin-top: 4px;
+
+    accent-color: var(--color-primary);
+
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.booking-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+}
+
+
+.back-link {
+
+    color: var(--color-muted);
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+.back-link:hover {
+
+    color: var(--color-primary);
+
+}
+
+
+.booking-submit {
+
+    min-height: 48px;
+
+}
+
+
+/* =========================================================
+   SUMMARY CARD
+   ========================================================= */
+
+.booking-summary {
+
+    position: sticky;
+
+    top: 95px;
+
+    background: var(--color-white);
+
+    border: 1px solid var(--color-border);
+
+    border-radius: var(--radius-lg);
+
+    padding: 28px;
+
+    box-shadow: var(--shadow-sm);
+
+}
+
+
+/* =========================================================
+   SUMMARY HEADER
+   ========================================================= */
+
+.summary-header {
+
+    padding-bottom: 22px;
+
+    border-bottom:
+        1px solid var(--color-border-light);
+
+}
+
+
+.summary-label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--color-primary);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+}
+
+
+.summary-header h2 {
+
+    color: var(--color-dark);
+
+    font-size: 24px;
+
+}
+
+
+/* =========================================================
+   SUMMARY SERVICES
+   ========================================================= */
+
+.summary-services {
+
+    padding: 15px 0;
+
+    border-bottom:
+        1px solid var(--color-border-light);
+
+}
+
+
+.empty-summary {
+
+    color: var(--color-muted);
+
+    font-size: 13px;
+
+}
+
+
+.summary-service-row {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 8px 0;
+
+}
+
+
+.summary-service-name {
+
+    color: var(--color-text);
+
+    font-size: 13px;
+
+}
+
+
+.summary-service-price {
+
+    color: var(--color-dark);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+}
+
+
+/* =========================================================
+   SUMMARY DETAILS
+   ========================================================= */
+
+.summary-details {
+
+    padding: 18px 0;
+
+    border-bottom:
+        1px solid var(--color-border-light);
+
+}
+
+
+.summary-row {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 16px;
+
+}
+
+
+.summary-row:last-child {
+
+    margin-bottom: 0;
+
+}
+
+
+.summary-row span {
+
+    color: var(--color-muted);
+
+    font-size: 13px;
+
+}
+
+
+.summary-row strong {
+
+    color: var(--color-dark);
+
+    font-size: 13px;
+
+    text-align: right;
+
+}
+
+
+/* =========================================================
+   TOTAL
+   ========================================================= */
+
+.summary-total {
+
+    padding-top: 20px;
+
+}
+
+
+.total-row {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 15px;
+
+}
+
+
+.total-row span {
+
+    color: var(--color-text);
+
+    font-size: 14px;
+
+}
+
+
+.total-row strong {
+
+    color: var(--color-dark);
+
+    font-size: 18px;
+
+}
+
+
+.pay-row {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 15px;
+
+    border-radius: var(--radius-md);
+
+    background: var(--color-primary-soft);
+
+}
+
+
+.pay-row span {
+
+    color: var(--color-primary);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+}
+
+
+.pay-row strong {
+
+    color: var(--color-primary);
+
+    font-size: 21px;
+
+}
+
+
+.remaining-text {
+
+    margin-top: 10px;
+
+    color: var(--color-muted-light);
+
+    font-size: 11px;
+
+    line-height: 1.5;
+
+}
+
+
+/* =========================================================
+   SECURE BOOKING
+   ========================================================= */
+
+.secure-booking {
+
+    display: flex;
+
+    gap: 12px;
+
+    margin-top: 22px;
+
+    padding: 15px;
+
+    border: 1px solid #ffc7cc;
+
+    border-radius: var(--radius-md);
+
+    background: #fff9fa;
+
+}
+
+
+.secure-icon {
+
+    font-size: 17px;
+
+}
+
+
+.secure-booking strong {
+
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: var(--color-dark);
+
+    font-size: 13px;
+
+}
+
+
+.secure-booking p {
+
+    color: var(--color-muted);
+
+    font-size: 11px;
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
     .booking-layout {
+
         grid-template-columns: 1fr;
+
     }
 
-    .summary-card {
-        position: relative;
-        top: 0;
-        max-width: 700px;
-        width: 100%;
-        margin: 0 auto;
+
+    .booking-summary {
+
+        position: static;
+
     }
+
 }
 
-@media (max-width: 700px) {
-    .page-header {
-        padding: 40px 0;
+
+@media (max-width: 600px) {
+
+    .booking-page {
+
+        padding-top: 25px;
+
     }
 
-    .page-header h1 {
-        font-size: 32px;
+
+    .booking-form-card,
+    .booking-summary {
+
+        padding: 20px;
+
     }
 
-    .booking-section {
-        padding: 45px 0 60px;
-    }
-
-    .booking-form-card {
-        padding: 22px;
-    }
-
-    .summary-card {
-        padding: 22px;
-    }
 
     .form-grid {
+
         grid-template-columns: 1fr;
+
     }
+
 
     .full-width {
+
         grid-column: auto;
+
     }
 
-    .form-actions {
+
+    .selected-service-item {
+
+        align-items: flex-start;
+
+    }
+
+
+    .selected-service-right {
+
+        flex-direction: column;
+
+        gap: 7px;
+
+    }
+
+
+    .booking-actions {
+
         flex-direction: column-reverse;
+
         align-items: stretch;
+
     }
 
-    .back-button,
-    .continue-button {
+
+    .booking-submit {
+
         width: 100%;
-        min-height: 48px;
+
     }
+
+
+    .back-link {
+
+        text-align: center;
+
+    }
+
 }

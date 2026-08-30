@@ -24,7 +24,7 @@ $basePath = "/Vehicle_Service_Center";
 | Profile Image
 |--------------------------------------------------------------------------
 */
-$profileImage = $basePath . "/public/images/profile.jpg";
+$profileImage = $basePath . "/public/images/profile.png";
 
 ?>
 
@@ -96,7 +96,7 @@ $profileImage = $basePath . "/public/images/profile.jpg";
 
             <?php if ($isLoggedIn): ?>
 
-                <!-- Logged In -->
+            <!-- Logged In -->
 
                 <a
                     href="<?= $basePath ?>/dashboard/dashboard.php"
@@ -106,24 +106,54 @@ $profileImage = $basePath . "/public/images/profile.jpg";
                 </a>
 
 
-                <!-- Profile Picture -->
+            <!-- Profile Dropdown -->
 
-                <a
-                    href="<?= $basePath ?>/public/profile.php"
-                    class="profile-avatar"
-                    title="Profile"
+            <div class="profile-dropdown">
+
+                <button
+                    type="button"
+                    class="profile-avatar profile-dropdown-toggle"
+                    title="Profile menu"
+                    aria-label="Open profile menu"
                 >
-
                     <img
                         src="<?= htmlspecialchars($profileImage) ?>"
                         alt="Profile"
                     >
+                </button>
 
-                </a>
+
+                <!-- Dropdown Menu -->
+
+                <div class="profile-dropdown-menu">
+
+                    <a href="<?= $basePath ?>/public/profile.php">
+                        Profile
+                    </a>
+
+                    <a href="<?= $basePath ?>/public/dashboard.php">
+                        Dashboard
+                    </a>
+
+                    <a href="<?= $basePath ?>/public/my-bookings.php">
+                        My Bookings
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <a
+                        href="<?= $basePath ?>/login/logout.php"
+                        class="logout-link"
+                    >
+                        Logout
+                    </a>
+
+                </div>
+
+            </div>
 
 
-            <?php else: ?>
-
+        <?php else: ?>
                 <!-- Not Logged In -->
 
                 <a
@@ -148,3 +178,5 @@ $profileImage = $basePath . "/public/images/profile.jpg";
     </div>
 
 </header>
+
+<script src="<?= $basePath ?>/includes/js/profile-dropdown.js"></script>
