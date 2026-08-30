@@ -9,7 +9,10 @@
              ===================================================== -->
         <div class="footer-brand">
 
-            <a href="<?= $basePath ?>/index.php" class="logo">
+            <a
+                href="<?= $basePath ?>/index.php#home"
+                class="logo"
+            >
 
                 <span class="logo-icon">
                     ⚙
@@ -38,15 +41,21 @@
                 Services
             </h3>
 
-            <a href="<?= $basePath ?>/services.php">
+            <a
+                href="<?= $basePath ?>/index.php?all=1#services"
+            >
                 All Services
             </a>
 
-            <a href="<?= $basePath ?>/packages.php">
+            <a
+                href="<?= $basePath ?>/index.php#packages"
+            >
                 Service Packages
             </a>
 
-            <a href="<?= $basePath ?>/offers.php">
+            <a
+                href="<?= $basePath ?>/index.php#offers"
+            >
                 Special Offers
             </a>
 
@@ -62,17 +71,40 @@
                 Customer
             </h3>
 
-            <a href="<?= $basePath ?>/register/register-form.php">
-                Register
-            </a>
+            <?php if ($isLoggedIn): ?>
 
-            <a href="<?= $basePath ?>/login/login-form.php">
-                Login
-            </a>
+                <a
+                    href="<?= $basePath ?>/dashboard/dashboard.php"
+                >
+                    Dashboard
+                </a>
 
-            <a href="<?= $basePath ?>/book-appointment.php">
-                Book Appointment
-            </a>
+                <a
+                    href="<?= $basePath ?>/public/profile.php"
+                >
+                    Profile
+                </a>
+
+            <?php else: ?>
+
+                <a
+                    href="<?= $basePath ?>/register/register-form.php"
+                >
+                    Register
+                </a>
+
+                <a
+                    href="<?= $basePath ?>/login/login-form.php"
+                >
+                    Login
+                </a>
+
+            <?php endif; ?>
+                <a
+                    href="<?= $basePath ?>/booking/booking.php"
+                >
+                    Book Appointment
+                </a>
 
         </div>
 

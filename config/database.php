@@ -3,7 +3,7 @@
 $host = "localhost";
 $dbname = "veyro";
 $username = "root";
-$password = "T2320$267@c";
+$password = "";
 
 try {
 
