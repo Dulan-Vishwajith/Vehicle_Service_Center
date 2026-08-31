@@ -1,34 +1,48 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-// Ensure user is authenticated
-if (!isset($_SESSION['user_id']) && !isset($_POST['role_id'])) {
+// Check if the user is logged in
+if (!isset($_SESSION["user_id"])) {
+
+    // Build redirect URL, carrying the services[] selection
+    // through login (works for both a single service and a package)
+    $redirectUrl = "../dashboard/dashboard.php";
+
+    if (!empty($_SERVER["QUERY_STRING"])) {
+        $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
+    }
+
+    // Save redirect URL for after login
+    $_SESSION["redirect_after_login"] = $redirectUrl;
+
+    // Redirect to login
     header("Location: ../login/login-form.php");
-    exit();
+    exit;
 }
 
-// Set role_id from POST if coming directly from login form, or fallback to SESSION
-if (isset($_POST['role_id'])) {
-    $_SESSION['role_id'] = intval($_POST['role_id']);
-}
-
+// Determine the role of the logged-in user
 $role_id = $_SESSION['role_id'] ?? null;
 $role_file = '';
 
+// Map role_id to the corresponding dashboard view file
 switch ($role_id) {
+
     case 1:
-        $role_file = __DIR__ . '/customer/customer.php';
+        include 'customer/customer.php';
         break;
+
     case 2:
-        $role_file = __DIR__ . '/serviceAssistant/serviceAssistant.php';
+        include 'serviceAssistant/serviceAssistant.php';
         break;
+
     case 3:
-        $role_file = __DIR__ . '/managementEmployee/managementEmployee.php';
+        include 'managementEmployee/managementEmployee.php';
         break;
+
     default:
         header("Location: ../login/login-form.php?error=invalid_role");
         exit();
 }
-
-include __DIR__ . '/dashboard-view.php';
 ?>
