@@ -1,0 +1,143 @@
+<?php
+/*
+|--------------------------------------------------------------------------
+| SERVICE ASSISTANT DASHBOARD
+|--------------------------------------------------------------------------
+*/
+
+$dashboardRole = "SERVICE ASSISTANT";
+
+$dashboardTitle = "Service Dashboard";
+
+$dashboardDescription = "Manage today's bookings, services and customers.";
+
+$dashboardButtonText = "View Schedule";
+
+$dashboardButtonLink = "#";
+
+
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD CARDS
+|--------------------------------------------------------------------------
+*/
+
+$dashboardCards = [
+
+    [
+        'icon' => '📅',
+        'label' => "Today's Bookings",
+        'value' => '8'
+    ],
+
+    [
+        'icon' => '⏳',
+        'label' => 'Pending',
+        'value' => '3'
+    ],
+
+    [
+        'icon' => '🔧',
+        'label' => 'In Progress',
+        'value' => '2'
+    ],
+
+    [
+        'icon' => '✓',
+        'label' => 'Completed Today',
+        'value' => '3'
+    ]
+
+];
+
+/*
+|--------------------------------------------------------------------------
+| QUICK ACTIONS
+|--------------------------------------------------------------------------
+*/
+
+$quickActions = [
+
+    [
+        'icon' => '📅',
+        'title' => "Today's Schedule",
+        'link' => '#'
+    ],
+
+    [
+        'icon' => '📋',
+        'title' => 'All Bookings',
+        'link' => '#'
+    ],
+
+    [
+        'icon' => '👥',
+        'title' => 'Customers',
+        'link' => '#'
+    ],
+
+    [
+        'icon' => '💬',
+        'title' => 'Customer Messages',
+        'link' => '#'
+    ]
+
+];
+
+?>
+
+<link rel="stylesheet" href="../includes/css/header.css">
+<link rel="stylesheet" href="../includes/css/global.css">
+<link rel="stylesheet" href="../css/dashboard.css">
+<link rel="stylesheet" href="../includes/css/footer.css">
+
+
+<?php include_once '../includes/header.php'; ?>
+
+
+<main class="dashboard-content">
+
+    <section class="role-dashboard">
+
+        <!-- Dashboard Header -->
+        <?php
+        include './includes/dashboard-header.php';
+        ?>
+
+
+        <!-- Dashboard Cards -->
+        <?php
+        include './includes/dashboard-cards.php';
+        ?>
+
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+
+            <!-- Functions --> 
+            <div class="dashboard-panel"> 
+    
+                <?php 
+                //Include service assistant functions 
+                ?> 
+    
+            </div>
+
+
+            <!-- Quick Actions -->
+            <div class="dashboard-panel">
+
+                <?php
+                include './includes/quick-action-panel.php';
+                ?>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<?php include_once '../includes/footer.php'; ?>
