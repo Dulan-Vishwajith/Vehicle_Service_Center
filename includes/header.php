@@ -81,7 +81,7 @@ $profileImage = $basePath . "/public/images/profile.png";
 
 
             <a
-                href="<?= $basePath ?>/index.php#contact"
+                href="#contact"
             >
                 Contact
             </a>
@@ -124,23 +124,30 @@ $profileImage = $basePath . "/public/images/profile.png";
 
 
                 <!-- Dropdown Menu -->
-
                 <div class="profile-dropdown-menu">
 
-                    <a href="<?= $basePath ?>/public/profile.php">
+                    <!-- Profile -->
+                    <a href="<?= $basePath ?>/dashboard/dashboard.php?page=profile">
                         Profile
                     </a>
 
-                    <a href="<?= $basePath ?>/public/dashboard.php">
+
+                    <!-- Dashboard -->
+                    <a href="<?= $basePath ?>/dashboard/dashboard.php">
                         Dashboard
                     </a>
 
-                    <a href="<?= $basePath ?>/public/my-bookings.php">
+
+                    <!-- My Bookings -->
+                    <a href="<?= $basePath ?>/dashboard/dashboard.php?page=bookings">
                         My Bookings
                     </a>
 
+
                     <div class="dropdown-divider"></div>
 
+
+                    <!-- Logout -->
                     <a
                         href="<?= $basePath ?>/login/logout.php"
                         class="logout-link"

@@ -797,15 +797,15 @@ $urlServices = array_values(
 
                 <div class="booking-actions">
 
-
                     <a
-                        href="../index.php"
+                        href="../dashboard/dashboard.php"
                         class="back-link"
                     >
 
-                        ← Back
+                        ← Dashboard
 
                     </a>
+
 
 
                     <button

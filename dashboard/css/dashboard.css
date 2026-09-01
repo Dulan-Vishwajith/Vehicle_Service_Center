@@ -92,8 +92,8 @@
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 25px;
+    grid-template-columns: 4fr 1fr;
+    gap: 20px;
 }
 
 .dashboard-panel {
@@ -178,6 +178,16 @@
 .status-completed {
     background: #e8f8ef;
     color: #198754;
+}
+
+.status-progress {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+}
+
+.status-cancelled {
+    background: #f8d7da;
+    color: #842029;
 }
 
 /* Quick Actions */

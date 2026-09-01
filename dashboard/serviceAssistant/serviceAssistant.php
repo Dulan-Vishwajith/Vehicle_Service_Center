@@ -86,14 +86,6 @@ $quickActions = [
 
 ?>
 
-<link rel="stylesheet" href="../includes/css/header.css">
-<link rel="stylesheet" href="../includes/css/global.css">
-<link rel="stylesheet" href="../css/dashboard.css">
-<link rel="stylesheet" href="../includes/css/footer.css">
-
-
-<?php include_once '../includes/header.php'; ?>
-
 
 <main class="dashboard-content">
 
@@ -101,13 +93,13 @@ $quickActions = [
 
         <!-- Dashboard Header -->
         <?php
-        include './includes/dashboard-header.php';
+        include __DIR__ . '/../includes/dashboard-header.php';
         ?>
 
 
         <!-- Dashboard Cards -->
         <?php
-        include './includes/dashboard-cards.php';
+        include __DIR__ . '/../includes/dashboard-cards.php';
         ?>
 
 
@@ -128,7 +120,7 @@ $quickActions = [
             <div class="dashboard-panel">
 
                 <?php
-                include './includes/quick-action-panel.php';
+                include __DIR__ . '/../includes/quick-action-panel.php';
                 ?>
 
             </div>
@@ -140,4 +132,3 @@ $quickActions = [
 </main>
 
 
-<?php include_once '../includes/footer.php'; ?>
