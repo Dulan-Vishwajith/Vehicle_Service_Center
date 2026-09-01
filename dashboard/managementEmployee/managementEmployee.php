@@ -102,13 +102,13 @@ $quickActions = [
 
         <!-- Dashboard Header -->
         <?php
-        include './includes/dashboard-header.php';
+        include __DIR__ . '/../includes/dashboard-header.php';
         ?>
 
 
         <!-- Dashboard Cards -->
         <?php
-        include './includes/dashboard-cards.php';
+        include __DIR__ . '/../includes/dashboard-cards.php';
         ?>
 
 
@@ -129,7 +129,7 @@ $quickActions = [
             <div class="dashboard-panel">
 
                 <?php
-                include './includes/quick-action-panel.php';
+                include __DIR__ . '/../includes/quick-action-panel.php';
                 ?>
 
             </div>

@@ -33,8 +33,10 @@ $role_id = $_SESSION['role_id'] ?? null;
 <link rel="stylesheet" href="./css/dashboard.css"> 
 <link rel="stylesheet" href="../includes/css/footer.css"> 
 
+
 <!-- Include the header -->
 <?php   include_once '../includes/header.php';  ?> 
+
 
 <?php
 
@@ -42,15 +44,15 @@ $role_id = $_SESSION['role_id'] ?? null;
 switch ($role_id) {
 
     case 1:
-        include 'customer/customer.php';
+        include __DIR__ . '/customer/customer.php';
         break;
 
     case 2:
-        include 'serviceAssistant/serviceAssistant.php';
+        include __DIR__ . '/serviceAssistant/serviceAssistant.php';
         break;
 
     case 3:
-        include 'managementEmployee/managementEmployee.php';
+        include __DIR__ . '/managementEmployee/managementEmployee.php';
         break;
 
     default:
