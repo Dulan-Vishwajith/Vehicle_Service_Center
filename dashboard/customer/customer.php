@@ -87,15 +87,8 @@ $quickActions = [
  
 ?> 
  
-<link rel="stylesheet" href="../includes/css/header.css"> 
-<link rel="stylesheet" href="../includes/css/global.css"> 
-<link rel="stylesheet" href="./css/dashboard.css"> 
-<link rel="stylesheet" href="../includes/css/footer.css"> 
- 
- 
-<?php   include_once '../includes/header.php';  ?> 
- 
- 
+<?php // Customer dashboard page ?> 
+
 <main class="dashboard-content"> 
     <section class="role-dashboard"> 
         
@@ -148,4 +141,3 @@ $quickActions = [
 </main> 
  
  
-<?php   include_once '../includes/footer.php';  ?>

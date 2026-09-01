@@ -92,8 +92,8 @@
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 25px;
+    grid-template-columns: 4fr 1fr;
+    gap: 20px;
 }
 
 .dashboard-panel {

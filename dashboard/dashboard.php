@@ -24,9 +24,21 @@ if (!isset($_SESSION["user_id"])) {
 
 // Determine the role of the logged-in user
 $role_id = $_SESSION['role_id'] ?? null;
-$role_file = '';
 
-// Map role_id to the corresponding dashboard view file
+?>
+
+<!-- Stylesheets -->
+<link rel="stylesheet" href="../includes/css/header.css"> 
+<link rel="stylesheet" href="../includes/css/global.css"> 
+<link rel="stylesheet" href="./css/dashboard.css"> 
+<link rel="stylesheet" href="../includes/css/footer.css"> 
+
+<!-- Include the header -->
+<?php   include_once '../includes/header.php';  ?> 
+
+<?php
+
+// Include the appropriate dashboard based on the user's role
 switch ($role_id) {
 
     case 1:
@@ -46,3 +58,6 @@ switch ($role_id) {
         exit();
 }
 ?>
+
+<!--Include the footer -->
+<?php   include_once '../includes/footer.php';  ?>
