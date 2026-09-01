@@ -80,7 +80,7 @@
                 </a>
 
                 <a
-                    href="<?= $basePath ?>/public/profile.php"
+                    href="<?= $basePath ?>/dashboard/dashboard.php?page=profile"
                 >
                     Profile
                 </a>

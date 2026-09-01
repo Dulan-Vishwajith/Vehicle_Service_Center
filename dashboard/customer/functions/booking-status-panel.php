@@ -24,7 +24,6 @@ if ($userId > 0) {
         LIMIT 5
     ";
 
-
     try {
 
         $stmt = $pdo->prepare($sql);
@@ -46,34 +45,38 @@ if ($userId > 0) {
    STATUS CLASS
 ===================================================== */
 
-/* =====================================================
-   STATUS CLASS
-===================================================== */
+if (!function_exists('getStatusClass')) {
 
-function getStatusClass($status)
-{
-    switch (strtolower(trim($status))) {
+    function getStatusClass($status)
+    {
+        switch (strtolower(trim($status ?? ''))) {
 
-        case 'pending':
-            return 'status-pending';
+            case 'pending':
+                return 'status-pending';
 
-        case 'booked':
-            return 'status-booked';
+            case 'booked':
+                return 'status-booked';
 
-        case 'confirmed':
-            return 'status-confirmed';
+            case 'confirmed':
+                return 'status-confirmed';
 
-        case 'service':
-        case 'in_progress':
-        case 'in progress':
-            return 'status-progress';
+            case 'service':
+            case 'in_progress':
+            case 'in progress':
+                return 'status-progress';
 
-        case 'completed':
-            return 'status-completed';
+            case 'completed':
+                return 'status-completed';
 
-        default:
-            return 'status-pending';
+            case 'cancelled':
+            case 'canceled':
+                return 'status-cancelled';
+
+            default:
+                return 'status-pending';
+        }
     }
+
 }
 
 
@@ -81,11 +84,19 @@ function getStatusClass($status)
    STATUS TEXT
 ===================================================== */
 
-function getStatusText($status)
-{
-    return ucwords(
-        str_replace('_', ' ', trim($status))
-    );
+if (!function_exists('getStatusText')) {
+
+    function getStatusText($status)
+    {
+        return ucwords(
+            str_replace(
+                '_',
+                ' ',
+                trim($status ?? '')
+            )
+        );
+    }
+
 }
 
 
@@ -93,32 +104,39 @@ function getStatusText($status)
    GET PROGRESS STEP
 ===================================================== */
 
-function getStatusStep($status)
-{
-    switch (strtolower(trim($status))) {
+if (!function_exists('getStatusStep')) {
 
-        case 'pending':
-        case 'booked':
-            return 1;
+    function getStatusStep($status)
+    {
+        switch (strtolower(trim($status ?? ''))) {
 
-        case 'confirmed':
-            return 2;
+            case 'pending':
+            case 'booked':
+                return 1;
 
-        case 'service':
-        case 'in_progress':
-        case 'in progress':
-            return 3;
+            case 'confirmed':
+                return 2;
 
-        case 'completed':
-            return 4;
+            case 'service':
+            case 'in_progress':
+            case 'in progress':
+                return 3;
 
-        default:
-            return 1;
+            case 'completed':
+                return 4;
+
+            case 'cancelled':
+            case 'canceled':
+                return 0;
+
+            default:
+                return 1;
+        }
     }
+
 }
+
 ?>
-
-
 
 
 <!-- =========================================
@@ -127,13 +145,9 @@ function getStatusStep($status)
 
 <div class="dashboard-panel booking-status-panel">
 
-
-    <!-- PANEL HEADER -->
-
     <div class="panel-header">
 
         <h2>Booking Status</h2>
-
 
     </div>
 
@@ -145,7 +159,7 @@ function getStatusStep($status)
              BOOKING HEADER
         ========================================= -->
 
-        <div class="booking-row booking-heading">
+        <div class="status-table-heading">
 
             <div class="booking-vehicle">
                 Vehicle
@@ -178,40 +192,53 @@ function getStatusStep($status)
 
             <?php
 
-                $currentStep = getStatusStep(
-                    $booking['status']
-                );
+            /* =========================================
+               CURRENT BOOKING STATUS
+            ========================================= */
+
+            $currentStatus = strtolower(
+                trim($booking['status'] ?? '')
+            );
+
+            $isCancelled =
+                ($currentStatus === 'cancelled' ||
+                 $currentStatus === 'canceled');
+
+
+            /* =========================================
+               CURRENT PROGRESS STEP
+            ========================================= */
+
+            $currentStep = getStatusStep(
+                $booking['status'] ?? ''
+            );
 
             ?>
 
 
-            <div class="booking-row">
+            <div class="status-table-row">
 
 
-                <!-- ==============================
-                     VEHICLE
-                =============================== -->
+                <!-- VEHICLE -->
 
                 <div class="booking-vehicle">
 
                     <strong>
-
                         <?= htmlspecialchars(
-                            $booking['vehicle_model']
+                            $booking['vehicle_model'] ?? 'Unknown Vehicle'
                         ); ?>
-
                     </strong>
 
                     <small>
 
                         Booking #<?= htmlspecialchars(
-                            $booking['id']
+                            $booking['id'] ?? ''
                         ); ?>
 
                         ·
 
                         <?= htmlspecialchars(
-                            $booking['license_plate']
+                            $booking['license_plate'] ?? ''
                         ); ?>
 
                     </small>
@@ -219,36 +246,40 @@ function getStatusStep($status)
                 </div>
 
 
-                <!-- ==============================
-                     DATE
-                =============================== -->
+                <!-- DATE -->
 
                 <div class="booking-date">
 
-                    <?= date(
-                        "d M Y",
-                        strtotime(
-                            $booking['booking_date']
-                        )
-                    ); ?>
+                    <?php if (!empty($booking['booking_date'])): ?>
+
+                        <?= date(
+                            "d M Y",
+                            strtotime($booking['booking_date'])
+                        ); ?>
+
+                    <?php else: ?>
+
+                        N/A
+
+                    <?php endif; ?>
 
                 </div>
 
 
-                <!-- ==============================
-                     STATUS
-                =============================== -->
+                <!-- STATUS -->
 
                 <div class="booking-status">
 
                     <span
                         class="status <?= getStatusClass(
-                            $booking['status']
+                            $booking['status'] ?? ''
                         ); ?>"
                     >
 
-                        <?= getStatusText(
-                            $booking['status']
+                        <?= htmlspecialchars(
+                            getStatusText(
+                                $booking['status'] ?? ''
+                            )
                         ); ?>
 
                     </span>
@@ -256,96 +287,167 @@ function getStatusStep($status)
                 </div>
 
 
-                <!-- ==============================
-                     PROGRESS
-                =============================== -->
+                <!-- PROGRESS -->
 
                 <div class="booking-progress-column">
 
-                    <div class="booking-status-progress">
+
+                    <?php if ($isCancelled): ?>
 
 
-                        <!-- BOOKED -->
+                        <!-- CANCELLED BOOKING -->
 
-                        <div class="booking-status-step <?= $currentStep >= 1 ? 'active' : ''; ?>">
+                        <div class="booking-cancelled-progress">
 
-                            <div class="booking-status-circle">
-
-                                <?= $currentStep > 1 ? '✓' : '1'; ?>
-
+                            <div class="cancelled-circle">
+                                ✕
                             </div>
 
-                            <span>Booked</span>
+                            <div class="cancelled-line"></div>
+
+                            <span class="cancelled-text">
+                                Booking Cancelled
+                            </span>
 
                         </div>
 
 
-                        <div class="booking-status-line <?= $currentStep >= 2 ? 'active' : ''; ?>"></div>
+                    <?php else: ?>
 
 
-                        <!-- CONFIRMED -->
+                        <!-- NORMAL BOOKING PROGRESS -->
 
-                        <div class="booking-status-step <?= $currentStep >= 2 ? 'active' : ''; ?>">
+                        <div class="booking-status-progress">
 
-                            <div class="booking-status-circle">
 
-                                <?= $currentStep > 2 ? '✓' : '2'; ?>
+                            <!-- BOOKED -->
+
+                            <div
+                                class="booking-status-step <?=
+                                    $currentStep >= 1
+                                    ? 'active'
+                                    : '';
+                                ?>"
+                            >
+
+                                <div class="booking-status-circle">
+
+                                    <?= $currentStep > 1 ? '✓' : '1'; ?>
+
+                                </div>
+
+                                <span>Booked</span>
 
                             </div>
 
-                            <span>Confirmed</span>
+
+                            <div
+                                class="booking-status-line <?=
+                                    $currentStep >= 2
+                                    ? 'active'
+                                    : '';
+                                ?>"
+                            ></div>
+
+
+                            <!-- CONFIRMED -->
+
+                            <div
+                                class="booking-status-step <?=
+                                    $currentStep >= 2
+                                    ? 'active'
+                                    : '';
+                                ?>"
+                            >
+
+                                <div class="booking-status-circle">
+
+                                    <?= $currentStep > 2 ? '✓' : '2'; ?>
+
+                                </div>
+
+                                <span>Confirmed</span>
+
+                            </div>
+
+
+                            <div
+                                class="booking-status-line <?=
+                                    $currentStep >= 3
+                                    ? 'active'
+                                    : '';
+                                ?>"
+                            ></div>
+
+
+                            <!-- SERVICE -->
+
+                            <div
+                                class="booking-status-step <?=
+                                    $currentStep >= 3
+                                    ? 'active'
+                                    : '';
+                                ?>"
+                            >
+
+                                <div class="booking-status-circle">
+
+                                    <?= $currentStep > 3 ? '✓' : '3'; ?>
+
+                                </div>
+
+                                <span>Service</span>
+
+                            </div>
+
+
+                            <div
+                                class="booking-status-line <?=
+                                    $currentStep >= 4
+                                    ? 'active'
+                                    : '';
+                                ?>"
+                            ></div>
+
+
+                            <!-- COMPLETED -->
+
+                            <div
+                                class="booking-status-step <?=
+                                    $currentStep >= 4
+                                    ? 'active'
+                                    : '';
+                                ?>"
+                            >
+
+                                <div class="booking-status-circle">
+
+                                    <?= $currentStep > 4 ? '✓' : '4'; ?>
+
+                                </div>
+
+                                <span>Completed</span>
+
+                            </div>
+
 
                         </div>
 
 
-                        <div class="booking-status-line <?= $currentStep >= 3 ? 'active' : ''; ?>"></div>
+                    <?php endif; ?>
 
-
-                        <!-- SERVICE -->
-
-                        <div class="booking-status-step <?= $currentStep >= 3 ? 'active' : ''; ?>">
-
-                            <div class="booking-status-circle">
-
-                                <?= $currentStep > 3 ? '✓' : '3'; ?>
-
-                            </div>
-
-                            <span>Service</span>
-
-                        </div>
-
-
-                        <div class="booking-status-line <?= $currentStep >= 4 ? 'active' : ''; ?>"></div>
-
-
-                        <!-- COMPLETED -->
-
-                        <div class="booking-status-step <?= $currentStep >= 4 ? 'active' : ''; ?>">
-
-                            <div class="booking-status-circle">
-                                4
-                            </div>
-
-                            <span>Completed</span>
-
-                        </div>
-
-
-                    </div>
 
                 </div>
 
-                <!-- ==============================
-                     TOTAL
-                =============================== -->
+
+                <!-- TOTAL -->
 
                 <div class="booking-total">
 
                     <strong>
 
                         Rs. <?= number_format(
-                            (float) $booking['total_price'],
+                            (float) ($booking['total_price'] ?? 0),
                             2
                         ); ?>
 

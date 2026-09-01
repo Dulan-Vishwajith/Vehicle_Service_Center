@@ -154,7 +154,7 @@ if ($user && password_verify($password, $user["password"])) {
     |--------------------------------------------------------------------------
     */
 
-    header("Location: ../index.php");
+    header("Location: ../dashboard/dashboard.php");
     exit();
 }
 
@@ -165,8 +165,7 @@ if ($user && password_verify($password, $user["password"])) {
 |--------------------------------------------------------------------------
 */
 
-$_SESSION["login_message"] =
-    "Incorrect email or password.";
+$_SESSION["login_message"] ="Incorrect email or password.";
 
 header("Location: login-form.php");
 exit();

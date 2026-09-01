@@ -180,6 +180,16 @@
     color: #198754;
 }
 
+.status-progress {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+}
+
+.status-cancelled {
+    background: #f8d7da;
+    color: #842029;
+}
+
 /* Quick Actions */
 
 .quick-action {
