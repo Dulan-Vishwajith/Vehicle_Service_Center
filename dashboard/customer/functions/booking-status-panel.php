@@ -476,7 +476,7 @@ if (!function_exists('getStatusStep')) {
             </p>
 
             <a
-                href="../booking/booking-form.php"
+                href="../booking/booking.php"
                 class="btn btn-primary"
             >
                 Make a Booking
