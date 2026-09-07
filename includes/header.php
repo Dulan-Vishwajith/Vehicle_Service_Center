@@ -8,12 +8,16 @@ $isLoggedIn = isset($_SESSION["user_id"]);
 
 /*
 |--------------------------------------------------------------------------
-| Project Root
+| User Role
 |--------------------------------------------------------------------------
-| Your project folder is:
-| Vehicle_Service_Center
-|
-| If you rename the project folder, change this value.
+| Role 2 = Service Assistant
+*/
+$userRole = (int) ($_SESSION["role_id"] ?? 0);
+
+
+/*
+|--------------------------------------------------------------------------
+| Project Root
 |--------------------------------------------------------------------------
 */
 $basePath = "/Vehicle_Service_Center";
@@ -32,10 +36,11 @@ $profileImage = $basePath . "/public/images/profile.png";
 
     <div class="container header-container">
 
-        <!-- =====================================================
-             LOGO
-             ===================================================== -->
-        <a href="<?= $basePath ?>/index.php#home" class="logo">
+        <!-- LOGO -->
+        <a
+            href="<?= $basePath ?>/index.php#home"
+            class="logo"
+        >
 
             <span class="logo-icon">⚙</span>
 
@@ -46,9 +51,7 @@ $profileImage = $basePath . "/public/images/profile.png";
         </a>
 
 
-        <!-- =====================================================
-             NAVIGATION
-             ===================================================== -->
+        <!-- NAVIGATION -->
         <nav class="main-nav">
 
             <a
@@ -59,45 +62,34 @@ $profileImage = $basePath . "/public/images/profile.png";
             </a>
 
 
-            <a
-                href="<?= $basePath ?>/index.php#services"
-            >
+            <a href="<?= $basePath ?>/index.php#services">
                 Services
             </a>
 
 
-            <a
-                href="<?= $basePath ?>/index.php#packages"
-            >
+            <a href="<?= $basePath ?>/index.php#packages">
                 Packages
             </a>
 
 
-            <a
-                href="<?= $basePath ?>/index.php#offers"
-            >
+            <a href="<?= $basePath ?>/index.php#offers">
                 Offers
             </a>
 
 
-            <a
-                href="#contact"
-            >
+            <a href="#contact">
                 Contact
             </a>
 
         </nav>
 
 
-        <!-- =====================================================
-             AUTHENTICATION
-             ===================================================== -->
+        <!-- AUTHENTICATION -->
         <div class="auth-buttons">
 
             <?php if ($isLoggedIn): ?>
 
-            <!-- Logged In -->
-
+                <!-- Dashboard -->
                 <a
                     href="<?= $basePath ?>/dashboard/dashboard.php"
                     class="dashboard-btn"
@@ -106,62 +98,83 @@ $profileImage = $basePath . "/public/images/profile.png";
                 </a>
 
 
-            <!-- Profile Dropdown -->
+                <!-- PROFILE DROPDOWN -->
+                <div class="profile-dropdown">
 
-            <div class="profile-dropdown">
-
-                <button
-                    type="button"
-                    class="profile-avatar profile-dropdown-toggle"
-                    title="Profile menu"
-                    aria-label="Open profile menu"
-                >
-                    <img
-                        src="<?= htmlspecialchars($profileImage) ?>"
-                        alt="Profile"
+                    <button
+                        type="button"
+                        class="profile-avatar profile-dropdown-toggle"
+                        title="Profile menu"
+                        aria-label="Open profile menu"
                     >
-                </button>
+
+                        <img
+                            src="<?= htmlspecialchars($profileImage) ?>"
+                            alt="Profile"
+                        >
+
+                    </button>
 
 
-                <!-- Dropdown Menu -->
-                <div class="profile-dropdown-menu">
+                    <div class="profile-dropdown-menu">
 
-                    <!-- Profile -->
-                    <a href="<?= $basePath ?>/dashboard/dashboard.php?page=profile">
-                        Profile
-                    </a>
-
-
-                    <!-- Dashboard -->
-                    <a href="<?= $basePath ?>/dashboard/dashboard.php">
-                        Dashboard
-                    </a>
+                        <!-- Profile -->
+                        <a
+                            href="<?= $basePath ?>/dashboard/dashboard.php?page=profile"
+                        >
+                            Profile
+                        </a>
 
 
-                    <!-- My Bookings -->
-                    <a href="<?= $basePath ?>/dashboard/dashboard.php?page=bookings">
-                        My Bookings
-                    </a>
+                        <!-- Dashboard -->
+                        <a
+                            href="<?= $basePath ?>/dashboard/dashboard.php"
+                        >
+                            Dashboard
+                        </a>
 
 
-                    <div class="dropdown-divider"></div>
+                        <!-- ROLE 2: SERVICE ASSISTANT -->
+                        <?php if ($userRole === 2): ?>
+
+                            <a
+                                href="<?= $basePath ?>/dashboard/dashboard.php?page=appointments"
+                            >
+                                My Appointments
+                            </a>
 
 
-                    <!-- Logout -->
-                    <a
-                        href="<?= $basePath ?>/login/logout.php"
-                        class="logout-link"
-                    >
-                        Logout
-                    </a>
+                        <!-- OTHER USERS -->
+                        <?php else: ?>
+
+                            <a
+                                href="<?= $basePath ?>/dashboard/dashboard.php?page=bookings"
+                            >
+                                My Bookings
+                            </a>
+
+                        <?php endif; ?>
+
+
+                        <div class="dropdown-divider"></div>
+
+
+                        <!-- Logout -->
+                        <a
+                            href="<?= $basePath ?>/login/logout.php"
+                            class="logout-link"
+                        >
+                            Logout
+                        </a>
+
+                    </div>
 
                 </div>
 
-            </div>
 
+            <?php else: ?>
 
-        <?php else: ?>
-                <!-- Not Logged In -->
+                <!-- NOT LOGGED IN -->
 
                 <a
                     href="<?= $basePath ?>/login/login-form.php"
@@ -186,4 +199,7 @@ $profileImage = $basePath . "/public/images/profile.png";
 
 </header>
 
-<script src="<?= $basePath ?>/includes/js/profile-dropdown.js"></script>
+
+<script
+    src="<?= $basePath ?>/includes/js/profile-dropdown.js"
+></script>
