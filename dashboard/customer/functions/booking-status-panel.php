@@ -21,7 +21,6 @@ if ($userId > 0) {
         FROM bookings b
         WHERE b.user_id = ?
         ORDER BY b.booking_date DESC
-        LIMIT 5
     ";
 
     try {
