@@ -1,41 +1,36 @@
 <?php
-// Offers data
-$offers = [
-    [
-        "class" => "dark-card",
-        "icon" => "🔥",
-        "type" => "SEASONAL OFFER",
-        "title" => "Full Service Special",
-        "discount" => "15% OFF",
-        "description" => "Get 15% off your next full vehicle service.",
-        "valid" => "Valid until 31 August 2026",
-        "link" => "book-appointment.php"
-    ],
 
-    [
-        "class" => "red-card",
-        "icon" => "👑",
-        "type" => "REGULAR CUSTOMER",
-        "title" => "Loyalty Reward",
-        "discount" => "10% OFF",
-        "description" => "Special discount for returning customers.",
-        "valid" => "Terms and conditions apply",
-        "link" => "login.php"
-    ],
+require_once "config/database.php";
 
-    [
-        "class" => "navy-card",
-        "icon" => "🚗",
-        "type" => "SERVICE DEAL",
-        "title" => "AC Service Deal",
-        "discount" => "Rs. 4,500",
-        "description" => "Complete AC inspection and service at a special price.",
-        "valid" => "Limited time offer",
-        "link" => "book-appointment.php"
-    ]
-];
+/* =========================================================
+   GET ACTIVE OFFERS
+   ========================================================= */
+
+$offerStatus = 1;
+
+$offerSQL = "
+    SELECT
+        id,
+        card_class,
+        icon,
+        offer_type,
+        title,
+        discount,
+        description,
+        valid_text,
+        link
+    FROM offers
+    WHERE status = ?
+    ORDER BY id ASC
+";
+
+$offerStmt = $pdo->prepare($offerSQL);
+
+$offerStmt->execute([$offerStatus]);
+
+$offers = $offerStmt->fetchAll();
+
 ?>
-
 
 
 <section class="section offers-section" id="offers">
@@ -61,44 +56,53 @@ $offers = [
 
         <div class="offers-grid">
 
-            <?php foreach ($offers as $offer): ?>
+            <?php if (!empty($offers)): ?>
 
-                <div class="offer-card <?= $offer['class']; ?>">
+                <?php foreach ($offers as $offer): ?>
 
-                    <div class="offer-icon">
-                        <?= $offer['icon']; ?>
+                    <div class="offer-card <?= htmlspecialchars($offer['card_class'], ENT_QUOTES, 'UTF-8'); ?>">
+
+                        <div class="offer-icon">
+                            <?= htmlspecialchars($offer['icon'], ENT_QUOTES, 'UTF-8'); ?>
+                        </div>
+
+                        <span class="offer-type">
+                            <?= htmlspecialchars($offer['offer_type'], ENT_QUOTES, 'UTF-8'); ?>
+                        </span>
+
+                        <h3>
+                            <?= htmlspecialchars($offer['title'], ENT_QUOTES, 'UTF-8'); ?>
+                        </h3>
+
+                        <div class="discount">
+                            <?= htmlspecialchars($offer['discount'], ENT_QUOTES, 'UTF-8'); ?>
+                        </div>
+
+                        <p>
+                            <?= htmlspecialchars($offer['description'], ENT_QUOTES, 'UTF-8'); ?>
+                        </p>
+
+                        <small>
+                            <?= htmlspecialchars($offer['valid_text'], ENT_QUOTES, 'UTF-8'); ?>
+                        </small>
+
                     </div>
 
-                    <span class="offer-type">
-                        <?= $offer['type']; ?>
-                    </span>
+                <?php endforeach; ?>
 
-                    <h3>
-                        <?= $offer['title']; ?>
-                    </h3>
+            <?php else: ?>
 
-                    <div class="discount">
-                        <?= $offer['discount']; ?>
-                    </div>
+                <div class="no-offers">
 
                     <p>
-                        <?= $offer['description']; ?>
+                        No special offers are currently available.
                     </p>
-
-                    <small>
-                        <?= $offer['valid']; ?>
-                    </small>
-
-                    
 
                 </div>
 
-            <?php endforeach; ?>
+            <?php endif; ?>
 
         </div>
-
-
-        
 
     </div>
 
