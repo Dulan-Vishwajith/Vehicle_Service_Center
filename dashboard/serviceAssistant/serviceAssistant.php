@@ -1,134 +1,265 @@
 <?php
-/*
-|--------------------------------------------------------------------------
-| SERVICE ASSISTANT DASHBOARD
-|--------------------------------------------------------------------------
-*/
 
-$dashboardRole = "SERVICE ASSISTANT";
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-$dashboardTitle = "Service Dashboard";
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../login/login-form.php");
+    exit;
+}
 
-$dashboardDescription = "Manage today's bookings, services and customers.";
+$assistantId = (int) $_SESSION['user_id'];
 
-$dashboardButtonText = "View Schedule";
-
-$dashboardButtonLink = "#";
+require_once __DIR__ . '/../../config/database.php';
 
 
-/*
-|--------------------------------------------------------------------------
-| DASHBOARD CARDS
-|--------------------------------------------------------------------------
-*/
+$dashboardRole = 'SERVICE ASSISTANT';
 
-$dashboardCards = [
+$dashboardTitle = 'Service Assistant Dashboard';
 
-    [
-        'icon' => '📅',
-        'label' => "Today's Bookings",
-        'value' => '8'
-    ],
+$dashboardDescription =
+    'Manage your appointments and customer services.';
 
-    [
-        'icon' => '⏳',
-        'label' => 'Pending',
-        'value' => '3'
-    ],
+$dashboardButtonText =
+    "View Today's Schedule";
 
-    [
-        'icon' => '🔧',
-        'label' => 'In Progress',
-        'value' => '2'
-    ],
+$dashboardButtonLink =
+    '?page=today';
 
-    [
-        'icon' => '✓',
-        'label' => 'Completed Today',
-        'value' => '3'
-    ]
-
-];
-
-/*
-|--------------------------------------------------------------------------
-| QUICK ACTIONS
-|--------------------------------------------------------------------------
-*/
 
 $quickActions = [
 
     [
         'icon' => '📅',
         'title' => "Today's Schedule",
-        'link' => '#'
+        'link' => '?page=today'
     ],
 
     [
         'icon' => '📋',
-        'title' => 'All Bookings',
-        'link' => '#'
+        'title' => 'My Appointments',
+        'link' => '?page=appointments'
+    ],
+
+    [
+        'icon' => '🚗',
+        'title' => 'Available Bookings',
+        'link' => '?page=available'
     ],
 
     [
         'icon' => '👥',
-        'title' => 'Customers',
-        'link' => '#'
+        'title' => 'View Customers',
+        'link' => '?page=customers'
     ],
 
     [
-        'icon' => '💬',
-        'title' => 'Customer Messages',
-        'link' => '#'
+        'icon' => '👤',
+        'title' => 'My Profile',
+        'link' => '?page=profile'
     ]
 
 ];
 
+
+$page = $_GET['page'] ?? 'today';
+
+
+$allowedPages = [
+
+    'today',
+    'appointments',
+    'available',
+    'details',
+    'profile',
+    'customers'
+
+];
+
+
+if (!in_array($page, $allowedPages, true)) {
+
+    $page = 'today';
+
+}
+
 ?>
+
+
+<link rel="stylesheet" href="./serviceAssistant/functions/functions.css">
 
 
 <main class="dashboard-content">
 
     <section class="role-dashboard">
 
-        <!-- Dashboard Header -->
+
+        <!-- DASHBOARD HEADER -->
+
         <?php
-        include __DIR__ . '/../includes/dashboard-header.php';
+
+        include __DIR__
+            . '/../includes/dashboard-header.php';
+
         ?>
 
 
-        <!-- Dashboard Cards -->
+        <!-- DASHBOARD CARDS -->
+
         <?php
-        include __DIR__ . '/../includes/dashboard-cards.php';
+
+        include __DIR__
+            . '/functions/service-assistant-dashboard-cards.php';
+
         ?>
 
 
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
+        <!-- SUCCESS MESSAGE -->
 
-            <!-- Functions --> 
-            <div class="dashboard-panel"> 
-    
-                <?php 
-                //Include service assistant functions 
-                ?> 
-    
+        <?php if (
+            isset($_GET['success'])
+            && $_GET['success'] === 'booking_confirmed'
+        ): ?>
+
+            <div class="booking-success-message">
+
+                Booking confirmed and assigned to you successfully.
+
             </div>
 
+        <?php endif; ?>
 
-            <!-- Quick Actions -->
-            <div class="dashboard-panel">
+
+        <!-- ERROR MESSAGE -->
+
+        <?php if (isset($_GET['error'])): ?>
+
+            <div class="booking-error-message">
 
                 <?php
-                include __DIR__ . '/../includes/quick-action-panel.php';
+
+                $error = $_GET['error'];
+
+
+                if ($error === 'booking_unavailable') {
+
+                    echo 'This booking is no longer available.';
+
+                } elseif ($error === 'invalid_booking') {
+
+                    echo 'Invalid booking.';
+
+                } elseif ($error === 'unauthorized') {
+
+                    echo 'You are not authorized to perform this action.';
+
+                } elseif ($error === 'update') {
+
+                    echo 'Unable to update the booking.';
+
+                } else {
+
+                    echo 'An error occurred. Please try again.';
+
+                }
+
                 ?>
 
             </div>
 
+        <?php endif; ?>
+
+
+        <div class="dashboard-grid">
+
+
+            <!-- MAIN CONTENT -->
+
+            <div class="dashboard-panel">
+
+
+                <?php
+
+
+                switch ($page) {
+
+
+                    case 'appointments':
+
+                        include __DIR__
+                            . '/functions/manage-appointments.php';
+
+                        break;
+
+
+                    case 'available':
+
+                        include __DIR__
+                            . '/functions/available-bookings.php';
+
+                        break;
+
+
+                    case 'details':
+
+                        include __DIR__
+                            . '/functions/appointment-details.php';
+
+                        break;
+
+
+                    case 'customers':
+
+                        include __DIR__
+                            . '/functions/view-customers.php';
+
+                        break;
+
+                    case 'profile':
+                        include __DIR__ . '/functions/my-profile.php';
+                        
+                        break;
+
+                    
+
+                    case 'today':
+
+                    default:
+
+                        include __DIR__
+                            . '/functions/today-schedule.php';
+
+                        break;
+
+                }
+
+
+                ?>
+
+
+            </div>
+
+
+            <!-- QUICK ACTIONS -->
+
+            <div class="dashboard-panel">
+
+
+                <?php
+
+                include __DIR__
+                    . '/../includes/quick-action-panel.php';
+
+                ?>
+
+
+            </div>
+
+
         </div>
+
 
     </section>
 
 </main>
-
-

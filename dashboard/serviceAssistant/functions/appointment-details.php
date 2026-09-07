@@ -1,0 +1,466 @@
+<?php
+
+
+$bookingId =
+    (int) ($_GET['id'] ?? 0);
+
+
+$booking = null;
+
+
+if ($bookingId > 0) {
+
+
+    try {
+
+
+        $stmt = $pdo->prepare("
+
+            SELECT
+
+                b.*,
+
+                u.name AS customer_name,
+
+                u.email,
+
+                u.phone,
+
+                ts.slot_name,
+
+                ts.start_time,
+
+                ts.end_time,
+
+                GROUP_CONCAT(
+                    DISTINCT s.service_name
+                    ORDER BY s.service_name
+                    SEPARATOR ', '
+                ) AS services
+
+            FROM bookings b
+
+            INNER JOIN users u
+                ON b.user_id = u.user_id
+
+            LEFT JOIN time_slots ts
+                ON b.time_slot_id = ts.id
+
+            LEFT JOIN booking_services bs
+                ON b.id = bs.booking_id
+
+            LEFT JOIN services s
+                ON bs.service_id = s.id
+
+            WHERE b.id = ?
+
+            AND (
+
+                b.assigned_assistant_id = ?
+
+                OR (
+
+                    b.assigned_assistant_id IS NULL
+
+                    AND b.status IN (
+                        'pending',
+                        'booked'
+                    )
+
+                )
+
+            )
+
+            GROUP BY
+
+                b.id,
+                u.name,
+                u.email,
+                u.phone,
+                ts.slot_name,
+                ts.start_time,
+                ts.end_time
+
+        ");
+
+
+        $stmt->execute([
+
+            $bookingId,
+            $assistantId
+
+        ]);
+
+
+        $booking =
+            $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+    } catch (PDOException $e) {
+
+
+        $booking = null;
+
+
+    }
+
+
+}
+
+
+if (!$booking) {
+
+
+    echo '
+
+        <div class="empty-message">
+
+            <h3>Booking Not Found</h3>
+
+            <p>
+
+                The booking is unavailable
+                or belongs to another assistant.
+
+            </p>
+
+        </div>
+
+    ';
+
+
+    return;
+
+
+}
+
+
+$isAvailableBooking =
+    $booking['assigned_assistant_id'] === null
+    && in_array(
+        $booking['status'],
+        ['pending', 'booked'],
+        true
+    );
+
+
+$isMyBooking =
+    (int) $booking['assigned_assistant_id']
+    === $assistantId;
+
+?>
+
+
+<div class="panel-header">
+
+    <div>
+
+        <span class="section-label">
+            BOOKING DETAILS
+        </span>
+
+        <h2>
+
+            Booking #
+            <?= (int) $booking['id'] ?>
+
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="booking-card">
+
+
+    <!-- CUSTOMER DETAILS -->
+
+    <h3>
+        Customer Details
+    </h3>
+
+
+    <p>
+
+        <strong>Name:</strong>
+
+        <?= htmlspecialchars(
+            $booking['customer_name']
+        ) ?>
+
+    </p>
+
+
+    <p>
+
+        <strong>Email:</strong>
+
+        <?= htmlspecialchars(
+            $booking['email']
+        ) ?>
+
+    </p>
+
+
+    <p>
+
+        <strong>Phone:</strong>
+
+        <?= htmlspecialchars(
+            $booking['phone']
+        ) ?>
+
+    </p>
+
+
+    <hr>
+
+
+    <!-- VEHICLE DETAILS -->
+
+    <h3>
+        Vehicle Details
+    </h3>
+
+
+    <p>
+
+        <strong>Vehicle:</strong>
+
+        <?= htmlspecialchars(
+            $booking['vehicle_model']
+        ) ?>
+
+    </p>
+
+
+    <p>
+
+        <strong>License Plate:</strong>
+
+        <?= htmlspecialchars(
+            $booking['license_plate']
+        ) ?>
+
+    </p>
+
+
+    <hr>
+
+
+    <!-- BOOKING DETAILS -->
+
+    <h3>
+        Booking Details
+    </h3>
+
+
+    <p>
+
+        <strong>Services:</strong>
+
+        <?= htmlspecialchars(
+            $booking['services']
+            ?: 'Not available'
+        ) ?>
+
+    </p>
+
+
+    <p>
+
+        <strong>Date:</strong>
+
+        <?= htmlspecialchars(
+            $booking['booking_date']
+        ) ?>
+
+    </p>
+
+
+    <p>
+
+        <strong>Time:</strong>
+
+        <?= htmlspecialchars(
+            $booking['start_time'] ?: ''
+        ) ?>
+
+        -
+
+        <?= htmlspecialchars(
+            $booking['end_time'] ?: ''
+        ) ?>
+
+    </p>
+
+
+    <p>
+
+        <strong>Total Price:</strong>
+
+        Rs.
+
+        <?= number_format(
+            (float) $booking['total_price'],
+            2
+        ) ?>
+
+    </p>
+
+
+    <p>
+
+        <strong>Status:</strong>
+
+        <?= htmlspecialchars(
+            ucfirst($booking['status'])
+        ) ?>
+
+    </p>
+
+
+    <!-- ACTIONS -->
+
+    <div class="booking-status-actions">
+
+
+        <?php if ($isAvailableBooking): ?>
+
+
+            <form
+                method="POST"
+                action="./serviceAssistant/functions/confirm-and-assign.php"
+            >
+
+                <input
+                    type="hidden"
+                    name="booking_id"
+                    value="<?= (int) $booking['id'] ?>"
+                >
+
+
+                <button
+                    type="submit"
+                    onclick="
+                        return confirm(
+                            'Confirm this booking and assign it to yourself?'
+                        );
+                    "
+                >
+
+                    Confirm &amp; Assign to Me
+
+                </button>
+
+
+            </form>
+
+
+        <?php elseif (
+
+            $isMyBooking
+            && $booking['status'] === 'confirmed'
+
+        ): ?>
+
+
+            <form
+                method="POST"
+                action="./serviceAssistant/functions/update-booking-status.php"
+            >
+
+                <input
+                    type="hidden"
+                    name="booking_id"
+                    value="<?= (int) $booking['id'] ?>"
+                >
+
+
+                <input
+                    type="hidden"
+                    name="status"
+                    value="service"
+                >
+
+
+                <button type="submit">
+
+                    Start Service
+
+                </button>
+
+
+            </form>
+
+
+        <?php elseif (
+
+            $isMyBooking
+            && $booking['status'] === 'service'
+
+        ): ?>
+
+
+            <form
+                method="POST"
+                action="./serviceAssistant/functions/update-booking-status.php"
+            >
+
+                <input
+                    type="hidden"
+                    name="booking_id"
+                    value="<?= (int) $booking['id'] ?>"
+                >
+
+
+                <input
+                    type="hidden"
+                    name="status"
+                    value="completed"
+                >
+
+
+                <button type="submit">
+
+                    Complete Service
+
+                </button>
+
+
+            </form>
+
+
+        <?php endif; ?>
+
+
+        <!-- DYNAMIC BACK BUTTON -->
+
+        <?php if ($isAvailableBooking): ?>
+
+
+            <a href="?page=available">
+
+                Back to Available Bookings
+
+            </a>
+
+
+        <?php else: ?>
+
+
+            <a href="?page=appointments">
+
+                Back to My Appointments
+
+            </a>
+
+
+        <?php endif; ?>
+
+
+    </div>
+
+
+</div>
