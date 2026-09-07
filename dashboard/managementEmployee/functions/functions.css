@@ -1,0 +1,1429 @@
+/* =========================================
+   MANAGEMENT DASHBOARD
+   (scoped to .ops-* / .management-dashboard-cards
+   so it can't collide with the generic
+   .booking-row/.status rules in dashboard.css)
+========================================= */
+
+.management-dashboard-cards .card-icon {
+    background: var(--color-primary-soft);
+}
+
+
+/* =========================================
+   OPERATIONS SECTIONS
+========================================= */
+
+.ops-section {
+    margin-bottom: 32px;
+}
+
+.ops-section:last-child {
+    margin-bottom: 0;
+}
+
+.ops-section-title {
+    margin-bottom: 14px;
+
+    color: var(--color-dark);
+    font-size: 15px;
+}
+
+.ops-error-message {
+    padding: 14px 16px;
+    margin-bottom: 20px;
+
+    border-radius: var(--radius-sm);
+
+    background: #f8d7da;
+    color: #842029;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================================
+   OPERATIONS TABLE
+   (flex-row table, same idiom as
+   booking-status-panel in customer dashboard)
+========================================= */
+
+.ops-table {
+    overflow-x: auto;
+}
+
+.ops-table-heading,
+.ops-table-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    min-width: 900px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.ops-table-heading {
+    color: var(--color-dark);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.ops-table-row:last-child {
+    border-bottom: none;
+}
+
+.ops-table-row:hover {
+    background: var(--color-bg);
+}
+
+.ops-table-compact .ops-table-heading,
+.ops-table-compact .ops-table-row {
+    min-width: 500px;
+}
+
+.ops-col-id {
+    width: 70px;
+    flex-shrink: 0;
+    color: var(--color-muted);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ops-col-customer {
+    width: 150px;
+    flex-shrink: 0;
+    color: var(--color-dark);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ops-col-vehicle {
+    width: 140px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-col-vehicle small {
+    display: block;
+    margin-top: 3px;
+    color: var(--color-muted);
+    font-size: 11px;
+}
+
+.ops-col-service {
+    flex: 1;
+    min-width: 160px;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-col-assistant {
+    width: 130px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-col-date {
+    width: 110px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--color-text);
+    white-space: nowrap;
+}
+
+.ops-col-date small {
+    display: block;
+    margin-top: 2px;
+    color: var(--color-muted);
+    font-size: 11px;
+}
+
+.ops-col-status {
+    width: 110px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-col-total {
+    width: 110px;
+    flex-shrink: 0;
+    color: var(--color-dark);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.ops-col-action {
+    width: 60px;
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.ops-view-link {
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* =========================================
+   OPERATION DETAILS
+========================================= */
+
+.ops-details-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.ops-details-top h3 {
+    margin-top: 4px;
+    color: var(--color-dark);
+}
+
+.ops-details-block {
+    margin-bottom: 24px;
+}
+
+.ops-details-block:last-child {
+    margin-bottom: 0;
+}
+
+.ops-details-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.ops-services-list {
+    margin-top: 10px;
+}
+
+.ops-service-line {
+    display: flex;
+    justify-content: space-between;
+
+    padding: 12px 0;
+
+    border-bottom: 1px solid var(--color-border-light);
+
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-service-line:last-child {
+    border-bottom: none;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 768px) {
+
+    .ops-details-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .ops-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ops-details-top {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+}
+
+/* =========================================
+   MANAGEMENT DASHBOARD
+   (scoped to .ops-* / .management-dashboard-cards
+   so it can't collide with the generic
+   .booking-row/.status rules in dashboard.css)
+========================================= */
+
+.management-dashboard-cards .card-icon {
+    background: var(--color-primary-soft);
+}
+
+
+/* =========================================
+   OPERATIONS SECTIONS
+========================================= */
+
+.ops-section {
+    margin-bottom: 32px;
+}
+
+.ops-section:last-child {
+    margin-bottom: 0;
+}
+
+.ops-section-title {
+    margin-bottom: 14px;
+
+    color: var(--color-dark);
+    font-size: 15px;
+}
+
+.ops-error-message {
+    padding: 14px 16px;
+    margin-bottom: 20px;
+
+    border-radius: var(--radius-sm);
+
+    background: #f8d7da;
+    color: #842029;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================================
+   OPERATIONS TABLE
+   (flex-row table, same idiom as
+   booking-status-panel in customer dashboard)
+========================================= */
+
+.ops-table {
+    overflow-x: auto;
+}
+
+.ops-table-heading,
+.ops-table-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    min-width: 900px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.ops-table-heading {
+    color: var(--color-dark);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.ops-table-row:last-child {
+    border-bottom: none;
+}
+
+.ops-table-row:hover {
+    background: var(--color-bg);
+}
+
+.ops-table-compact .ops-table-heading,
+.ops-table-compact .ops-table-row {
+    min-width: 500px;
+}
+
+.ops-col-id {
+    width: 70px;
+    flex-shrink: 0;
+    color: var(--color-muted);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ops-col-customer {
+    width: 150px;
+    flex-shrink: 0;
+    color: var(--color-dark);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ops-col-vehicle {
+    width: 140px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-col-vehicle small {
+    display: block;
+    margin-top: 3px;
+    color: var(--color-muted);
+    font-size: 11px;
+}
+
+.ops-col-service {
+    flex: 1;
+    min-width: 160px;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-col-assistant {
+    width: 130px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-col-date {
+    width: 110px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--color-text);
+    white-space: nowrap;
+}
+
+.ops-col-date small {
+    display: block;
+    margin-top: 2px;
+    color: var(--color-muted);
+    font-size: 11px;
+}
+
+.ops-col-status {
+    width: 110px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-col-total {
+    width: 110px;
+    flex-shrink: 0;
+    color: var(--color-dark);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.ops-col-action {
+    width: 60px;
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.ops-view-link {
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* =========================================
+   OPERATION DETAILS
+========================================= */
+
+.ops-details-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.ops-details-top h3 {
+    margin-top: 4px;
+    color: var(--color-dark);
+}
+
+.ops-details-block {
+    margin-bottom: 24px;
+}
+
+.ops-details-block:last-child {
+    margin-bottom: 0;
+}
+
+.ops-details-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.ops-services-list {
+    margin-top: 10px;
+}
+
+.ops-service-line {
+    display: flex;
+    justify-content: space-between;
+
+    padding: 12px 0;
+
+    border-bottom: 1px solid var(--color-border-light);
+
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-service-line:last-child {
+    border-bottom: none;
+}
+
+
+/* =========================================
+   REPORTS — CATEGORY HUB
+========================================= */
+
+.report-category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.report-category-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    padding: 20px;
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+
+    color: var(--color-text);
+
+    transition: var(--transition-fast);
+}
+
+.report-category-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.report-category-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--color-primary-soft);
+    border-radius: var(--radius-sm);
+
+    font-size: 20px;
+}
+
+.report-category-card h3 {
+    margin-bottom: 6px;
+    color: var(--color-dark);
+    font-size: 15px;
+}
+
+.report-category-card p {
+    color: var(--color-muted);
+    font-size: 13px;
+}
+
+
+/* =========================================
+   REPORTS — DATE FILTERS
+========================================= */
+
+.report-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 16px;
+    padding-bottom: 18px;
+
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.report-filter {
+    padding: 8px 14px;
+
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+
+    color: var(--color-text);
+    font-size: 12px;
+    font-weight: 700;
+
+    transition: var(--transition-fast);
+}
+
+.report-filter:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.report-filter.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.report-custom-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-left: auto;
+
+    font-size: 12px;
+    color: var(--color-muted);
+}
+
+.report-custom-range input[type="date"] {
+    padding: 7px 10px;
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+
+    font-size: 12px;
+}
+
+.report-filter-submit {
+    padding: 8px 14px;
+
+    border: none;
+    border-radius: var(--radius-sm);
+
+    background: var(--color-dark);
+    color: var(--color-white);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.report-range-label {
+    margin-bottom: 20px;
+    color: var(--color-muted);
+    font-size: 13px;
+}
+
+
+/* =========================================
+   REPORTS — HIGHLIGHT / SUMMARY CARDS
+========================================= */
+
+.report-highlights {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+    margin-bottom: 24px;
+}
+
+.report-highlight-card {
+    padding: 18px;
+
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.report-highlight-card span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-muted);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.report-highlight-card strong {
+    display: block;
+    color: var(--color-dark);
+    font-size: 17px;
+}
+
+.report-highlight-card small {
+    display: block;
+    margin-top: 4px;
+    color: var(--color-muted);
+    font-size: 12px;
+}
+
+
+/* =========================================
+   ADMIN — MESSAGES
+========================================= */
+
+.admin-message {
+    padding: 14px 16px;
+    margin-bottom: 20px;
+
+    border-radius: var(--radius-sm);
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.admin-message.success {
+    background: #e8f8ef;
+    color: #198754;
+}
+
+.admin-message.error {
+    background: #f8d7da;
+    color: #842029;
+}
+
+
+/* =========================================
+   ADMIN — LIST TABLES
+   (reuses .ops-table row/heading layout,
+   just different column widths)
+========================================= */
+
+.admin-col-name {
+    width: 170px;
+    flex-shrink: 0;
+    color: var(--color-dark);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.admin-col-mid {
+    width: 130px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.admin-col-service {
+    flex: 1;
+    min-width: 200px;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.admin-col-truncate {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.admin-col-status {
+    width: 100px;
+    flex-shrink: 0;
+}
+
+.admin-col-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    width: 190px;
+    flex-shrink: 0;
+}
+
+.admin-inline-form {
+    display: inline;
+}
+
+.admin-action-link {
+    border: none;
+    background: none;
+    padding: 0;
+
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.admin-action-danger {
+    color: #dc3545;
+}
+
+
+/* =========================================
+   ADMIN — FORMS
+========================================= */
+
+.admin-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.admin-form-full {
+    grid-column: 1 / -1;
+}
+
+.admin-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.admin-form-group label {
+    color: var(--color-dark);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.admin-form-group input,
+.admin-form-group select,
+.admin-form-group textarea {
+    width: 100%;
+
+    padding: 12px 14px;
+
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+
+    color: var(--color-text);
+    font-size: 14px;
+    font-family: inherit;
+
+    outline: none;
+}
+
+.admin-form-group input:focus,
+.admin-form-group select:focus,
+.admin-form-group textarea:focus {
+    border-color: var(--color-primary);
+}
+
+.admin-form-group textarea {
+    resize: vertical;
+}
+
+.admin-form-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    margin-top: 25px;
+    padding-top: 20px;
+
+    border-top: 1px solid var(--color-border-light);
+}
+
+.admin-save-btn,
+.admin-cancel-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 18px;
+
+    border: none;
+    border-radius: var(--radius-md);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+    text-decoration: none;
+
+    transition: var(--transition-fast);
+}
+
+.admin-save-btn {
+    background: var(--color-primary);
+    color: var(--color-white);
+}
+
+.admin-cancel-btn {
+    background: #f1f3f5;
+    color: var(--color-text);
+}
+
+
+/* =========================================
+   ADMIN — CHECKBOX GRID
+   (package form: included services)
+========================================= */
+
+.admin-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+
+    margin-top: 8px;
+    padding: 16px;
+
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.admin-checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 13px;
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.admin-checkbox-item small {
+    margin-left: auto;
+    color: var(--color-muted);
+    font-weight: 400;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+
+    .report-category-grid,
+    .report-highlights {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-checkbox-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .ops-details-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .ops-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ops-details-top {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .report-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .report-custom-range {
+        margin-left: 0;
+        flex-wrap: wrap;
+    }
+
+    .admin-checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-form-actions {
+        flex-direction: column;
+    }
+
+    .admin-save-btn,
+    .admin-cancel-btn {
+        width: 100%;
+    }
+
+    .admin-col-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        width: 90px;
+    }
+
+}
+
+/* =========================================
+   MANAGEMENT DASHBOARD
+   (scoped to .ops-* / .management-dashboard-cards
+   so it can't collide with the generic
+   .booking-row/.status rules in dashboard.css)
+========================================= */
+
+.management-dashboard-cards .card-icon {
+    background: var(--color-primary-soft);
+}
+
+
+/* =========================================
+   OPERATIONS SECTIONS
+========================================= */
+
+.ops-section {
+    margin-bottom: 32px;
+}
+
+.ops-section:last-child {
+    margin-bottom: 0;
+}
+
+.ops-section-title {
+    margin-bottom: 14px;
+
+    color: var(--color-dark);
+    font-size: 15px;
+}
+
+.ops-error-message {
+    padding: 14px 16px;
+    margin-bottom: 20px;
+
+    border-radius: var(--radius-sm);
+
+    background: #f8d7da;
+    color: #842029;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================================
+   OPERATIONS TABLE
+   (flex-row table, same idiom as
+   booking-status-panel in customer dashboard)
+========================================= */
+
+.ops-table {
+    overflow-x: auto;
+}
+
+.ops-table-heading,
+.ops-table-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    min-width: 900px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.ops-table-heading {
+    color: var(--color-dark);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.ops-table-row:last-child {
+    border-bottom: none;
+}
+
+.ops-table-row:hover {
+    background: var(--color-bg);
+}
+
+.ops-table-compact .ops-table-heading,
+.ops-table-compact .ops-table-row {
+    min-width: 500px;
+}
+
+.ops-col-id {
+    width: 70px;
+    flex-shrink: 0;
+    color: var(--color-muted);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ops-col-customer {
+    width: 150px;
+    flex-shrink: 0;
+    color: var(--color-dark);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ops-col-vehicle {
+    width: 140px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-col-vehicle small {
+    display: block;
+    margin-top: 3px;
+    color: var(--color-muted);
+    font-size: 11px;
+}
+
+.ops-col-service {
+    flex: 1;
+    min-width: 160px;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-col-assistant {
+    width: 130px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-col-date {
+    width: 110px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--color-text);
+    white-space: nowrap;
+}
+
+.ops-col-date small {
+    display: block;
+    margin-top: 2px;
+    color: var(--color-muted);
+    font-size: 11px;
+}
+
+.ops-col-status {
+    width: 110px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-col-total {
+    width: 110px;
+    flex-shrink: 0;
+    color: var(--color-dark);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.ops-col-action {
+    width: 60px;
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.ops-view-link {
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* =========================================
+   OPERATION DETAILS
+========================================= */
+
+.ops-details-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.ops-details-top h3 {
+    margin-top: 4px;
+    color: var(--color-dark);
+}
+
+.ops-details-block {
+    margin-bottom: 24px;
+}
+
+.ops-details-block:last-child {
+    margin-bottom: 0;
+}
+
+.ops-details-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.ops-services-list {
+    margin-top: 10px;
+}
+
+.ops-service-line {
+    display: flex;
+    justify-content: space-between;
+
+    padding: 12px 0;
+
+    border-bottom: 1px solid var(--color-border-light);
+
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.ops-service-line:last-child {
+    border-bottom: none;
+}
+
+
+/* =========================================
+   REPORTS — CATEGORY HUB
+========================================= */
+
+.report-category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.report-category-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    padding: 20px;
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+
+    color: var(--color-text);
+
+    transition: var(--transition-fast);
+}
+
+.report-category-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.report-category-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--color-primary-soft);
+    border-radius: var(--radius-sm);
+
+    font-size: 20px;
+}
+
+.report-category-card h3 {
+    margin-bottom: 6px;
+    color: var(--color-dark);
+    font-size: 15px;
+}
+
+.report-category-card p {
+    color: var(--color-muted);
+    font-size: 13px;
+}
+
+
+/* =========================================
+   REPORTS — DATE FILTERS
+========================================= */
+
+.report-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 16px;
+    padding-bottom: 18px;
+
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.report-filter {
+    padding: 8px 14px;
+
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+
+    color: var(--color-text);
+    font-size: 12px;
+    font-weight: 700;
+
+    transition: var(--transition-fast);
+}
+
+.report-filter:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.report-filter.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.report-custom-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-left: auto;
+
+    font-size: 12px;
+    color: var(--color-muted);
+}
+
+.report-custom-range input[type="date"] {
+    padding: 7px 10px;
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+
+    font-size: 12px;
+}
+
+.report-filter-submit {
+    padding: 8px 14px;
+
+    border: none;
+    border-radius: var(--radius-sm);
+
+    background: var(--color-dark);
+    color: var(--color-white);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.report-range-label {
+    margin-bottom: 20px;
+    color: var(--color-muted);
+    font-size: 13px;
+}
+
+
+/* =========================================
+   REPORTS — HIGHLIGHT / SUMMARY CARDS
+========================================= */
+
+.report-highlights {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+    margin-bottom: 24px;
+}
+
+.report-highlight-card {
+    padding: 18px;
+
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.report-highlight-card span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-muted);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.report-highlight-card strong {
+    display: block;
+    color: var(--color-dark);
+    font-size: 17px;
+}
+
+.report-highlight-card small {
+    display: block;
+    margin-top: 4px;
+    color: var(--color-muted);
+    font-size: 12px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+
+    .report-category-grid,
+    .report-highlights {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .ops-details-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .ops-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ops-details-top {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .report-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .report-custom-range {
+        margin-left: 0;
+        flex-wrap: wrap;
+    }
+
+}
