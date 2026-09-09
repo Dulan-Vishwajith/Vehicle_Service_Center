@@ -83,8 +83,13 @@ $quickActions = [
         'icon' => '👷',
         'title' => 'Manage Assistants',
         'link' => '?page=assistants'
+    ],
+    
+    [
+        'icon' => '👤',
+        'title' => 'My Profile',
+        'link' => '?page=profile'
     ]
-
 ];
 
 ?>
@@ -140,7 +145,9 @@ $quickActions = [
                     'packages'          => 'manage-packages.php',
                     'package-form'      => 'package-form.php',
                     'assistants'        => 'manage-service-assistants.php',
-                ];
+                    'profile'           => 'my-profile.php'
+                    ];
+
 
                 $pageFile = $managementPages[$page]
                     ?? $managementPages['operations'];
