@@ -134,129 +134,89 @@ if (isset($_SESSION["register_message"])) {
                  REGISTRATION FORM
                  ================================================= -->
 
-            <form
-                action="register-submit.php"
-                method="POST"
-                class="register-form"
+            <form 
+                action="register-submit.php" 
+                method="POST" 
+                class="register-form" 
+                autocomplete="off"
             >
 
-
-                <!-- =============================================
-                     FULL NAME
-                     ============================================= -->
-
                 <div class="form-group">
+                    <label for="name">Full Name</label>
 
-                    <label for="name">
-                        Full Name
-                    </label>
-
-                    <input
+                    <input 
                         type="text"
                         id="name"
                         name="name"
                         placeholder="Enter your full name"
+                        autocomplete="name"
                         required
                     >
-
                 </div>
 
 
-                <!-- =============================================
-                     EMAIL
-                     ============================================= -->
-
                 <div class="form-group">
+                    <label for="email">Email Address</label>
 
-                    <label for="email">
-                        Email Address
-                    </label>
-
-                    <input
+                    <input 
                         type="email"
                         id="email"
                         name="email"
                         placeholder="Enter your email"
+                        autocomplete="off"
                         required
                     >
-
                 </div>
 
 
-                <!-- =============================================
-                     PHONE
-                     ============================================= -->
-
                 <div class="form-group">
+                    <label for="phone">Phone Number</label>
 
-                    <label for="phone">
-                        Phone Number
-                    </label>
-
-                    <input
+                    <input 
                         type="text"
                         id="phone"
                         name="phone"
                         placeholder="07XXXXXXXX"
+                        autocomplete="tel"
                         required
                     >
-
                 </div>
 
 
-                <!-- =============================================
-                     PASSWORD
-                     ============================================= -->
-
                 <div class="form-group">
+                    <label for="password">Password</label>
 
-                    <label for="password">
-                        Password
-                    </label>
-
-                    <input
+                    <input 
                         type="password"
                         id="password"
                         name="password"
                         placeholder="At least 6 characters"
+                        autocomplete="new-password"
                         required
                     >
-
                 </div>
 
 
-                <!-- =============================================
-                     CONFIRM PASSWORD
-                     ============================================= -->
-
                 <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
 
-                    <label for="confirm_password">
-                        Confirm Password
-                    </label>
-
-                    <input
+                    <input 
                         type="password"
                         id="confirm_password"
                         name="confirm_password"
                         placeholder="Enter password again"
+                        autocomplete="new-password"
                         required
                     >
-
                 </div>
 
 
-                <!-- =============================================
-                     SUBMIT BUTTON
-                     ============================================= -->
-
-                <button
-                    type="submit"
+                <button 
+                    type="submit" 
                     class="btn btn-primary register-submit"
                 >
                     Create Account
                 </button>
-
 
             </form>
 

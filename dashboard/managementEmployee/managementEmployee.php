@@ -56,6 +56,12 @@ $quickActions = [
     ],
 
     [
+        'icon' => '💳',
+        'title' => 'Manage Payments',
+        'link' => '?page=payments'
+    ],
+
+    [
         'icon' => '📊',
         'title' => 'View Reports',
         'link' => '?page=reports'
@@ -143,6 +149,7 @@ $quickActions = [
                 $managementPages = [
                     'operations'        => 'monitor-operations.php',
                     'operation-details' => 'operations-details.php',
+                    'payments' => 'manage-payments.php',
                     'reports'           => 'reports.php',
                     'services-report'   => 'services-report.php',
                     'revenue-report'    => 'revenue-report.php',

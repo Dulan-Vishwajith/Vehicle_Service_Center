@@ -129,6 +129,14 @@ try {
 
         )
 
+        AND payment_status IN (
+    
+            'partial',
+    
+            'paid'
+
+        )
+
     ");
 
 

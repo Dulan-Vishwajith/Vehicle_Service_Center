@@ -593,59 +593,245 @@ if ($userId > 0) {
 
 
                 <!-- =============================================
-                     PAYMENT INFORMATION
-                ============================================== -->
+                    PAYMENT INFORMATION
+                ============================================= -->
 
-                <div class="booking-payment-section">
+                    <div class="booking-payment-section">
 
+                        <div>
 
-                    <!-- TOTAL PRICE -->
+                            <span>
+                            Service Total
+                            </span>
 
-                    <div>
+                            <strong>
 
-                        <span>
-                            Total Price
-                        </span>
+                                Rs.
+                                <?= number_format(
+                                    (float) $booking['total_price'],
+                                    2
+                                ) ?>
 
-                        <strong>
+                            </strong>
 
-                            Rs.
-                            <?= number_format(
-                                (float) (
-                                    $booking['total_price'] ?? 0
-                                ),
-                                2
-                            ) ?>
-
-                        </strong>
-
-                    </div>
+                        </div>
 
 
-                    <!-- DEPOSIT AMOUNT -->
+                        <div>
 
-                    <div>
+                            <span>
+                                Required Deposit
+                            </span>
 
-                        <span>
-                            Deposit Amount
-                        </span>
+                            <strong>
 
-                        <strong>
+                                Rs.
+                                <?= number_format(
+                                    (float) $booking['deposit_amount'],
+                                    2
+                                ) ?>
 
-                            Rs.
-                            <?= number_format(
-                                (float) (
-                                    $booking['deposit_amount'] ?? 0
-                                ),
-                                2
-                            ) ?>
+                            </strong>
 
-                        </strong>
-
-                    </div>
+                        </div>
 
 
-                </div>
+                        <?php
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Get confirmed deposit amount
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $depositPaid = 0.00;
+
+                        try {
+
+                            $paymentStmt = $pdo->prepare("
+                                SELECT COALESCE(
+                                    SUM(amount),
+                                    0
+                                )
+                                FROM payments
+                                WHERE booking_id = ?
+                                AND payment_type = 'deposit'
+                                AND verification_status = 'confirmed'
+                            ");
+
+                            $paymentStmt->execute([
+                                $booking['id']
+                            ]);
+
+                            $depositPaid =
+                                (float) $paymentStmt->fetchColumn();
+
+                        } catch (PDOException $e) {
+
+                            $depositPaid = 0.00;
+                        }
+
+
+                        $remainingBalance =
+                            max(
+                                0,
+                                (float) $booking['total_price']
+                                - $depositPaid
+                            );
+
+                        ?>
+
+
+                        <div>
+
+                            <span>
+                                Deposit Paid
+                            </span>
+
+                            <strong>
+
+                                Rs.
+                                <?= number_format(
+                                    $depositPaid,
+                                    2
+                                ) ?>
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Remaining Balance
+                            </span>
+
+                            <strong>
+
+                                Rs.
+                                <?= number_format(
+                                    $remainingBalance,
+                                    2
+                                ) ?>
+
+                            </strong>
+
+                        </div>
+
+
+        <?php
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payment display state
+        |--------------------------------------------------------------------------
+        */
+
+        $paymentStatus =
+            strtolower(
+                $booking['payment_status'] ?? 'unpaid'
+            );
+
+
+        $verificationStatus = null;
+
+        try {
+
+            $verificationStmt = $pdo->prepare("
+                SELECT verification_status
+                FROM payments
+                WHERE booking_id = ?
+                ORDER BY id DESC
+                LIMIT 1
+            ");
+
+            $verificationStmt->execute([
+                $booking['id']
+            ]);
+
+            $verificationStatus =
+                $verificationStmt->fetchColumn();
+
+        } catch (PDOException $e) {
+
+            $verificationStatus = null;
+        }
+
+        ?>
+
+
+        <div>
+
+            <span>
+                Payment Status
+            </span>
+
+            <strong>
+
+                <?php if (
+                    $verificationStatus === 'pending'
+                ): ?>
+
+                    <span class="payment-status-badge payment-status-pending">
+                        Awaiting Verification
+                    </span>
+
+                <?php elseif (
+                    $verificationStatus === 'rejected'
+                ): ?>
+
+                    <span class="payment-status-badge payment-status-rejected">
+                        Payment Rejected
+                    </span>
+
+                <?php elseif (
+                    $paymentStatus === 'paid'
+                ): ?>
+
+                    <span class="payment-status-badge payment-status-paid">
+                        Paid
+                    </span>
+
+                <?php elseif (
+                    $paymentStatus === 'partial'
+                ): ?>
+
+                    <span class="payment-status-badge payment-status-partial">
+                        Deposit Paid
+                    </span>
+
+                <?php else: ?>
+
+                    <span class="payment-status-badge payment-status-unpaid">
+                        Unpaid
+                    </span>
+
+                <?php endif; ?>
+
+            </strong>
+
+        </div>
+
+
+        <?php if (
+            $verificationStatus === 'rejected'
+        ): ?>
+
+            <div>
+
+                <a
+                    href="booking/replace-payment.php?booking_id=<?= (int) $booking['id'] ?>"
+                    class="btn btn-primary"
+                >
+                    Upload New Slip
+                </a>
+
+            </div>
+
+        <?php endif; ?>
+
+    </div>
 
 
             </div>

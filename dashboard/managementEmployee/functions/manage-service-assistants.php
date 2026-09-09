@@ -298,141 +298,148 @@ $assistants = $stmt->fetchAll();
     <!-- =====================================================
          CREATE / UPDATE FORM
     ====================================================== -->
-
-    <form method="post" class="assistant-management-form">
-
-        <input
-            type="hidden"
-            name="assistant_action"
-            value="save"
+        <form 
+            method="post" 
+            class="assistant-management-form"
+            autocomplete="off"
         >
 
-        <input
-            type="hidden"
-            name="assistant_id"
-            value="<?= (int) ($edit['user_id'] ?? 0) ?>"
-        >
-
-
-        <div class="assistant-form-grid">
-
-
-            <!-- Full Name -->
-
-            <div class="assistant-form-group">
-
-                <label for="assistant-name">
-                    Full Name
-                </label>
-
-                <input
-                    id="assistant-name"
-                    type="text"
-                    name="name"
-                    required
-                    value="<?= htmlspecialchars($edit['name'] ?? '') ?>"
-                >
-
-            </div>
-
-
-            <!-- Email -->
-
-            <div class="assistant-form-group">
-
-                <label for="assistant-email">
-                    Email
-                </label>
-
-                <input
-                    id="assistant-email"
-                    type="email"
-                    name="email"
-                    required
-                    value="<?= htmlspecialchars($edit['email'] ?? '') ?>"
-                >
-
-            </div>
-
-
-            <!-- Phone -->
-
-            <div class="assistant-form-group">
-
-                <label for="assistant-phone">
-                    Phone
-                </label>
-
-                <input
-                    id="assistant-phone"
-                    type="text"
-                    name="phone"
-                    required
-                    value="<?= htmlspecialchars($edit['phone'] ?? '') ?>"
-                >
-
-            </div>
-
-
-            <!-- Password -->
-
-            <div class="assistant-form-group">
-
-                <label for="assistant-password">
-
-                    Password
-                    <?= $edit
-                        ? '(leave empty to keep current password)'
-                        : '*'
-                    ?>
-
-                </label>
-
-                <input
-                    id="assistant-password"
-                    type="password"
-                    name="password"
-                    <?= $edit ? '' : 'required' ?>
-                >
-
-            </div>
-
-
-        </div>
-
-
-        <!-- =================================================
-             FORM ACTIONS
-        ================================================== -->
-
-        <div class="assistant-form-actions">
-
-            <button
-                type="submit"
-                class="btn btn-primary"
+            <input 
+                type="hidden" 
+                name="assistant_action" 
+                value="save"
             >
-                <?= $edit
-                    ? 'Update Assistant'
-                    : 'Create Assistant'
-                ?>
-            </button>
+
+            <input 
+                type="hidden" 
+                name="assistant_id" 
+                value="<?= (int) ($edit['user_id'] ?? 0) ?>"
+            >
 
 
-            <?php if ($edit): ?>
+            <div class="assistant-form-grid">
 
-                <a
-                    class="btn assistant-cancel-btn"
-                    href="?page=assistants"
+
+                <!-- Full Name -->
+
+                <div class="assistant-form-group">
+
+                    <label for="assistant-name">
+                        Full Name
+                    </label>
+
+                    <input 
+                        id="assistant-name"
+                        type="text"
+                        name="name"
+                        autocomplete="off"
+                        required
+                        value="<?= htmlspecialchars($edit['name'] ?? '') ?>"
+                    >
+
+                </div>
+
+
+                <!-- Email -->
+
+                <div class="assistant-form-group">
+
+                    <label for="assistant-email">
+                        Email
+                    </label>
+
+                    <input 
+                        id="assistant-email"
+                        type="email"
+                        name="email"
+                        autocomplete="off"
+                        required
+                        value="<?= htmlspecialchars($edit['email'] ?? '') ?>"
+                    >
+
+                </div>
+
+
+                <!-- Phone -->
+
+                <div class="assistant-form-group">
+
+                    <label for="assistant-phone">
+                        Phone
+                    </label>
+
+                    <input 
+                        id="assistant-phone"
+                        type="text"
+                        name="phone"
+                        autocomplete="off"
+                        required
+                        value="<?= htmlspecialchars($edit['phone'] ?? '') ?>"
+                    >
+
+                </div>
+
+
+                <!-- Password -->
+
+                <div class="assistant-form-group">
+
+                    <label for="assistant-password">
+
+                        Password
+
+                        <?= $edit 
+                            ? '(leave empty to keep current password)' 
+                            : '*' 
+                        ?>
+
+                    </label>
+
+                    <input 
+                        id="assistant-password"
+                        type="password"
+                        name="password"
+                        autocomplete="new-password"
+                        <?= $edit ? '' : 'required' ?>
+                    >
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                FORM ACTIONS
+            ================================================== -->
+
+            <div class="assistant-form-actions">
+
+                <button 
+                    type="submit" 
+                    class="btn btn-primary"
                 >
-                    Cancel
-                </a>
+                    <?= $edit 
+                        ? 'Update Assistant' 
+                        : 'Create Assistant' 
+                    ?>
+                </button>
 
-            <?php endif; ?>
 
+                <?php if ($edit): ?>
 
-        </div>
+                    <a 
+                        class="btn assistant-cancel-btn" 
+                        href="?page=assistants"
+                    >
+                        Cancel
+                    </a>
 
-    </form>
+                <?php endif; ?>
+
+            </div>
+
+        </form>
 
 
     <!-- =====================================================

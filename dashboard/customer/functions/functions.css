@@ -1018,3 +1018,52 @@
     }
 
 }
+
+
+/* =====================================================
+   PAYMENT STATUS BADGES
+===================================================== */
+
+.payment-status-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+
+.payment-status-unpaid {
+    background: #eee;
+    color: #555;
+}
+
+
+.payment-status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+
+.payment-status-partial {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+
+.payment-status-paid {
+    background: #d4edda;
+    color: #155724;
+}
+
+
+.payment-status-refunded {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+
+.payment-status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}

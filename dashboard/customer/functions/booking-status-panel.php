@@ -17,7 +17,9 @@ if ($userId > 0) {
             b.license_plate,
             b.booking_date,
             b.status,
-            b.total_price
+            b.total_price,
+            b.deposit_amount,
+            b.payment_status
         FROM bookings b
         WHERE b.user_id = ?
         ORDER BY b.booking_date DESC
@@ -328,6 +330,37 @@ if (!function_exists('getStatusStep')) {
 
                 </div>
 
+               <div class="booking-payment-status">
+
+    <strong>
+        Payment:
+    </strong>
+
+    <?php if (
+        $booking['payment_status'] === 'partial'
+    ): ?>
+
+        <span class="payment-status-badge payment-status-partial">
+            Deposit Paid
+        </span>
+
+    <?php elseif (
+        $booking['payment_status'] === 'paid'
+    ): ?>
+
+        <span class="payment-status-badge payment-status-paid">
+            Paid
+        </span>
+
+    <?php else: ?>
+
+        <span class="payment-status-badge payment-status-unpaid">
+            Unpaid
+        </span>
+
+    <?php endif; ?>
+
+</div>
 
                 <!-- =========================================
                      SECOND ROW
