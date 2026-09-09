@@ -120,7 +120,7 @@ try {
 
 <?php else: ?>
 
-    <div class="ops-table">
+    <div class="ops-table package-table">
 
         <div class="ops-table-heading">
             <span class="admin-col-name">Package Name</span>

@@ -117,62 +117,35 @@ $quickActions = [
 
                 <?php
 
+                /*
+                 |----------------------------------------------------------
+                 | PAGE ROUTER
+                 |----------------------------------------------------------
+                 | Keep all management pages in one whitelist. This removes
+                 | repetitive switch cases while preserving the existing URLs
+                 | and folder structure.
+                 */
                 $page = $_GET['page'] ?? 'operations';
 
-                switch ($page) {
+                $managementPages = [
+                    'operations'        => 'monitor-operations.php',
+                    'operation-details' => 'operations-details.php',
+                    'reports'           => 'reports.php',
+                    'services-report'   => 'services-report.php',
+                    'revenue-report'    => 'revenue-report.php',
+                    'offers'            => 'manage-offers.php',
+                    'offer-form'        => 'offer-form.php',
+                    'services'          => 'manage-services.php',
+                    'service-form'      => 'service-form.php',
+                    'packages'          => 'manage-packages.php',
+                    'package-form'      => 'package-form.php',
+                    'assistants'        => 'manage-service-assistants.php',
+                ];
 
-                    case 'operations':
-                        include __DIR__ . '/functions/monitor-operations.php';
-                        break;
+                $pageFile = $managementPages[$page]
+                    ?? $managementPages['operations'];
 
-                    case 'operation-details':
-                        include __DIR__ . '/functions/operations-details.php';
-                        break;
-
-                    case 'reports':
-                        include __DIR__ . '/functions/reports.php';
-                        break;
-
-                    case 'services-report':
-                        include __DIR__ . '/functions/services-report.php';
-                        break;
-
-                    case 'revenue-report':
-                        include __DIR__ . '/functions/revenue-report.php';
-                        break;
-
-                    case 'offers':
-                        include __DIR__ . '/functions/manage-offers.php';
-                        break;
-
-                    case 'offer-form':
-                        include __DIR__ . '/functions/offer-form.php';
-                        break;
-
-                    case 'services':
-                        include __DIR__ . '/functions/manage-services.php';
-                        break;
-
-                    case 'service-form':
-                        include __DIR__ . '/functions/service-form.php';
-                        break;
-
-                    case 'packages':
-                        include __DIR__ . '/functions/manage-packages.php';
-                        break;
-
-                    case 'package-form':
-                        include __DIR__ . '/functions/package-form.php';
-                        break;
-
-                    case 'assistants':
-                        include __DIR__ . '/functions/manage-service-assistants.php';
-                        break;
-
-                    default:
-                        include __DIR__ . '/functions/monitor-operations.php';
-                        break;
-                }
+                include __DIR__ . '/functions/' . $pageFile;
 
                 ?>
 

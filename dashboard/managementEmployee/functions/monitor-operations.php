@@ -164,7 +164,7 @@ function operationsStatusClass($status)
 
     <?php else: ?>
 
-        <div class="ops-table">
+        <div class="ops-table monitor-table">
 
             <div class="ops-table-heading">
                 <span class="ops-col-id">Booking</span>
@@ -240,7 +240,7 @@ function operationsStatusClass($status)
 
     <?php else: ?>
 
-        <div class="ops-table">
+        <div class="ops-table monitor-table">
 
             <div class="ops-table-heading">
                 <span class="ops-col-id">Booking</span>

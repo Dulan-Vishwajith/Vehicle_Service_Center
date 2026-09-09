@@ -29,6 +29,15 @@
     --shadow-sm: 0 5px 20px rgba(0, 0, 0, 0.04);
     --shadow-md: 0 15px 35px rgba(0, 0, 0, 0.08);
 
+    --color-danger: #dc3545;
+    --color-danger-bg: #f8d7da;
+    --color-danger-text: #842029;
+
+    --color-success: #198754;
+    --color-success-bg: #e8f8ef;
+
+    --color-cancel-bg: #f1f3f5;
+
     --transition-fast: 0.2s ease;
     --transition-normal: 0.3s ease;
 }
