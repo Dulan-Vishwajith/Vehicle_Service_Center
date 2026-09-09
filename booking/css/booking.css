@@ -970,3 +970,108 @@ textarea.form-control {
     }
 
 }
+
+
+/* =====================================================
+   PAYMENT PAGE
+===================================================== */
+
+.booking-payment-summary {
+    margin-top: 25px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.booking-payment-summary h2 {
+    margin-top: 0;
+}
+
+
+.payment-methods {
+    display: flex;
+    gap: 12px;
+    margin: 25px 0;
+    flex-wrap: wrap;
+}
+
+
+.payment-method-button {
+    padding: 12px 18px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+
+.payment-method-button.active {
+    border-color: #111;
+}
+
+
+.payment-method-panel {
+    margin-top: 20px;
+    padding: 25px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+
+.payment-method-panel label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+
+.payment-method-panel input[type="text"],
+.payment-method-panel input[type="password"],
+.payment-method-panel input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+
+.payment-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+
+.bank-details {
+    padding: 18px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background: #f5f5f5;
+}
+
+
+.bank-details p {
+    margin: 7px 0;
+}
+
+
+.booking-payment-section {
+    margin-top: 25px;
+}
+
+
+.booking-payment-section > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+
+.booking-success-message {
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 10px;
+}

@@ -1,11 +1,5 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| START SESSION
-|--------------------------------------------------------------------------
-*/
-
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -17,13 +11,12 @@ if (session_status() === PHP_SESSION_NONE) {
 |--------------------------------------------------------------------------
 */
 
-if (!isset($_SESSION["user_id"])) {
+if (!isset($_SESSION['user_id'])) {
 
-    $_SESSION["redirect_after_login"] =
-        "../booking/booking.php";
+    $_SESSION['redirect_after_login'] = '../booking/booking.php';
 
-    header("Location: ../login/login-form.php");
-    exit();
+    header('Location: ../login/login-form.php');
+    exit;
 }
 
 
@@ -33,27 +26,23 @@ if (!isset($_SESSION["user_id"])) {
 |--------------------------------------------------------------------------
 */
 
-require_once "../config/database.php";
+require_once '../config/database.php';
 
 
 /*
 |--------------------------------------------------------------------------
-| ERROR REDIRECT
+| ERROR HELPER
 |--------------------------------------------------------------------------
 */
 
 function bookingError($message, $old = [])
 {
-    $_SESSION["booking_message"] = $message;
+    $_SESSION['booking_message'] = $message;
+    $_SESSION['booking_message_type'] = 'error';
+    $_SESSION['booking_old'] = $old;
 
-    $_SESSION["booking_message_type"] =
-        "error";
-
-    $_SESSION["booking_old"] =
-        $old;
-
-    header("Location: booking.php");
-    exit();
+    header('Location: booking.php');
+    exit;
 }
 
 
@@ -63,21 +52,14 @@ function bookingError($message, $old = [])
 |--------------------------------------------------------------------------
 */
 
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
-    header("Location: booking-form.php");
-    exit();
+    header('Location: booking.php');
+    exit;
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| LOGGED-IN USER
-|--------------------------------------------------------------------------
-*/
-
-$userId =
-    (int) $_SESSION["user_id"];
+$userId = (int) $_SESSION['user_id'];
 
 
 /*
@@ -86,73 +68,41 @@ $userId =
 |--------------------------------------------------------------------------
 */
 
-$services =
-    $_POST["services"] ?? [];
+$services = $_POST['services'] ?? [];
 
-$services =
-    array_map(
-        "intval",
-        (array) $services
-    );
+$services = array_map('intval', (array) $services);
 
-$services =
-    array_values(
-        array_unique(
-            array_filter(
-                $services,
-                function ($id) {
-                    return $id > 0;
-                }
-            )
+$services = array_values(
+    array_unique(
+        array_filter(
+            $services,
+            function ($id) {
+                return $id > 0;
+            }
         )
-    );
+    )
+);
 
 
-$vehicleModel =
-    trim(
-        $_POST["vehicleModel"] ?? ""
-    );
+$vehicleModel = trim($_POST['vehicleModel'] ?? '');
 
+$licensePlate = trim($_POST['licensePlate'] ?? '');
 
-$licensePlate =
-    trim(
-        $_POST["licensePlate"] ?? ""
-    );
+$vehicleYear = $_POST['vehicleYear'] ?? null;
 
-
-$vehicleYear =
-    $_POST["vehicleYear"] ?? null;
-
-
-if ($vehicleYear === "") {
+if ($vehicleYear === '') {
     $vehicleYear = null;
 }
 
+$vehicleType = trim($_POST['vehicleType'] ?? '');
 
-$vehicleType =
-    trim(
-        $_POST["vehicleType"] ?? ""
-    );
+$bookingDate = $_POST['bookingDate'] ?? '';
 
+$timeSlot = (int) ($_POST['timeSlot'] ?? 0);
 
-$bookingDate =
-    $_POST["bookingDate"] ?? "";
+$notes = trim($_POST['notes'] ?? '');
 
-
-$timeSlot =
-    (int) (
-        $_POST["timeSlot"] ?? 0
-    );
-
-
-$notes =
-    trim(
-        $_POST["notes"] ?? ""
-    );
-
-
-$terms =
-    $_POST["terms"] ?? "";
+$terms = $_POST['terms'] ?? '';
 
 
 /*
@@ -163,29 +113,22 @@ $terms =
 
 $old = [
 
-    "services" =>
-        $services,
+    'services' => $services,
 
-    "vehicleModel" =>
-        $vehicleModel,
+    'vehicleModel' => $vehicleModel,
 
-    "licensePlate" =>
-        $licensePlate,
+    'licensePlate' => $licensePlate,
 
-    "vehicleYear" =>
-        $vehicleYear,
+    'vehicleYear' => $vehicleYear,
 
-    "vehicleType" =>
-        $vehicleType,
+    'vehicleType' => $vehicleType,
 
-    "bookingDate" =>
-        $bookingDate,
+    'bookingDate' => $bookingDate,
 
-    "timeSlot" =>
-        $timeSlot,
+    'timeSlot' => $timeSlot,
 
-    "notes" =>
-        $notes
+    'notes' => $notes
+
 ];
 
 
@@ -198,61 +141,52 @@ $old = [
 if (empty($services)) {
 
     bookingError(
-        "Please select at least one service.",
+        'Please select at least one service.',
         $old
     );
 }
 
 
-if ($vehicleModel === "") {
+if ($vehicleModel === '') {
 
     bookingError(
-        "Please enter your vehicle make and model.",
+        'Please enter your vehicle make and model.',
         $old
     );
 }
 
 
-if ($licensePlate === "") {
+if (strlen($vehicleModel) > 100) {
 
     bookingError(
-        "Please enter your registration number.",
+        'Vehicle model is too long.',
         $old
     );
 }
 
 
-if ($bookingDate === "") {
+if ($licensePlate === '') {
 
     bookingError(
-        "Please select a service date.",
+        'Please enter your registration number.',
         $old
     );
 }
 
 
-if ($bookingDate < date("Y-m-d")) {
+if (strlen($licensePlate) > 20) {
 
     bookingError(
-        "Please select a valid service date.",
+        'Registration number is too long.',
         $old
     );
 }
 
 
-if ($timeSlot <= 0) {
+if ($bookingDate === '') {
 
     bookingError(
-        "Please select a time slot.",
-        $old
-    );
-}
-
-
-if ($terms !== "1") {
-
-    bookingError(
-        "Please agree to the booking terms.",
+        'Please select a service date.',
         $old
     );
 }
@@ -260,9 +194,92 @@ if ($terms !== "1") {
 
 /*
 |--------------------------------------------------------------------------
-| GET TIME SLOT
+| DATE VALIDATION
 |--------------------------------------------------------------------------
 */
+
+$dateObject = DateTime::createFromFormat(
+    'Y-m-d',
+    $bookingDate
+);
+
+if (
+    !$dateObject
+    || $dateObject->format('Y-m-d') !== $bookingDate
+) {
+
+    bookingError(
+        'Please select a valid service date.',
+        $old
+    );
+}
+
+
+if ($bookingDate < date('Y-m-d')) {
+
+    bookingError(
+        'Please select a valid service date.',
+        $old
+    );
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| TERMS
+|--------------------------------------------------------------------------
+*/
+
+if ($terms !== '1') {
+
+    bookingError(
+        'Please agree to the booking terms.',
+        $old
+    );
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| VEHICLE YEAR
+|--------------------------------------------------------------------------
+*/
+
+if ($vehicleYear !== null) {
+
+    $year = (int) $vehicleYear;
+
+    $currentYear = (int) date('Y');
+
+    if (
+        $year < 1900
+        || $year > $currentYear + 1
+    ) {
+
+        bookingError(
+            'Please enter a valid vehicle year.',
+            $old
+        );
+    }
+
+    $vehicleYear = $year;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| TIME SLOT
+|--------------------------------------------------------------------------
+*/
+
+if ($timeSlot <= 0) {
+
+    bookingError(
+        'Please select a time slot.',
+        $old
+    );
+}
+
 
 $stmt = $pdo->prepare("
     SELECT
@@ -277,18 +294,15 @@ $stmt = $pdo->prepare("
     LIMIT 1
 ");
 
-$stmt->execute([
-    $timeSlot
-]);
+$stmt->execute([$timeSlot]);
 
-$slot =
-    $stmt->fetch();
+$slot = $stmt->fetch();
 
 
 if (!$slot) {
 
     bookingError(
-        "The selected time slot is not available.",
+        'The selected time slot is not available.',
         $old
     );
 }
@@ -296,16 +310,24 @@ if (!$slot) {
 
 /*
 |--------------------------------------------------------------------------
-| CHECK SLOT CAPACITY
+| CHECK CURRENT SLOT CAPACITY
 |--------------------------------------------------------------------------
+|
+| Only already-created bookings are counted here.
+| The final payment step checks capacity again.
+|
 */
 
 $stmt = $pdo->prepare("
-    SELECT COUNT(*) AS booking_count
+    SELECT COUNT(*)
     FROM bookings
     WHERE booking_date = ?
       AND time_slot_id = ?
-      AND status IN ('pending', 'confirmed')
+      AND status IN (
+          'pending',
+          'booked',
+          'confirmed'
+      )
 ");
 
 $stmt->execute([
@@ -313,17 +335,13 @@ $stmt->execute([
     $timeSlot
 ]);
 
-$bookingCount =
-    (int) $stmt->fetchColumn();
+$bookingCount = (int) $stmt->fetchColumn();
 
 
-if (
-    $bookingCount
-    >= (int) $slot["max_bookings"]
-) {
+if ($bookingCount >= (int) $slot['max_bookings']) {
 
     bookingError(
-        "Sorry, this time slot is fully booked. Please select another time.",
+        'Sorry, this time slot is fully booked. Please select another time.',
         $old
     );
 }
@@ -331,24 +349,18 @@ if (
 
 /*
 |--------------------------------------------------------------------------
-| GET SERVICES FROM DATABASE
+| GET REAL SERVICE PRICES
 |--------------------------------------------------------------------------
-|
-| IMPORTANT:
-| Never trust prices from JavaScript.
-| We get the real prices from MySQL.
-|
 */
 
-$placeholders =
-    implode(
-        ",",
-        array_fill(
-            0,
-            count($services),
-            "?"
-        )
-    );
+$placeholders = implode(
+    ',',
+    array_fill(
+        0,
+        count($services),
+        '?'
+    )
+);
 
 
 $sql = "
@@ -363,22 +375,16 @@ $sql = "
 ";
 
 
-$stmt =
-    $pdo->prepare($sql);
+$stmt = $pdo->prepare($sql);
 
+$stmt->execute($services);
 
-$stmt->execute(
-    $services
-);
-
-
-$selectedServices =
-    $stmt->fetchAll();
+$selectedServices = $stmt->fetchAll();
 
 
 /*
 |--------------------------------------------------------------------------
-| MAKE SURE ALL SERVICES ARE VALID
+| ENSURE ALL SERVICES ARE VALID
 |--------------------------------------------------------------------------
 */
 
@@ -388,7 +394,7 @@ if (
 ) {
 
     bookingError(
-        "One or more selected services are not available.",
+        'One or more selected services are not available.',
         $old
     );
 }
@@ -396,25 +402,20 @@ if (
 
 /*
 |--------------------------------------------------------------------------
-| CALCULATE TOTALS
+| CALCULATE TRUSTED TOTALS
 |--------------------------------------------------------------------------
 */
 
-$totalPrice = 0;
+$totalPrice = 0.00;
 
 $totalDuration = 0;
 
 
-foreach (
-    $selectedServices as $service
-) {
+foreach ($selectedServices as $service) {
 
-    $totalPrice +=
-        (float) $service["price"];
+    $totalPrice += (float) $service['price'];
 
-    $totalDuration +=
-        (int) $service["duration_minutes"];
-
+    $totalDuration += (int) $service['duration_minutes'];
 }
 
 
@@ -422,189 +423,106 @@ foreach (
 |--------------------------------------------------------------------------
 | DEPOSIT
 |--------------------------------------------------------------------------
+|
+| Existing project rule:
+| Fixed booking deposit = Rs. 2,500
+|
 */
 
-$depositAmount =
-    2500.00;
+$depositAmount = 2500.00;
 
 
 /*
 |--------------------------------------------------------------------------
-| CREATE BOOKING
+| IMPORTANT
+|--------------------------------------------------------------------------
+|
+| Do NOT create a booking here.
+|
+| Store validated booking information temporarily.
+|
+*/
+
+$_SESSION['pending_booking'] = [
+
+    'request_token' =>
+        bin2hex(random_bytes(32)),
+
+    'user_id' =>
+        $userId,
+
+    'vehicle_model' =>
+        $vehicleModel,
+
+    'license_plate' =>
+        $licensePlate,
+
+    'vehicle_year' =>
+        $vehicleYear,
+
+    'vehicle_type' =>
+        $vehicleType,
+
+    'booking_date' =>
+        $bookingDate,
+
+    'time_slot_id' =>
+        $timeSlot,
+
+    'time_slot_name' =>
+        $slot['slot_name'],
+
+    'start_time' =>
+        $slot['start_time'],
+
+    'end_time' =>
+        $slot['end_time'],
+
+    'notes' =>
+        $notes,
+
+    'selected_service_ids' =>
+        array_map(
+            'intval',
+            $services
+        ),
+
+    'selected_services' =>
+        $selectedServices,
+
+    'total_price' =>
+        $totalPrice,
+
+    'total_duration_minutes' =>
+        $totalDuration,
+
+    'deposit_amount' =>
+        $depositAmount,
+
+    'created_at' =>
+        time()
+
+];
+
+
+/*
+|--------------------------------------------------------------------------
+| CLEAR OLD BOOKING ERRORS
 |--------------------------------------------------------------------------
 */
 
-try {
-
-    $pdo->beginTransaction();
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | INSERT BOOKING
-    |--------------------------------------------------------------------------
-    */
-
-    $stmt = $pdo->prepare("
-        INSERT INTO bookings
-        (
-            user_id,
-            vehicle_model,
-            license_plate,
-            vehicle_year,
-            vehicle_type,
-            booking_date,
-            time_slot_id,
-            notes,
-            total_price,
-            total_duration_minutes,
-            deposit_amount,
-            status,
-            payment_status
-        )
-        VALUES
-        (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-            'pending',
-            'unpaid'
-        )
-    ");
+unset(
+    $_SESSION['booking_old'],
+    $_SESSION['booking_message'],
+    $_SESSION['booking_message_type']
+);
 
 
-    $stmt->execute([
+/*
+|--------------------------------------------------------------------------
+| GO TO PAYMENT
+|--------------------------------------------------------------------------
+*/
 
-        $userId,
-
-        $vehicleModel,
-
-        $licensePlate,
-
-        $vehicleYear,
-
-        $vehicleType,
-
-        $bookingDate,
-
-        $timeSlot,
-
-        $notes,
-
-        $totalPrice,
-
-        $totalDuration,
-
-        $depositAmount
-
-    ]);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | GET BOOKING ID
-    |--------------------------------------------------------------------------
-    */
-
-    $bookingId =
-        $pdo->lastInsertId();
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | INSERT SERVICES
-    |--------------------------------------------------------------------------
-    */
-
-    $stmt = $pdo->prepare("
-        INSERT INTO booking_services
-        (
-            booking_id,
-            service_id,
-            service_price,
-            service_duration_minutes
-        )
-        VALUES
-        (?, ?, ?, ?)
-    ");
-
-
-    foreach (
-        $selectedServices as $service
-    ) {
-
-        $stmt->execute([
-
-            $bookingId,
-
-            $service["id"],
-
-            $service["price"],
-
-            $service["duration_minutes"]
-
-        ]);
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | COMMIT
-    |--------------------------------------------------------------------------
-    */
-
-    $pdo->commit();
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | SAVE BOOKING ID
-    |--------------------------------------------------------------------------
-    */
-
-    $_SESSION["booking_id"] =
-        $bookingId;
-
-
-    unset(
-        $_SESSION["booking_old"]
-    );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | GO TO PAYMENT
-    |--------------------------------------------------------------------------
-    */
-
-    header(
-        "Location: payment.php"
-    );
-
-    exit();
-
-
-} catch (PDOException $e) {
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | ROLLBACK
-    |--------------------------------------------------------------------------
-    */
-
-    if ($pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | SHOW ERROR
-    |--------------------------------------------------------------------------
-    */
-
-    bookingError(
-        "Unable to create your booking. Please try again.",
-        $old
-    );
-}
+header('Location: payment.php');
+exit;

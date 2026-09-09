@@ -44,6 +44,11 @@ try {
                 'booked'
             )
 
+            AND b.payment_status IN (
+                'partial',
+                'paid'
+            )
+
         GROUP BY
             b.id,
             b.vehicle_model,
