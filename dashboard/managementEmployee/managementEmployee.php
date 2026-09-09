@@ -84,12 +84,20 @@ $quickActions = [
         'title' => 'Manage Assistants',
         'link' => '?page=assistants'
     ],
-    
+
+    [
+        'icon' => '📞',
+        'title' => 'Manage Contact Details',
+        'link' => '?page=contact-details'
+    ],
+
     [
         'icon' => '👤',
         'title' => 'My Profile',
         'link' => '?page=profile'
     ]
+
+
 ];
 
 ?>
@@ -145,6 +153,7 @@ $quickActions = [
                     'packages'          => 'manage-packages.php',
                     'package-form'      => 'package-form.php',
                     'assistants'        => 'manage-service-assistants.php',
+                    'contact-details'   => 'manage-contact-details.php',
                     'profile'           => 'my-profile.php'
                     ];
 
