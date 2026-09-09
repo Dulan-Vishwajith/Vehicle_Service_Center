@@ -5,6 +5,7 @@ $appointments = [];
 try {
 
     $stmt = $pdo->prepare("
+
         SELECT
             b.id,
             b.vehicle_model,
@@ -56,11 +57,16 @@ try {
         ORDER BY
             b.booking_date ASC,
             ts.start_time ASC
+
     ");
+
 
     $stmt->execute([$assistantId]);
 
-    $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $appointments =
+        $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 } catch (PDOException $e) {
 
@@ -69,6 +75,7 @@ try {
 }
 
 ?>
+
 
 <div class="panel-header">
 
@@ -89,6 +96,7 @@ try {
 
 <?php if (empty($appointments)): ?>
 
+
     <div class="empty-message">
 
         <h3>
@@ -104,25 +112,125 @@ try {
 
 <?php else: ?>
 
+
     <div class="my-bookings-list">
 
+
         <?php foreach ($appointments as $appointment): ?>
+
+
+            <?php
+
+            $status = strtolower(
+                trim($appointment['status'] ?? '')
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | STATUS ACTIONS
+            |--------------------------------------------------------------------------
+            */
+
+            $actions = [
+
+                'confirmed' => [
+
+                    'next_status' => 'service',
+
+                    'button' => 'Start Service',
+
+                    'message' =>
+                        'Are you sure you want to start this service?'
+
+                ],
+
+
+                'service' => [
+
+                    'next_status' => 'vehicle_arrived',
+
+                    'button' => 'Vehicle Arrived',
+
+                    'message' =>
+                        'Confirm that the vehicle has arrived?'
+
+                ],
+
+
+                'vehicle_arrived' => [
+
+                    'next_status' => 'service_ongoing',
+
+                    'button' => 'Start Service Work',
+
+                    'message' =>
+                        'Are you sure you want to start the service work?'
+
+                ],
+
+
+                'service_ongoing' => [
+
+                    'next_status' => 'service_done',
+
+                    'button' => 'Service Done',
+
+                    'message' =>
+                        'Are you sure the service is finished?'
+
+                ],
+
+
+                'service_done' => [
+
+                    'next_status' => 'vehicle_handover',
+
+                    'button' => 'Hand Over Vehicle',
+
+                    'message' =>
+                        'Are you sure you want to hand over the vehicle?'
+
+                ],
+
+
+                'vehicle_handover' => [
+
+                    'next_status' => 'completed',
+
+                    'button' => 'Complete Appointment',
+
+                    'message' =>
+                        'Are you sure the vehicle handover is complete?'
+
+                ]
+
+            ];
+
+            ?>
+
 
             <div class="booking-card">
 
 
                 <div class="booking-card-header">
 
+
                     <div>
 
                         <h3>
+
                             Booking #<?= (int) $appointment['id'] ?>
+
                         </h3>
 
+
                         <p>
+
                             <?= htmlspecialchars(
                                 $appointment['customer_name']
                             ) ?>
+
                         </p>
 
                     </div>
@@ -131,10 +239,19 @@ try {
                     <span class="status">
 
                         <?= htmlspecialchars(
-                            ucfirst($appointment['status'])
+
+                            ucwords(
+                                str_replace(
+                                    '_',
+                                    ' ',
+                                    $status
+                                )
+                            )
+
                         ) ?>
 
                     </span>
+
 
                 </div>
 
@@ -165,8 +282,10 @@ try {
                     </strong>
 
                     <?= htmlspecialchars(
+
                         $appointment['services']
                         ?: 'Not available'
+
                     ) ?>
 
                 </p>
@@ -205,22 +324,24 @@ try {
                     <a
                         href="?page=details&id=<?= (int) $appointment['id'] ?>"
                     >
+
                         View Details
+
                     </a>
 
 
-                    <!-- START SERVICE -->
+                    <!-- STATUS ACTION -->
 
-                    <?php if (
-                        $appointment['status'] === 'confirmed'
-                    ): ?>
+                    <?php if (isset($actions[$status])): ?>
+
 
                         <form
                             method="POST"
                             action="./serviceAssistant/functions/update-booking-status.php"
                             style="display:inline;"
-                            onsubmit="return confirmStartService();"
+                            onsubmit="return confirmBookingAction(this);"
                         >
+
 
                             <input
                                 type="hidden"
@@ -228,88 +349,75 @@ try {
                                 value="<?= (int) $appointment['id'] ?>"
                             >
 
-                            <input
-                                type="hidden"
-                                name="status"
-                                value="service"
-                            >
-
-                            <button type="submit">
-
-                                Start Service
-
-                            </button>
-
-                        </form>
-
-
-                    <!-- COMPLETE SERVICE -->
-
-                    <?php elseif (
-                        $appointment['status'] === 'service'
-                    ): ?>
-
-                        <form
-                            method="POST"
-                            action="./serviceAssistant/functions/update-booking-status.php"
-                            style="display:inline;"
-                            onsubmit="return confirmCompleteService();"
-                        >
-
-                            <input
-                                type="hidden"
-                                name="booking_id"
-                                value="<?= (int) $appointment['id'] ?>"
-                            >
 
                             <input
                                 type="hidden"
                                 name="status"
-                                value="completed"
+                                value="<?= htmlspecialchars(
+                                    $actions[$status]['next_status']
+                                ) ?>"
                             >
+
+
+                            <input
+                                type="hidden"
+                                name="confirmation_message"
+                                value="<?= htmlspecialchars(
+                                    $actions[$status]['message']
+                                ) ?>"
+                            >
+
 
                             <button type="submit">
 
-                                Complete Service
+                                <?= htmlspecialchars(
+                                    $actions[$status]['button']
+                                ) ?>
 
                             </button>
 
+
                         </form>
+
+
+                    <?php elseif ($status === 'completed'): ?>
+
+
+                        <span class="appointment-completed">
+
+                            ✓ Completed
+
+                        </span>
+
 
                     <?php endif; ?>
 
 
                 </div>
 
+
             </div>
+
 
         <?php endforeach; ?>
 
+
     </div>
+
 
 <?php endif; ?>
 
 
-
-<?php 
-    // Add JavaScript functions for confirmation dialogs
-?>
 <script>
 
-function confirmStartService() {
+function confirmBookingAction(form) {
 
-    return confirm(
-        "Are you sure you want to start this service?"
-    );
-
-}
+    const message = form.querySelector(
+        '[name="confirmation_message"]'
+    ).value;
 
 
-function confirmCompleteService() {
-
-    return confirm(
-        "Are you sure you want to complete this service?\n\nThis action cannot be undone."
-    );
+    return confirm(message);
 
 }
 
