@@ -499,7 +499,7 @@ try {
 
 <?php else: ?>
 
-    <div class="ops-table">
+    <div class="ops-table payments-table">
 
         <div class="ops-table-heading">
 
@@ -610,23 +610,30 @@ try {
 
                 <span>
 
-                    <?php if (
-                        !empty(
-                            $payment['slip_path']
-                        )
-                    ): ?>
+                    <?php
+                    // Generate the public URL for the payment slip if it exists.
+                    $slipPath = trim($payment['slip_path'] ?? '');
 
+                    // Check if the slip path is not empty and the file exists.
+                    if ($slipPath !== '') {
+
+                        // Convert stored payment-slip path to the correct public URL.
+                        $slipFileName = basename(str_replace('\\', '/', $slipPath));
+
+                        //
+                        $slipUrl =
+                            '/Vehicle_Service_Center/booking/uploads/payment-slips/'
+                            . rawurlencode($slipFileName);
+                    ?>
                         <a
-                            href="<?= htmlspecialchars(
-                                $payment['slip_path']
-                            ) ?>"
+                            href="<?= htmlspecialchars($slipUrl) ?>"
                             target="_blank"
                             rel="noopener"
+                            class="ops-view-link"
                         >
                             View Slip
                         </a>
-
-                    <?php endif; ?>
+                    <?php } ?>
 
 
                     <?php if (
