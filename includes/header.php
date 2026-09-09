@@ -143,7 +143,12 @@ $profileImage = $basePath . "/public/images/profile.png";
                                 My Appointments
                             </a>
 
-
+                        <?php elseif($userRole === 3):?>
+                            <a
+                                href="<?= $basePath ?>/dashboard/dashboard.php?page=operations"
+                            >
+                                Monitor Operations
+                            </a>
                         <!-- OTHER USERS -->
                         <?php else: ?>
 
