@@ -48,6 +48,7 @@ if (!function_exists('getStatusClass')) {
 
     function getStatusClass($status)
     {
+
         switch (strtolower(trim($status ?? ''))) {
 
             case 'pending':
@@ -60,9 +61,13 @@ if (!function_exists('getStatusClass')) {
                 return 'status-confirmed';
 
             case 'service':
-            case 'in_progress':
-            case 'in progress':
+            case 'vehicle_arrived':
+            case 'service_ongoing':
                 return 'status-progress';
+
+            case 'service_done':
+            case 'vehicle_handover':
+                return 'status-done';
 
             case 'completed':
                 return 'status-completed';
@@ -73,7 +78,9 @@ if (!function_exists('getStatusClass')) {
 
             default:
                 return 'status-pending';
+
         }
+
     }
 
 }
@@ -107,6 +114,7 @@ if (!function_exists('getStatusStep')) {
 
     function getStatusStep($status)
     {
+
         switch (strtolower(trim($status ?? ''))) {
 
             case 'pending':
@@ -117,12 +125,22 @@ if (!function_exists('getStatusStep')) {
                 return 2;
 
             case 'service':
-            case 'in_progress':
-            case 'in progress':
                 return 3;
 
-            case 'completed':
+            case 'vehicle_arrived':
                 return 4;
+
+            case 'service_ongoing':
+                return 5;
+
+            case 'service_done':
+                return 6;
+
+            case 'vehicle_handover':
+                return 7;
+
+            case 'completed':
+                return 8;
 
             case 'cancelled':
             case 'canceled':
@@ -130,7 +148,9 @@ if (!function_exists('getStatusStep')) {
 
             default:
                 return 1;
+
         }
+
     }
 
 }
@@ -170,10 +190,6 @@ if (!function_exists('getStatusStep')) {
 
             <div class="booking-status">
                 Status
-            </div>
-
-            <div class="booking-progress-column">
-                Progress
             </div>
 
             <div class="booking-total">
@@ -218,77 +234,107 @@ if (!function_exists('getStatusStep')) {
             <div class="status-table-row">
 
 
-                <!-- VEHICLE -->
+                <!-- =========================================
+                     FIRST ROW
+                     VEHICLE | DATE | STATUS | TOTAL
+                ========================================= -->
 
-                <div class="booking-vehicle">
-
-                    <strong>
-                        <?= htmlspecialchars(
-                            $booking['vehicle_model'] ?? 'Unknown Vehicle'
-                        ); ?>
-                    </strong>
-
-                    <small>
-
-                        Booking #<?= htmlspecialchars(
-                            $booking['id'] ?? ''
-                        ); ?>
-
-                        ·
-
-                        <?= htmlspecialchars(
-                            $booking['license_plate'] ?? ''
-                        ); ?>
-
-                    </small>
-
-                </div>
+                <div class="booking-main-row">
 
 
-                <!-- DATE -->
+                    <!-- VEHICLE -->
 
-                <div class="booking-date">
+                    <div class="booking-vehicle">
 
-                    <?php if (!empty($booking['booking_date'])): ?>
+                        <strong>
+                            <?= htmlspecialchars(
+                                $booking['vehicle_model'] ?? 'Unknown Vehicle'
+                            ); ?>
+                        </strong>
 
-                        <?= date(
-                            "d M Y",
-                            strtotime($booking['booking_date'])
-                        ); ?>
+                        <small>
 
-                    <?php else: ?>
+                            Booking #<?= htmlspecialchars(
+                                $booking['id'] ?? ''
+                            ); ?>
 
-                        N/A
+                            ·
 
-                    <?php endif; ?>
+                            <?= htmlspecialchars(
+                                $booking['license_plate'] ?? ''
+                            ); ?>
 
-                </div>
+                        </small>
+
+                    </div>
 
 
-                <!-- STATUS -->
+                    <!-- DATE -->
 
-                <div class="booking-status">
+                    <div class="booking-date">
 
-                    <span
-                        class="status <?= getStatusClass(
-                            $booking['status'] ?? ''
-                        ); ?>"
-                    >
+                        <?php if (!empty($booking['booking_date'])): ?>
 
-                        <?= htmlspecialchars(
-                            getStatusText(
+                            <?= date(
+                                "d M Y",
+                                strtotime($booking['booking_date'])
+                            ); ?>
+
+                        <?php else: ?>
+
+                            N/A
+
+                        <?php endif; ?>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="booking-status">
+
+                        <span
+                            class="status <?= getStatusClass(
                                 $booking['status'] ?? ''
-                            )
-                        ); ?>
+                            ); ?>"
+                        >
 
-                    </span>
+                            <?= htmlspecialchars(
+                                getStatusText(
+                                    $booking['status'] ?? ''
+                                )
+                            ); ?>
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- TOTAL -->
+
+                    <div class="booking-total">
+
+                        <strong>
+
+                            Rs. <?= number_format(
+                                (float) ($booking['total_price'] ?? 0),
+                                2
+                            ); ?>
+
+                        </strong>
+
+                    </div>
+
 
                 </div>
 
 
-                <!-- PROGRESS -->
+                <!-- =========================================
+                     SECOND ROW
+                     BOOKING PROGRESS
+                ========================================= -->
 
-                <div class="booking-progress-column">
+                <div class="booking-progress-row">
 
 
                     <?php if ($isCancelled): ?>
@@ -314,20 +360,16 @@ if (!function_exists('getStatusStep')) {
                     <?php else: ?>
 
 
-                        <!-- NORMAL BOOKING PROGRESS -->
+                        <!-- =========================================
+                             NORMAL BOOKING PROGRESS
+                        ========================================= -->
 
                         <div class="booking-status-progress">
 
 
                             <!-- BOOKED -->
 
-                            <div
-                                class="booking-status-step <?=
-                                    $currentStep >= 1
-                                    ? 'active'
-                                    : '';
-                                ?>"
-                            >
+                            <div class="booking-status-step <?= $currentStep >= 1 ? 'active' : '' ?>">
 
                                 <div class="booking-status-circle">
 
@@ -340,24 +382,12 @@ if (!function_exists('getStatusStep')) {
                             </div>
 
 
-                            <div
-                                class="booking-status-line <?=
-                                    $currentStep >= 2
-                                    ? 'active'
-                                    : '';
-                                ?>"
-                            ></div>
+                            <div class="booking-status-line <?= $currentStep >= 2 ? 'active' : '' ?>"></div>
 
 
                             <!-- CONFIRMED -->
 
-                            <div
-                                class="booking-status-step <?=
-                                    $currentStep >= 2
-                                    ? 'active'
-                                    : '';
-                                ?>"
-                            >
+                            <div class="booking-status-step <?= $currentStep >= 2 ? 'active' : '' ?>">
 
                                 <div class="booking-status-circle">
 
@@ -370,24 +400,12 @@ if (!function_exists('getStatusStep')) {
                             </div>
 
 
-                            <div
-                                class="booking-status-line <?=
-                                    $currentStep >= 3
-                                    ? 'active'
-                                    : '';
-                                ?>"
-                            ></div>
+                            <div class="booking-status-line <?= $currentStep >= 3 ? 'active' : '' ?>"></div>
 
 
                             <!-- SERVICE -->
 
-                            <div
-                                class="booking-status-step <?=
-                                    $currentStep >= 3
-                                    ? 'active'
-                                    : '';
-                                ?>"
-                            >
+                            <div class="booking-status-step <?= $currentStep >= 3 ? 'active' : '' ?>">
 
                                 <div class="booking-status-circle">
 
@@ -400,28 +418,88 @@ if (!function_exists('getStatusStep')) {
                             </div>
 
 
-                            <div
-                                class="booking-status-line <?=
-                                    $currentStep >= 4
-                                    ? 'active'
-                                    : '';
-                                ?>"
-                            ></div>
+                            <div class="booking-status-line <?= $currentStep >= 4 ? 'active' : '' ?>"></div>
 
 
-                            <!-- COMPLETED -->
+                            <!-- VEHICLE ARRIVED -->
 
-                            <div
-                                class="booking-status-step <?=
-                                    $currentStep >= 4
-                                    ? 'active'
-                                    : '';
-                                ?>"
-                            >
+                            <div class="booking-status-step <?= $currentStep >= 4 ? 'active' : '' ?>">
 
                                 <div class="booking-status-circle">
 
                                     <?= $currentStep > 4 ? '✓' : '4'; ?>
+
+                                </div>
+
+                                <span>Vehicle Arrived</span>
+
+                            </div>
+
+
+                            <div class="booking-status-line <?= $currentStep >= 5 ? 'active' : '' ?>"></div>
+
+
+                            <!-- SERVICE ONGOING -->
+
+                            <div class="booking-status-step <?= $currentStep >= 5 ? 'active' : '' ?>">
+
+                                <div class="booking-status-circle">
+
+                                    <?= $currentStep > 5 ? '✓' : '5'; ?>
+
+                                </div>
+
+                                <span>Service Ongoing</span>
+
+                            </div>
+
+
+                            <div class="booking-status-line <?= $currentStep >= 6 ? 'active' : '' ?>"></div>
+
+
+                            <!-- SERVICE DONE -->
+
+                            <div class="booking-status-step <?= $currentStep >= 6 ? 'active' : '' ?>">
+
+                                <div class="booking-status-circle">
+
+                                    <?= $currentStep > 6 ? '✓' : '6'; ?>
+
+                                </div>
+
+                                <span>Service Done</span>
+
+                            </div>
+
+
+                            <div class="booking-status-line <?= $currentStep >= 7 ? 'active' : '' ?>"></div>
+
+
+                            <!-- VEHICLE HANDOVER -->
+
+                            <div class="booking-status-step <?= $currentStep >= 7 ? 'active' : '' ?>">
+
+                                <div class="booking-status-circle">
+
+                                    <?= $currentStep > 7 ? '✓' : '7'; ?>
+
+                                </div>
+
+                                <span>Vehicle Handover</span>
+
+                            </div>
+
+
+                            <div class="booking-status-line <?= $currentStep >= 8 ? 'active' : '' ?>"></div>
+
+
+                            <!-- COMPLETED -->
+
+                            <div class="booking-status-step <?= $currentStep >= 8 ? 'active' : '' ?>">
+
+                                <div class="booking-status-circle">
+
+                                    <?= $currentStep >= 8 ? '✓' : '8'; ?>
 
                                 </div>
 
@@ -435,22 +513,6 @@ if (!function_exists('getStatusStep')) {
 
                     <?php endif; ?>
 
-
-                </div>
-
-
-                <!-- TOTAL -->
-
-                <div class="booking-total">
-
-                    <strong>
-
-                        Rs. <?= number_format(
-                            (float) ($booking['total_price'] ?? 0),
-                            2
-                        ); ?>
-
-                    </strong>
 
                 </div>
 

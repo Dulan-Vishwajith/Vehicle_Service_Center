@@ -1,27 +1,17 @@
 <?php
 
-
 session_start();
 
-
-require_once __DIR__
-    . '/../../../config/database.php';
+require_once __DIR__ . '/../../../config/database.php';
 
 
-$assistantId =
-    (int) ($_SESSION['user_id'] ?? 0);
+$assistantId = (int) ($_SESSION['user_id'] ?? 0);
 
+$bookingId = (int) ($_POST['booking_id'] ?? 0);
 
-$bookingId =
-    (int) ($_POST['booking_id'] ?? 0);
-
-
-$newStatus =
-    strtolower(
-        trim(
-            $_POST['status'] ?? ''
-        )
-    );
+$newStatus = strtolower(
+    trim($_POST['status'] ?? '')
+);
 
 
 /*
@@ -31,28 +21,57 @@ $newStatus =
 */
 
 if (
-
     $_SERVER['REQUEST_METHOD'] !== 'POST'
-
     || $assistantId <= 0
-
     || $bookingId <= 0
-
 ) {
 
-
     header(
-
         'Location: ../../dashboard.php?page=appointments'
         . '&error=invalid_booking'
-
     );
-
 
     exit;
 
-
 }
+
+
+/*
+|--------------------------------------------------------------------------
+| STATUS FLOW
+|--------------------------------------------------------------------------
+|
+| confirmed
+|     ↓
+| service
+|     ↓
+| vehicle_arrived
+|     ↓
+| service_ongoing
+|     ↓
+| service_done
+|     ↓
+| vehicle_handover
+|     ↓
+| completed
+|
+*/
+
+$statusFlow = [
+
+    'service' => 'confirmed',
+
+    'vehicle_arrived' => 'service',
+
+    'service_ongoing' => 'vehicle_arrived',
+
+    'service_done' => 'service_ongoing',
+
+    'vehicle_handover' => 'service_done',
+
+    'completed' => 'vehicle_handover'
+
+];
 
 
 try {
@@ -60,97 +79,56 @@ try {
 
     /*
     |--------------------------------------------------------------------------
-    | START SERVICE
+    | VALIDATE STATUS
     |--------------------------------------------------------------------------
     */
 
-
-    if ($newStatus === 'service') {
-
-
-        $stmt = $pdo->prepare("
-
-            UPDATE bookings
-
-            SET status = 'service'
-
-            WHERE id = ?
-
-            AND assigned_assistant_id = ?
-
-            AND status = 'confirmed'
-
-        ");
-
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | COMPLETE SERVICE
-    |--------------------------------------------------------------------------
-    */
-
-
-    elseif ($newStatus === 'completed') {
-
-
-        $stmt = $pdo->prepare("
-
-            UPDATE bookings
-
-            SET status = 'completed'
-
-            WHERE id = ?
-
-            AND assigned_assistant_id = ?
-
-            AND status = 'service'
-
-        ");
-
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | INVALID STATUS
-    |--------------------------------------------------------------------------
-    */
-
-
-    else {
-
+    if (!isset($statusFlow[$newStatus])) {
 
         header(
-
-            'Location: ../../dashboard.php?page=details&id='
-            . $bookingId
-            . '&error=invalid_booking'
-
+            'Location: ../../dashboard.php?page=appointments'
+            . '&error=invalid_status'
         );
-
 
         exit;
 
-
     }
+
+
+    $requiredCurrentStatus =
+        $statusFlow[$newStatus];
 
 
     /*
     |--------------------------------------------------------------------------
-    | EXECUTE UPDATE
+    | UPDATE BOOKING STATUS
     |--------------------------------------------------------------------------
     */
+
+    $stmt = $pdo->prepare("
+
+        UPDATE bookings
+
+        SET status = ?
+
+        WHERE id = ?
+
+        AND assigned_assistant_id = ?
+
+        AND status = ?
+
+    ");
 
 
     $stmt->execute([
 
+        $newStatus,
+
         $bookingId,
 
-        $assistantId
+        $assistantId,
+
+        $requiredCurrentStatus
 
     ]);
 
@@ -161,29 +139,19 @@ try {
     |--------------------------------------------------------------------------
     */
 
-
     if ($stmt->rowCount() === 1) {
 
-
         header(
-
-            'Location: ../../dashboard.php?page=details&id='
-            . $bookingId
-
+            'Location: ../../dashboard.php?page=appointments'
+            . '&success=status_updated'
         );
-
 
     } else {
 
-
         header(
-
-            'Location: ../../dashboard.php?page=details&id='
-            . $bookingId
+            'Location: ../../dashboard.php?page=appointments'
             . '&error=update'
-
         );
-
 
     }
 
@@ -195,15 +163,11 @@ try {
 
 
     header(
-
-        'Location: ../../dashboard.php?page=details&id='
-        . $bookingId
+        'Location: ../../dashboard.php?page=appointments'
         . '&error=update'
-
     );
 
 
     exit;
-
 
 }
