@@ -5,13 +5,24 @@
 | PACKAGE FORM
 |--------------------------------------------------------------------------
 | One form for both Create (no id) and Edit (valid id).
+|
+| Matches the current `service_packages` table exactly:
+| id, package_name, price, duration, status, created_at.
+| No description column — if you add one later (see
+| migration_management_dashboard.sql), the description
+| block below can be restored.
+|
+| Price and Duration Label auto-fill from whichever services are
+| checked (see the <script> block at the bottom) — sum of each
+| selected service's price and duration_minutes. Both fields stay
+| editable afterwards, since a package is often sold at a discount
+| below the sum of its individual services.
 */
 
 $packageId = (int) ($_GET['id'] ?? 0);
 
 $package = [
     'package_name' => '',
-    'description' => '',
     'price' => '',
     'duration' => '',
     'status' => 1
@@ -51,11 +62,24 @@ if ($packageId > 0) {
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| SERVICES FOR THE CHECKLIST
+|--------------------------------------------------------------------------
+| duration_minutes is needed here (not just price) so the JS below
+| can sum both and auto-fill Price + Duration Label.
+*/
+
 $allServices = [];
 
 try {
 
-    $allServices = $pdo->query("SELECT id, service_name, price FROM services WHERE status = 1 ORDER BY service_name")->fetchAll();
+    $allServices = $pdo->query("
+        SELECT id, service_name, price, duration_minutes
+        FROM services
+        WHERE status = 1
+        ORDER BY service_name
+    ")->fetchAll();
 
 } catch (PDOException $e) {
     // Checklist just stays empty; rest of the form still works.
@@ -65,7 +89,6 @@ try {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_package'])) {
 
     $packageName = trim($_POST['package_name'] ?? '');
-    $description = trim($_POST['description'] ?? '');
     $price = (float) ($_POST['price'] ?? 0);
     $duration = trim($_POST['duration'] ?? '');
     $status = isset($_POST['status']) ? (int) $_POST['status'] : 1;
@@ -112,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_package'])) {
 
                 $stmt = $pdo->prepare("
                     INSERT INTO service_packages (package_name, price, duration, status)
-                    VALUES (?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?)
                 ");
 
                 $stmt->execute([$packageName, $price, $duration, $status]);
@@ -139,7 +162,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_package'])) {
                 $pdo->rollBack();
             }
 
-            $formError = "Unable to save this package. Please try again.";
+            /*
+            | Development-mode detail: shows the real DB error instead of
+            | a generic message. Remove the $e->getMessage() part before
+            | this goes to production — raw DB errors shouldn't reach
+            | end users on a live site.
+            */
+            $formError = "Unable to save this package: " . $e->getMessage();
         }
     }
 }
@@ -158,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_package'])) {
 <?php endif; ?>
 
 
-<form method="post" class="admin-form">
+<form method="post" class="admin-form" id="packageForm">
 
     <div class="admin-form-grid">
 
@@ -175,19 +204,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_package'])) {
             </select>
         </div>
 
-        <div class="admin-form-group admin-form-full">
-            <label>Description</label>
-            <textarea name="description" rows="3"><?= htmlspecialchars($package['description'] ?? '') ?></textarea>
+        <div class="admin-form-group">
+            <label>
+                Package Price (Rs.)
+                <small class="admin-autofill-hint">auto-filled — adjust for a package discount</small>
+            </label>
+            <input type="number" step="0.01" min="0" name="price" id="packagePrice" value="<?= htmlspecialchars((string) $package['price']) ?>" required>
         </div>
 
         <div class="admin-form-group">
-            <label>Package Price (Rs.)</label>
-            <input type="number" step="0.01" min="0" name="price" value="<?= htmlspecialchars((string) $package['price']) ?>" required>
-        </div>
-
-        <div class="admin-form-group">
-            <label>Duration Label</label>
-            <input type="text" name="duration" placeholder="e.g. 3 Hours" value="<?= htmlspecialchars($package['duration']) ?>" required>
+            <label>
+                Duration Label
+                <small class="admin-autofill-hint">auto-filled — edit if you want different wording</small>
+            </label>
+            <input type="text" name="duration" id="packageDuration" placeholder="e.g. 3 Hours" value="<?= htmlspecialchars($package['duration']) ?>" required>
         </div>
 
         <div class="admin-form-group admin-form-full">
@@ -200,7 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_package'])) {
 
             <?php else: ?>
 
-                <div class="admin-checkbox-grid">
+                <div class="admin-checkbox-grid" id="packageServiceChecklist">
 
                     <?php foreach ($allServices as $svc): ?>
 
@@ -209,6 +239,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_package'])) {
                                 type="checkbox"
                                 name="services[]"
                                 value="<?= (int) $svc['id'] ?>"
+                                data-price="<?= htmlspecialchars((string) $svc['price']) ?>"
+                                data-duration-minutes="<?= htmlspecialchars((string) ($svc['duration_minutes'] ?? 0)) ?>"
                                 <?= in_array((int) $svc['id'], $selectedServiceIds, true) ? 'checked' : '' ?>
                             >
                             <?= htmlspecialchars($svc['service_name']) ?>
@@ -218,6 +250,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_package'])) {
                     <?php endforeach; ?>
 
                 </div>
+
+                <p class="admin-checklist-total">
+                    Selected total:
+                    <strong id="packageSelectedSummary">Rs. 0.00 · 0 minutes</strong>
+                </p>
 
             <?php endif; ?>
 
@@ -233,3 +270,80 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_package'])) {
     </div>
 
 </form>
+
+
+<script>
+(function () {
+
+    var checklist = document.getElementById('packageServiceChecklist');
+
+    if (!checklist) {
+        return;
+    }
+
+    var priceInput = document.getElementById('packagePrice');
+    var durationInput = document.getElementById('packageDuration');
+    var summaryEl = document.getElementById('packageSelectedSummary');
+
+    // Always recalculates from whatever is checked — on page load AND
+    // on every checkbox change — for both a brand-new package and an
+    // existing one being edited. Price/Duration always match the
+    // actual selection. If you want a package priced below the sum of
+    // its services (a discount), check the services first, then edit
+    // the price/duration fields directly right before saving.
+
+    function minutesToLabel(totalMinutes) {
+
+        if (totalMinutes <= 0) {
+            return '';
+        }
+
+        if (totalMinutes < 60) {
+            return totalMinutes + ' Minutes';
+        }
+
+        var hours = Math.floor(totalMinutes / 60);
+        var minutes = totalMinutes % 60;
+
+        if (minutes === 0) {
+            return hours + (hours === 1 ? ' Hour' : ' Hours');
+        }
+
+        if (minutes === 30) {
+            return (hours + 0.5) + ' Hours';
+        }
+
+        return hours + 'h ' + minutes + 'm';
+    }
+
+    function recalculate() {
+
+        var checkboxes = checklist.querySelectorAll('input[type="checkbox"]:checked');
+
+        var totalPrice = 0;
+        var totalMinutes = 0;
+
+        checkboxes.forEach(function (checkbox) {
+            totalPrice += parseFloat(checkbox.dataset.price || '0');
+            totalMinutes += parseInt(checkbox.dataset.durationMinutes || '0', 10);
+        });
+
+        summaryEl.textContent = 'Rs. ' + totalPrice.toFixed(2) + ' · ' + totalMinutes + ' minutes';
+
+        priceInput.value = totalPrice > 0 ? totalPrice.toFixed(2) : '';
+        durationInput.value = minutesToLabel(totalMinutes);
+    }
+
+    checklist.addEventListener('change', function (event) {
+
+        if (event.target.type !== 'checkbox') {
+            return;
+        }
+
+        recalculate();
+    });
+
+    recalculate();
+
+})();
+</script>
