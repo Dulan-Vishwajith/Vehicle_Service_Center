@@ -67,20 +67,10 @@ $isPending =
 
     <title>Booking Confirmation - VEYRO</title>
 
-    <link
-        rel="stylesheet"
-        href="../includes/css/header.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="../includes/css/global.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="css/booking.css"
-    >
+    <link rel="stylesheet" href="../includes/css/header.css">
+    <link rel="stylesheet" href="../includes/css/global.css">
+    <link rel="stylesheet" href="../includes/css/footer.css">
+    <link rel="stylesheet" href="css/booking.css">
 
 </head>
 
