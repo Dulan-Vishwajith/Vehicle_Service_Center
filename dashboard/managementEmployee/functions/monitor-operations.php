@@ -14,95 +14,194 @@ $operationsError = '';
 try {
 
     /*
-    | Ongoing Bookings
+    |--------------------------------------------------------------------------
+    | ONGOING BOOKINGS
+    |--------------------------------------------------------------------------
     */
+
     $stmt = $pdo->query("
         SELECT
             b.id,
             u.name AS customer_name,
             b.vehicle_model,
             b.license_plate,
-            GROUP_CONCAT(s.service_name SEPARATOR ', ') AS service_names,
+            GROUP_CONCAT(
+                s.service_name
+                ORDER BY s.service_name
+                SEPARATOR ', '
+            ) AS service_names,
             a.name AS assistant_name,
             b.booking_date,
             ts.start_time,
             ts.end_time,
             b.status
         FROM bookings b
+
         INNER JOIN users u
             ON u.user_id = b.user_id
+
         LEFT JOIN users a
             ON a.user_id = b.assigned_assistant_id
+
         LEFT JOIN time_slots ts
             ON ts.id = b.time_slot_id
+
         LEFT JOIN booking_services bs
             ON bs.booking_id = b.id
+
         LEFT JOIN services s
             ON s.id = bs.service_id
-        WHERE b.status IN ('pending', 'booked', 'confirmed', 'service')
-        GROUP BY b.id
-        ORDER BY b.booking_date ASC, ts.start_time ASC
+
+        WHERE b.status IN (
+            'pending',
+            'booked',
+            'confirmed',
+            'service',
+            'vehicle_arrived',
+            'service_ongoing',
+            'service_done',
+            'vehicle_handover'
+        )
+
+        GROUP BY
+            b.id,
+            u.name,
+            b.vehicle_model,
+            b.license_plate,
+            a.name,
+            b.booking_date,
+            ts.start_time,
+            ts.end_time,
+            b.status
+
+        ORDER BY
+            b.booking_date ASC,
+            ts.start_time ASC
+
         LIMIT 15
     ");
 
-    $ongoing = $stmt->fetchAll();
+    $ongoing = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
     /*
-    | Completed Bookings
+    |--------------------------------------------------------------------------
+    | COMPLETED BOOKINGS
+    |--------------------------------------------------------------------------
     */
+
     $stmt = $pdo->query("
         SELECT
             b.id,
             u.name AS customer_name,
             b.vehicle_model,
             b.license_plate,
-            GROUP_CONCAT(s.service_name SEPARATOR ', ') AS service_names,
+            GROUP_CONCAT(
+                s.service_name
+                ORDER BY s.service_name
+                SEPARATOR ', '
+            ) AS service_names,
             a.name AS assistant_name,
             b.updated_at AS completed_date,
             b.total_price
         FROM bookings b
+
         INNER JOIN users u
             ON u.user_id = b.user_id
+
         LEFT JOIN users a
             ON a.user_id = b.assigned_assistant_id
+
         LEFT JOIN booking_services bs
             ON bs.booking_id = b.id
+
         LEFT JOIN services s
             ON s.id = bs.service_id
+
         WHERE b.status = 'completed'
-        GROUP BY b.id
-        ORDER BY b.updated_at DESC
+
+        GROUP BY
+            b.id,
+            u.name,
+            b.vehicle_model,
+            b.license_plate,
+            a.name,
+            b.updated_at,
+            b.total_price
+
+        ORDER BY
+            b.updated_at DESC
+
         LIMIT 10
     ");
 
-    $completed = $stmt->fetchAll();
+    $completed = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
     /*
-    | Active Service Assistants
+    |--------------------------------------------------------------------------
+    | ACTIVE SERVICE ASSISTANTS
+    |--------------------------------------------------------------------------
     */
+
     $stmt = $pdo->query("
         SELECT
             u.user_id,
             u.name,
-            SUM(CASE WHEN b.status IN ('pending', 'booked', 'confirmed') THEN 1 ELSE 0 END) AS current_assignments,
-            SUM(CASE WHEN b.status = 'service' THEN 1 ELSE 0 END) AS in_progress,
-            SUM(CASE WHEN b.status = 'completed' AND DATE(b.updated_at) = CURDATE() THEN 1 ELSE 0 END) AS completed_today
+
+            SUM(
+                CASE
+                    WHEN b.status IN (
+                        'pending',
+                        'booked',
+                        'confirmed',
+                        'vehicle_arrived'
+                    )
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS current_assignments,
+
+            SUM(
+                CASE
+                    WHEN b.status IN (
+                        'service',
+                        'service_ongoing'
+                    )
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS in_progress,
+
+            SUM(
+                CASE
+                    WHEN b.status = 'completed'
+                    AND DATE(b.updated_at) = CURDATE()
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS completed_today
+
         FROM users u
+
         LEFT JOIN bookings b
             ON b.assigned_assistant_id = u.user_id
+
         WHERE u.role_id = 2
-        AND u.status = 1
-        GROUP BY u.user_id
-        ORDER BY u.name ASC
+
+        GROUP BY
+            u.user_id,
+            u.name
+
+        ORDER BY
+            u.name ASC
     ");
 
-    $assistantActivity = $stmt->fetchAll();
+    $assistantActivity = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
 
-    $operationsError = "Unable to load operations data. Make sure the management dashboard migration has been applied.";
+    $operationsError = "Unable to load operations data: " . $e->getMessage();
 }
 
 
@@ -115,17 +214,33 @@ try {
 function operationsStatusClass($status)
 {
     switch (strtolower($status)) {
+
         case 'pending':
             return 'status-pending';
+
         case 'booked':
         case 'confirmed':
             return 'status-confirmed';
+
+        case 'vehicle_arrived':
+            return 'status-arrived';
+
         case 'service':
+        case 'service_ongoing':
             return 'status-progress';
+
+        case 'service_done':
+            return 'status-service-done';
+
+        case 'vehicle_handover':
+            return 'status-handover';
+
         case 'completed':
             return 'status-completed';
+
         case 'cancelled':
             return 'status-cancelled';
+
         default:
             return 'status-pending';
     }
@@ -139,14 +254,13 @@ function operationsStatusClass($status)
 </div>
 
 
-<?php if ($operationsError): ?>
+<?php if (!empty($operationsError)): ?>
 
     <div class="ops-error-message">
         <?= htmlspecialchars($operationsError) ?>
     </div>
 
 <?php endif; ?>
-
 
 <!-- ===================================================
      ONGOING BOOKINGS
