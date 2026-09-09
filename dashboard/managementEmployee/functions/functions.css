@@ -3357,3 +3357,420 @@
     }
 
 }
+
+/* =========================================================
+   MANAGE PAYMENTS
+   Dedicated payment management table
+========================================================= */
+
+.payments-table {
+    width: 100%;
+    overflow-x: auto;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PAYMENT FILTERS
+========================================================= */
+
+.payment-filter-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    margin: 0 0 20px;
+    padding-bottom: 16px;
+
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.payment-filter-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 8px 14px;
+
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+
+    background: var(--color-white);
+    color: var(--color-text);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.payment-filter-links a:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.payment-filter-links a.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+
+/* =========================================================
+   PAYMENT TABLE HEADER + ROW
+========================================================= */
+
+.payments-table .ops-table-heading,
+.payments-table .ops-table-row {
+    display: grid;
+
+    grid-template-columns:
+        65px
+        70px
+        minmax(150px, 1.4fr)
+        120px
+        120px
+        100px
+        minmax(180px, 1.3fr);
+
+    column-gap: 14px;
+
+    width: 100%;
+    min-width: 0;
+
+    align-items: center;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.payments-table .ops-table-heading {
+    padding: 11px 0;
+
+    border-bottom: 1px solid var(--color-border);
+
+    color: var(--color-dark);
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+
+/* =========================================================
+   ROW
+========================================================= */
+
+.payments-table .ops-table-row {
+    min-height: 64px;
+
+    padding: 13px 0;
+
+    border-bottom: 1px solid var(--color-border-light);
+
+    color: var(--color-text);
+
+    font-size: 13px;
+
+    transition: background var(--transition-fast);
+}
+
+.payments-table .ops-table-row:last-child {
+    border-bottom: none;
+}
+
+.payments-table .ops-table-row:hover {
+    background: var(--color-bg);
+}
+
+
+/* =========================================================
+   PAYMENT NUMBER
+========================================================= */
+
+.payments-table .ops-table-row > span:nth-child(1),
+.payments-table .ops-table-row > span:nth-child(2) {
+    color: var(--color-muted);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   CUSTOMER
+========================================================= */
+
+.payments-table .ops-table-row > span:nth-child(3) {
+    min-width: 0;
+
+    color: var(--color-dark);
+    font-weight: 600;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.payments-table .ops-table-row > span:nth-child(3) small {
+    display: block;
+
+    margin-top: 4px;
+
+    color: var(--color-muted);
+
+    font-size: 11px;
+    font-weight: 400;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   PAYMENT METHOD
+========================================================= */
+
+.payments-table .ops-table-row > span:nth-child(4) {
+    color: var(--color-text);
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   AMOUNT
+========================================================= */
+
+.payments-table .ops-table-row > span:nth-child(5) {
+    color: var(--color-dark);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.payments-table .ops-table-row > span:nth-child(6) {
+    display: inline-flex;
+    align-items: center;
+
+    width: fit-content;
+
+    padding: 5px 10px;
+
+    border-radius: 20px;
+
+    background: var(--color-bg);
+
+    color: var(--color-text);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-transform: capitalize;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.payments-table .ops-table-row > span:nth-child(7) {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 7px;
+
+    min-width: 0;
+}
+
+
+/* =========================================================
+   VIEW SLIP
+========================================================= */
+
+.payments-table .ops-table-row > span:nth-child(7) > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 7px 10px;
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+
+    background: var(--color-white);
+    color: var(--color-primary);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition: var(--transition-fast);
+}
+
+.payments-table .ops-table-row > span:nth-child(7) > a:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-soft);
+}
+
+
+/* =========================================================
+   ACTION FORMS
+========================================================= */
+
+.payments-table .ops-table-row > span:nth-child(7) form {
+    display: inline-flex !important;
+
+    margin: 0 !important;
+    padding: 0;
+
+    flex: 0 0 auto;
+}
+
+
+/* =========================================================
+   CONFIRM / REJECT BUTTONS
+========================================================= */
+
+.payments-table .ops-table-row > span:nth-child(7) button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 32px;
+
+    padding: 7px 11px;
+
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+
+    font-family: inherit;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast);
+}
+
+
+/* Confirm */
+
+.payments-table .ops-table-row > span:nth-child(7) form:first-of-type button {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.payments-table .ops-table-row > span:nth-child(7) form:first-of-type button:hover {
+    opacity: 0.9;
+}
+
+
+/* Reject */
+
+.payments-table .ops-table-row > span:nth-child(7) form:last-of-type button {
+    background: var(--color-danger-bg);
+    border-color: var(--color-danger-bg);
+    color: var(--color-danger);
+}
+
+.payments-table .ops-table-row > span:nth-child(7) form:last-of-type button:hover {
+    border-color: var(--color-danger);
+}
+
+
+/* =========================================================
+   EMPTY PAYMENT MESSAGE
+========================================================= */
+
+.payments-table + .empty-message,
+.empty-message {
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PAYMENT SUCCESS / ERROR
+========================================================= */
+
+.booking-success-message,
+.booking-error-message {
+    margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .payments-table {
+        overflow-x: auto;
+    }
+
+    .payments-table .ops-table-heading,
+    .payments-table .ops-table-row {
+        min-width: 820px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .payment-filter-links {
+        gap: 7px;
+    }
+
+    .payment-filter-links a {
+        padding: 7px 11px;
+        font-size: 11px;
+    }
+
+    .payments-table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .payments-table .ops-table-heading,
+    .payments-table .ops-table-row {
+        min-width: 820px;
+    }
+
+}
