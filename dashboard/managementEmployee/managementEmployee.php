@@ -101,6 +101,12 @@ $quickActions = [
         'icon' => '👤',
         'title' => 'My Profile',
         'link' => '?page=profile'
+    ],
+    
+    [
+        'icon' => '📜',
+        'title' => 'Terms & Conditions',
+        'link' => '?page=terms-conditions'
     ]
 
 
@@ -161,7 +167,9 @@ $quickActions = [
                     'package-form'      => 'package-form.php',
                     'assistants'        => 'manage-service-assistants.php',
                     'contact-details'   => 'manage-contact-details.php',
-                    'profile'           => 'my-profile.php'
+                    'profile'           => 'my-profile.php',
+                    'terms-conditions' => 'manage-terms-conditions.php'
+                
                     ];
 
 

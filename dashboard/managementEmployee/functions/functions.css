@@ -3774,3 +3774,241 @@
     }
 
 }
+
+
+
+
+/* =========================================================
+   TERMS & CONDITIONS MANAGEMENT
+========================================================= */
+
+.admin-form-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 20px;
+}
+
+.panel-description {
+    margin: 6px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.required {
+    color: #e63946;
+}
+
+
+.form-help-text {
+    margin: 0 0 12px;
+
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   TERMS EDITOR
+========================================================= */
+
+.terms-editor {
+    width: 100%;
+    min-height: 450px;
+
+    resize: vertical;
+
+    padding: 16px;
+
+    border: 1px solid #d9dee5;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size: 14px;
+    line-height: 1.6;
+
+    color: #374151;
+
+    box-sizing: border-box;
+}
+
+.terms-editor:focus {
+    outline: none;
+
+    border-color: #e63946;
+
+    box-shadow:
+        0 0 0 3px rgba(230, 57, 70, 0.08);
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+
+.admin-primary-button,
+.admin-secondary-button {
+    border: 0;
+    border-radius: 7px;
+
+    padding: 11px 20px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.admin-primary-button {
+    background: #e63946;
+    color: #ffffff;
+}
+
+.admin-primary-button:hover {
+    background: #c92535;
+}
+
+
+.admin-secondary-button {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.admin-secondary-button:hover {
+    background: #d1d5db;
+}
+
+
+/* =========================================================
+   PREVIEW
+========================================================= */
+
+.terms-preview-card {
+    margin-top: 24px;
+}
+
+
+.terms-preview-header {
+    padding-bottom: 16px;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+
+.terms-preview-label {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #e63946;
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+
+.terms-preview-header h3 {
+    margin: 0;
+
+    color: #1f2937;
+
+    font-size: 18px;
+}
+
+
+.terms-preview-content {
+    padding-top: 20px;
+
+    color: #4b5563;
+
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+
+.terms-preview-content h1,
+.terms-preview-content h2,
+.terms-preview-content h3,
+.terms-preview-content h4 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+
+    color: #17202a;
+}
+
+
+.terms-preview-content h3:first-child {
+    margin-top: 0;
+}
+
+
+.terms-preview-content p {
+    margin: 0 0 14px;
+}
+
+
+.terms-preview-content ul,
+.terms-preview-content ol {
+    padding-left: 25px;
+}
+
+
+.terms-preview-content li {
+    margin-bottom: 7px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .admin-form-card {
+        padding: 18px;
+    }
+
+    .terms-editor {
+        min-height: 350px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .admin-primary-button,
+    .admin-secondary-button {
+        width: 100%;
+    }
+
+}

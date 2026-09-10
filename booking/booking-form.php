@@ -197,7 +197,44 @@ $urlServices = array_values(
 );
 
 
+
+
+/*
+|--------------------------------------------------------------------------
+| GET BOOKING TERMS & CONDITIONS
+|--------------------------------------------------------------------------
+*/
+
+$bookingTerms = '';
+
+try {
+
+    $stmt = $pdo->prepare("
+        SELECT content
+        FROM terms_conditions
+        WHERE status = 1
+        ORDER BY id DESC
+        LIMIT 1
+    ");
+
+    $stmt->execute();
+
+    $bookingTerms = $stmt->fetchColumn();
+
+    if (!$bookingTerms) {
+        $bookingTerms = 'Booking terms and conditions are currently unavailable.';
+    }
+
+} catch (PDOException $e) {
+
+    $bookingTerms =
+        'Unable to load the booking terms and conditions.';
+}
 ?>
+
+
+
+
 
 <main class="booking-page">
 
@@ -764,32 +801,37 @@ $urlServices = array_values(
 
 
                 <!-- =============================================
-                     TERMS
-                     ============================================= -->
+                TERMS & CONDITIONS
+                ============================================= -->
 
-                <div class="booking-terms">
+            <div class="booking-terms">
 
-                    <label class="terms-label">
+                <label class="terms-label">
 
-                        <input
-                            type="checkbox"
-                            name="terms"
-                            value="1"
-                            required
+                    <input
+                        type="checkbox"
+                        name="terms"
+                        value="1"
+                        id="termsCheckbox"
+                        required
+                    >
+
+                    <span>
+                        I confirm that the information provided is correct
+                        and I agree to the
+
+                        <button
+                            type="button"
+                            class="terms-link"
+                            id="openTermsModal"
                         >
+                            booking terms and conditions
+                        </button>.
+                    </span>
 
-                        <span>
+                </label>
 
-                            I confirm that the information provided
-                            is correct and I agree to the booking
-                            terms and conditions.
-
-                        </span>
-
-                    </label>
-
-                </div>
-
+            </div>
 
                 <!-- =============================================
                      BUTTONS
@@ -998,6 +1040,100 @@ $urlServices = array_values(
 </main>
 
 
+
+
+
+<!-- =========================================================
+     BOOKING TERMS & CONDITIONS MODAL
+     ========================================================= -->
+
+<div
+    class="terms-modal"
+    id="termsModal"
+    aria-hidden="true"
+>
+
+    <div class="terms-modal-overlay" id="termsModalOverlay"></div>
+
+    <div
+        class="terms-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="termsModalTitle"
+    >
+
+        <!-- HEADER -->
+
+        <div class="terms-modal-header">
+
+            <div>
+                <span class="terms-modal-label">
+                    BOOKING
+                </span>
+
+                <h2 id="termsModalTitle">
+                    Terms & Conditions
+                </h2>
+            </div>
+
+            <button
+                type="button"
+                class="terms-modal-close"
+                id="closeTermsModal"
+                aria-label="Close"
+            >
+                &times;
+            </button>
+
+        </div>
+
+
+        <!-- CONTENT -->
+
+        <div class="terms-modal-body">
+
+            <div class="terms-content">
+
+                <?= $bookingTerms ?>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="terms-modal-footer">
+
+            <button
+                type="button"
+                class="terms-modal-cancel"
+                id="termsModalCancel"
+            >
+                Close
+            </button>
+
+            <button
+                type="button"
+                class="terms-modal-agree"
+                id="termsModalAgree"
+            >
+                I Agree
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
 <!-- =========================================================
      OLD SELECTED SERVICES
      ========================================================= -->
@@ -1011,8 +1147,9 @@ window.oldSelectedServices =
             : $urlServices,
         JSON_UNESCAPED_UNICODE
     ) ?>;
-
 </script>
+<script src="./js/booking-leave-alert.js"></script>
+<script src="./js/booking-terms-modal.js"></script>
 
 
 
