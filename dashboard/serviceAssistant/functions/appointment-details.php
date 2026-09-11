@@ -54,22 +54,7 @@ if ($bookingId > 0) {
 
             WHERE b.id = ?
 
-            AND (
-
-                b.assigned_assistant_id = ?
-
-                OR (
-
-                    b.assigned_assistant_id IS NULL
-
-                    AND b.status IN (
-                        'pending',
-                        'booked'
-                    )
-
-                )
-
-            )
+            AND b.assigned_assistant_id = ?
 
             GROUP BY
 
@@ -133,15 +118,6 @@ if (!$booking) {
 
 
 }
-
-
-$isAvailableBooking =
-    $booking['assigned_assistant_id'] === null
-    && in_array(
-        $booking['status'],
-        ['pending', 'booked'],
-        true
-    );
 
 
 $isMyBooking =
@@ -358,133 +334,60 @@ $isMyBooking =
 
     <div class="booking-status-actions">
 
-
-        <?php if ($isAvailableBooking): ?>
-
-
-            <form
-                method="POST"
-                action="./serviceAssistant/functions/confirm-and-assign.php"
-            >
-
-                <input
-                    type="hidden"
-                    name="booking_id"
-                    value="<?= (int) $booking['id'] ?>"
-                >
-
-
-                <button
-                    type="submit"
-                    onclick="
-                        return confirm(
-                            'Confirm this booking and assign it to yourself?'
-                        );
-                    "
-                >
-
-                    Confirm &amp; Assign to Me
-
-                </button>
-
-
-            </form>
-
-
-        <?php elseif (
-
+        <?php if (
             $isMyBooking
             && $booking['status'] === 'confirmed'
-
         ): ?>
-
 
             <form
                 method="POST"
                 action="./serviceAssistant/functions/update-booking-status.php"
             >
-
                 <input
                     type="hidden"
                     name="booking_id"
                     value="<?= (int) $booking['id'] ?>"
                 >
-
-
                 <input
                     type="hidden"
                     name="status"
                     value="service"
                 >
-
-
                 <button type="submit">
-
                     Start Service
-
                 </button>
-
-
             </form>
 
-
         <?php elseif (
-                $isMyBooking
-                && $booking['status'] === 'service'
-            ): ?>
+            $isMyBooking
+            && $booking['status'] === 'service'
+        ): ?>
 
-                <form
-                    method="POST"
-                    action="./serviceAssistant/functions/update-booking-status.php"
+            <form
+                method="POST"
+                action="./serviceAssistant/functions/update-booking-status.php"
+            >
+                <input
+                    type="hidden"
+                    name="booking_id"
+                    value="<?= (int) $booking['id'] ?>"
                 >
-
-                    <input
-                        type="hidden"
-                        name="booking_id"
-                        value="<?= (int) $booking['id'] ?>"
-                    >
-
-                    <input
-                        type="hidden"
-                        name="status"
-                        value="vehicle_arrived"
-                    >
-
-                    <button type="submit">
-                        Vehicle Arrived
-                    </button>
-
-                </form>
-
-<?php endif; ?>
-
-
-        <!-- DYNAMIC BACK BUTTON -->
-
-        <?php if ($isAvailableBooking): ?>
-
-
-            <a href="?page=available">
-
-                Back to Available Bookings
-
-            </a>
-
-
-        <?php else: ?>
-
-
-            <a href="?page=appointments">
-
-                Back to My Appointments
-
-            </a>
-
+                <input
+                    type="hidden"
+                    name="status"
+                    value="vehicle_arrived"
+                >
+                <button type="submit">
+                    Vehicle Arrived
+                </button>
+            </form>
 
         <?php endif; ?>
 
+        <a href="?page=appointments">
+            Back to My Appointments
+        </a>
 
     </div>
-
 
 </div>

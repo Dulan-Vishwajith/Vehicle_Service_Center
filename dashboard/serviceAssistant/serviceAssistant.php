@@ -43,14 +43,8 @@ $quickActions = [
     ],
 
     [
-        'icon' => '🚗',
-        'title' => 'Available Bookings',
-        'link' => '?page=available'
-    ],
-
-    [
         'icon' => '👥',
-        'title' => 'View Customers',
+        'title' => 'My Customers',
         'link' => '?page=customers'
     ],
 
@@ -190,14 +184,6 @@ if (!in_array($page, $allowedPages, true)) {
 
                         include __DIR__
                             . '/functions/manage-appointments.php';
-
-                        break;
-
-
-                    case 'available':
-
-                        include __DIR__
-                            . '/functions/available-bookings.php';
 
                         break;
 

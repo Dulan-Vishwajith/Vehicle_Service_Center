@@ -50,15 +50,21 @@ $dashboardButtonLink = "?page=reports";
 $quickActions = [
 
     [
-        'icon' => '📡',
-        'title' => 'Monitor Operations',
-        'link' => '?page=operations'
-    ],
-
-    [
         'icon' => '💳',
         'title' => 'Manage Payments',
         'link' => '?page=payments'
+    ],
+
+    [
+        'icon' => '📋',
+        'title' => 'Confirm & Assign Bookings',
+        'link' => '?page=bookings'
+    ],
+    
+    [
+        'icon' => '📡',
+        'title' => 'Monitor Operations',
+        'link' => '?page=operations'
     ],
 
     [
@@ -134,6 +140,7 @@ $quickActions = [
         ?>
 
 
+
         <!-- Dashboard Grid -->
         <div class="dashboard-grid">
 
@@ -156,6 +163,7 @@ $quickActions = [
                     'operations'        => 'monitor-operations.php',
                     'operation-details' => 'operations-details.php',
                     'payments' => 'manage-payments.php',
+                    'bookings'           => 'manage-bookings.php',
                     'reports'           => 'reports.php',
                     'services-report'   => 'services-report.php',
                     'revenue-report'    => 'revenue-report.php',

@@ -14,7 +14,7 @@ try {
     $stmt->execute([$assistantId]);
     $assignedAppointments = (int) $stmt->fetchColumn();
 
-    $stmt = $pdo->query("SELECT COUNT(*) FROM bookings WHERE assigned_assistant_id IS NULL AND status IN ('pending', 'booked')");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM bookings WHERE assigned_assistant_id IS NULL AND status = 'booked'");
     $availableBookings = (int) $stmt->fetchColumn();
 
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM bookings WHERE assigned_assistant_id = ? AND status = 'completed'");
@@ -27,7 +27,7 @@ try {
 $dashboardCards = [
     ['icon' => '📅', 'label' => "Today's Schedule", 'value' => $todayAppointments],
     ['icon' => '📋', 'label' => 'My Appointments', 'value' => $assignedAppointments],
-    ['icon' => '🚗', 'label' => 'Available Bookings', 'value' => $availableBookings],
+    ['icon' => '⏳', 'label' => 'Awaiting Assignment', 'value' => $availableBookings],
     ['icon' => '✓', 'label' => 'Completed', 'value' => $completedAppointments],
 ];
 

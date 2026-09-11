@@ -87,7 +87,7 @@ try {
         </span>
 
         <h2>
-            Available Bookings
+            Assigned Booking Queue
         </h2>
 
     </div>
@@ -105,8 +105,8 @@ try {
         </h3>
 
         <p>
-            There are currently no pending bookings
-            available for confirmation.
+            Bookings are confirmed and assigned by management.
+            Assigned appointments will appear in My Appointments.
         </p>
 
     </div>
@@ -238,35 +238,13 @@ try {
                     </a>
 
 
-                    <!-- Confirm and Assign -->
-
-                    <form
-                        method="POST"
-                        action="./serviceAssistant/functions/confirm-and-assign.php"
-                        style="display:inline;"
-                    >
-
-                        <input
-                            type="hidden"
-                            name="booking_id"
-                            value="<?= (int) $booking['id'] ?>"
-                        >
-
-
-                        <button
-                            type="submit"
-                            onclick="return confirm(
-                                'Confirm this booking and assign it to yourself?'
-                            );"
-                        >
-
-                            Confirm &amp; Assign to Me
-
-                        </button>
-
-
-                    </form>
-
+                    <div class="booking-assignment-waiting">
+                        <span class="booking-assignment-waiting-icon">✓</span>
+                        <div>
+                            <strong>Waiting for management assignment</strong>
+                            <small>This booking is confirmed and will be assigned by the management team.</small>
+                        </div>
+                    </div>
 
                 </div>
 
