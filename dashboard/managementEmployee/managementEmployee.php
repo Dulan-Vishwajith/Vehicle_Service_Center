@@ -108,6 +108,13 @@ $quickActions = [
         'title' => 'My Profile',
         'link' => '?page=profile'
     ],
+
+    
+    [
+    'icon' => '🏦',
+    'title' => 'Manage Bank Details',
+    'link' => '?page=bank-details'
+    ],
     
     [
         'icon' => '📜',
@@ -162,8 +169,8 @@ $quickActions = [
                 $managementPages = [
                     'operations'        => 'monitor-operations.php',
                     'operation-details' => 'operations-details.php',
-                    'payments' => 'manage-payments.php',
-                    'bookings'           => 'manage-bookings.php',
+                    'payments'          => 'manage-payments.php',
+                    'bookings'          => 'manage-bookings.php',
                     'reports'           => 'reports.php',
                     'services-report'   => 'services-report.php',
                     'revenue-report'    => 'revenue-report.php',
@@ -176,7 +183,8 @@ $quickActions = [
                     'assistants'        => 'manage-service-assistants.php',
                     'contact-details'   => 'manage-contact-details.php',
                     'profile'           => 'my-profile.php',
-                    'terms-conditions' => 'manage-terms-conditions.php'
+                    'terms-conditions' => 'manage-terms-conditions.php',
+                    'bank-details' => 'manage-bank-details.php'
                 
                     ];
 
