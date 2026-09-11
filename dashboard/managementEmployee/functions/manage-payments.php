@@ -432,6 +432,7 @@ try {
 ?>
 
 
+
 <div class="panel-header">
 
     <div>
@@ -485,6 +486,49 @@ try {
     </a>
 
 </div>
+
+
+
+<div class="booking-flow-guide">
+    <div class="booking-flow-item is-done">
+        <span>1</span>
+        <div>
+            <strong>Payment Accepted</strong>
+            <small>Deposit/payment verified</small>
+        </div>
+    </div>
+
+    <div class="booking-flow-arrow">→</div>
+
+    <div class="booking-flow-item is-active">
+        <span>2</span>
+        <div>
+            <strong>Confirm Booking</strong>
+            <small>Management approves the appointment</small>
+        </div>
+    </div>
+
+    <div class="booking-flow-arrow">→</div>
+
+    <div class="booking-flow-item">
+        <span>3</span>
+        <div>
+            <strong>Assign Assistant</strong>
+            <small>Select the responsible assistant</small>
+        </div>
+    </div>
+
+    <div class="booking-flow-arrow">→</div>
+
+    <div class="booking-flow-item">
+        <span>4</span>
+        <div>
+            <strong>Confirmed</strong>
+            <small>Assistant can begin the service flow</small>
+        </div>
+    </div>
+</div>
+
 
 
 <?php if (empty($payments)): ?>
