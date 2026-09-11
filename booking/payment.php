@@ -1383,6 +1383,8 @@ $remaining =
                             name="cardholder_name"
                             maxlength="100"
                             autocomplete="off"
+                            pattern="[A-Za-z ]{2,100}"
+                            title="Cardholder name can contain letters and spaces only."
                             required
                         >
 
@@ -1414,8 +1416,11 @@ $remaining =
                                     type="text"
                                     name="expiry"
                                     maxlength="5"
+                                    inputmode="numeric"
                                     placeholder="MM/YY"
                                     autocomplete="off"
+                                    pattern="(0[1-9]|1[0-2])/[0-9]{2}"
+                                    title="Enter a valid future expiry date in MM/YY format."
                                     required
                                 >
 
@@ -1432,6 +1437,8 @@ $remaining =
                                     name="cvv"
                                     maxlength="3"
                                     inputmode="numeric"
+                                    pattern="[0-9]{3}"
+                                    title="CVV must contain exactly 3 digits."
                                     autocomplete="off"
                                     required
                                 >
@@ -1596,6 +1603,97 @@ $remaining =
 
 
 <?php include '../includes/footer.php'; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const cardForm = document.getElementById('cardPaymentForm');
+
+    if (!cardForm) {
+        return;
+    }
+
+    const cardholderInput = cardForm.querySelector('input[name="cardholder_name"]');
+    const expiryInput = cardForm.querySelector('input[name="expiry"]');
+    const cvvInput = cardForm.querySelector('input[name="cvv"]');
+
+    /*
+     * Cardholder name:
+     * Allow English letters and spaces only.
+     */
+    cardholderInput.addEventListener('input', function () {
+        this.value = this.value.replace(/[^A-Za-z ]/g, '');
+        this.setCustomValidity('');
+    });
+
+    /*
+     * CVV:
+     * Allow numbers only and limit to 3 digits.
+     */
+    cvvInput.addEventListener('input', function () {
+        this.value = this.value.replace(/\D/g, '').slice(0, 3);
+        this.setCustomValidity('');
+    });
+
+    /*
+     * Expiry:
+     * Accept digits only and automatically format as MM/YY.
+     */
+    expiryInput.addEventListener('input', function () {
+        let digits = this.value.replace(/\D/g, '').slice(0, 4);
+
+        if (digits.length > 2) {
+            digits = digits.slice(0, 2) + '/' + digits.slice(2);
+        }
+
+        this.value = digits;
+        this.setCustomValidity('');
+    });
+
+    function validateExpiry() {
+        const value = expiryInput.value.trim();
+        const match = value.match(/^(0[1-9]|1[0-2])\/([0-9]{2})$/);
+
+        if (!match) {
+            expiryInput.setCustomValidity(
+                'Please enter a valid expiry date in MM/YY format.'
+            );
+            return false;
+        }
+
+        const expiryMonth = parseInt(match[1], 10);
+        const expiryYear = 2000 + parseInt(match[2], 10);
+
+        const now = new Date();
+        const currentMonth = now.getMonth() + 1;
+        const currentYear = now.getFullYear();
+
+        if (
+            expiryYear < currentYear ||
+            (expiryYear === currentYear && expiryMonth < currentMonth)
+        ) {
+            expiryInput.setCustomValidity(
+                'The card has expired. Please enter a valid future expiry date.'
+            );
+            return false;
+        }
+
+        expiryInput.setCustomValidity('');
+        return true;
+    }
+
+    expiryInput.addEventListener('blur', function () {
+        validateExpiry();
+        this.reportValidity();
+    });
+
+    cardForm.addEventListener('submit', function (event) {
+        if (!validateExpiry()) {
+            event.preventDefault();
+            expiryInput.reportValidity();
+        }
+    });
+});
+</script>
 
 // Payment method toggle script
 <script src="js/payment-form.js"></script>
