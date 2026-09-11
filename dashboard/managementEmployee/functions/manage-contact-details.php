@@ -87,13 +87,15 @@ try {
 |--------------------------------------------------------------------------
 */
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST'
-    && isset($_POST['update_contact_details'])) {
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['update_contact_details'])
+) {
 
 
     /*
     |--------------------------------------------------------------
-    | GET AND SANITIZE INPUT
+    | GET INPUT
     |--------------------------------------------------------------
     */
 
@@ -104,12 +106,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
 
     /*
     |--------------------------------------------------------------
+    | REMOVE SPACES FROM PHONE
+    |--------------------------------------------------------------
+    */
+
+    $phoneDigits = str_replace(' ', '', $phone);
+
+
+    /*
+    |--------------------------------------------------------------
+    | FORMAT PHONE NUMBER
+    |--------------------------------------------------------------
+    |
+    | User enters:
+    | 0712345689
+    |
+    | Saved/displayed as:
+    | 071 234 5689
+    |
+    */
+
+    $formattedPhone = $phone;
+
+    if (preg_match('/^0[0-9]{9}$/', $phoneDigits)) {
+
+        $formattedPhone =
+            substr($phoneDigits, 0, 3)
+            . ' '
+            . substr($phoneDigits, 3, 3)
+            . ' '
+            . substr($phoneDigits, 6, 4);
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------
     | KEEP FORM VALUES
     |--------------------------------------------------------------
     */
 
     $contact = [
-        'phone'   => $phone,
+        'phone'   => $formattedPhone,
         'email'   => $email,
         'address' => $address
     ];
@@ -124,16 +162,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
     $errors = [];
 
 
-    if ($phone === '') {
+    /*
+    |--------------------------------------------------------------
+    | PHONE VALIDATION
+    |--------------------------------------------------------------
+    */
+
+    if ($phoneDigits === '') {
 
         $errors[] = "Phone number is required.";
 
-    } elseif (!preg_match('/^[0-9+\-\s()]{7,30}$/', $phone)) {
+    } elseif (!preg_match('/^0[0-9]{9}$/', $phoneDigits)) {
 
-        $errors[] = "Please enter a valid phone number.";
+        $errors[] =
+            "Phone number must contain exactly 10 digits and start with 0.";
 
     }
 
+
+    /*
+    |--------------------------------------------------------------
+    | EMAIL VALIDATION
+    |--------------------------------------------------------------
+    |
+    | Email must:
+    | - be a valid email address
+    | - end with .com or .lk
+    |
+    */
 
     if ($email === '') {
 
@@ -143,8 +199,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
 
         $errors[] = "Please enter a valid email address.";
 
+    } elseif (!preg_match('/\.(com|lk)$/i', $email)) {
+
+        $errors[] = "Email address must end with .com or .lk.";
+
     }
 
+
+    /*
+    |--------------------------------------------------------------
+    | ADDRESS VALIDATION
+    |--------------------------------------------------------------
+    */
 
     if ($address === '') {
 
@@ -164,8 +230,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
         try {
 
             /*
-            | Check whether the single contact record exists.
+            | Check whether the contact record exists.
             */
+
             $stmt = $pdo->prepare("
                 SELECT id
                 FROM contact_details
@@ -183,6 +250,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
                 /*
                 | Update existing record.
                 */
+
                 $stmt = $pdo->prepare("
                     UPDATE contact_details
                     SET
@@ -194,7 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
                 ");
 
                 $stmt->execute([
-                    $phone,
+                    $formattedPhone,
                     $email,
                     $address,
                     $existingContact['id']
@@ -203,8 +271,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
             } else {
 
                 /*
-                | Create the first record if one does not exist.
+                | Create the first contact record if one does not exist.
                 */
+
                 $stmt = $pdo->prepare("
                     INSERT INTO contact_details
                     (
@@ -216,7 +285,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
                 ");
 
                 $stmt->execute([
-                    $phone,
+                    $formattedPhone,
                     $email,
                     $address
                 ]);
@@ -224,14 +293,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
             }
 
 
-            $contactMessage = "Contact details updated successfully.";
-            $contactMessageType = "success";
+            $contact['phone'] = $formattedPhone;
+
+            $contactMessage =
+                "Contact details updated successfully.";
+
+            $contactMessageType =
+                "success";
 
 
         } catch (PDOException $e) {
 
-            $contactMessage = "Unable to update contact details.";
-            $contactMessageType = "error";
+            $contactMessage =
+                "Unable to update contact details.";
+
+            $contactMessageType =
+                "error";
 
         }
 
@@ -240,6 +317,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
         /*
         | Show the first validation error.
         */
+
         $contactMessage = $errors[0];
         $contactMessageType = "error";
 
@@ -272,7 +350,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
 
 <div class="ops-section">
 
-    <p style="margin-bottom: 20px; color: var(--color-muted); font-size: 13px;">
+    <p style="
+        margin-bottom: 20px;
+        color: var(--color-muted);
+        font-size: 13px;
+    ">
 
         Update the phone number, email address and location
         displayed in the website footer.
@@ -295,12 +377,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
                 </label>
 
                 <input
-                    type="text"
+                    type="tel"
                     id="phone"
                     name="phone"
                     value="<?= htmlspecialchars($contact['phone']) ?>"
-                    placeholder="+94 77 123 4567"
-                    maxlength="30"
+                    placeholder="071 234 5689"
+                    maxlength="12"
+                    inputmode="numeric"
+                    autocomplete="tel"
+                    title="Enter a 10-digit phone number. Example: 0712345689"
                     required
                 >
 
@@ -322,6 +407,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
                     value="<?= htmlspecialchars($contact['email']) ?>"
                     placeholder="info@veyro.lk"
                     maxlength="150"
+                    pattern="^[^@\s]+@[^@\s]+\.(com|lk)$"
+                    title="Email address must end with .com or .lk"
+                    autocomplete="email"
                     required
                 >
 
@@ -367,3 +455,332 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
     </form>
 
 </div>
+
+
+<script>
+
+/*
+|--------------------------------------------------------------------------
+| AUTOMATIC PHONE NUMBER FORMATTING
+|--------------------------------------------------------------------------
+|
+| User types:
+| 0712345689
+|
+| Displayed as:
+| 071 234 5689
+|
+*/
+
+const phoneInput = document.getElementById('phone');
+
+
+phoneInput.addEventListener('input', function () {
+
+    let numbers = this.value.replace(/\D/g, '');
+
+    numbers = numbers.slice(0, 10);
+
+
+    if (numbers.length <= 3) {
+
+        this.value = numbers;
+        return;
+
+    }
+
+
+    if (numbers.length <= 6) {
+
+        this.value =
+            numbers.slice(0, 3)
+            + ' '
+            + numbers.slice(3);
+
+        return;
+
+    }
+
+
+    this.value =
+        numbers.slice(0, 3)
+        + ' '
+        + numbers.slice(3, 6)
+        + ' '
+        + numbers.slice(6, 10);
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| PHONE VALIDATION
+|--------------------------------------------------------------------------
+*/
+
+phoneInput.addEventListener('blur', function () {
+
+    const numbers =
+        this.value.replace(/\D/g, '');
+
+
+    if (
+        numbers.length !== 10
+        || numbers.charAt(0) !== '0'
+    ) {
+
+        this.setCustomValidity(
+            'Phone number must contain exactly 10 digits and start with 0.'
+        );
+
+    } else {
+
+        this.setCustomValidity('');
+
+    }
+
+});
+
+
+phoneInput.addEventListener('input', function () {
+
+    this.setCustomValidity('');
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| EMAIL INPUT CONTROL
+|--------------------------------------------------------------------------
+|
+| Once the email ends with:
+|
+| .lk
+| .com
+|
+| normal typing after that point is blocked.
+|
+*/
+
+const emailInput = document.getElementById('email');
+
+
+/*
+|--------------------------------------------------------------------------
+| BLOCK TYPING AFTER .LK OR .COM
+|--------------------------------------------------------------------------
+*/
+
+emailInput.addEventListener('keydown', function (event) {
+
+    const email = this.value.toLowerCase();
+
+    const emailFinished =
+        email.endsWith('.lk') ||
+        email.endsWith('.com');
+
+
+    if (emailFinished) {
+
+        /*
+        | Allow keys needed for editing/navigation.
+        */
+
+        const allowedKeys = [
+            'Backspace',
+            'Delete',
+            'ArrowLeft',
+            'ArrowRight',
+            'ArrowUp',
+            'ArrowDown',
+            'Home',
+            'End',
+            'Tab',
+            'Escape'
+        ];
+
+
+        /*
+        | Allow common keyboard shortcuts.
+        */
+
+        if (
+            allowedKeys.includes(event.key) ||
+            event.ctrlKey ||
+            event.metaKey
+        ) {
+            return;
+        }
+
+
+        /*
+        | Block normal character typing.
+        */
+
+        event.preventDefault();
+
+    }
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| PROTECT AGAINST PASTE / AUTOFILL
+|--------------------------------------------------------------------------
+|
+| Examples:
+|
+| info@veyro.lkabc
+|
+| becomes:
+|
+| info@veyro.lk
+|
+|--------------------------------------------------------------------------
+*/
+
+emailInput.addEventListener('input', function () {
+
+    let email = this.value;
+
+    const lowerEmail = email.toLowerCase();
+
+    const comPosition = lowerEmail.indexOf('.com');
+    const lkPosition = lowerEmail.indexOf('.lk');
+
+
+    /*
+    | Find whichever valid ending appears first.
+    */
+
+    let endPosition = -1;
+    let endLength = 0;
+
+
+    if (comPosition !== -1 && lkPosition !== -1) {
+
+        if (comPosition < lkPosition) {
+
+            endPosition = comPosition;
+            endLength = 4;
+
+        } else {
+
+            endPosition = lkPosition;
+            endLength = 3;
+
+        }
+
+    } else if (comPosition !== -1) {
+
+        endPosition = comPosition;
+        endLength = 4;
+
+    } else if (lkPosition !== -1) {
+
+        endPosition = lkPosition;
+        endLength = 3;
+
+    }
+
+
+    /*
+    | Remove everything after .com or .lk.
+    */
+
+    if (endPosition !== -1) {
+
+        this.value =
+            email.substring(
+                0,
+                endPosition + endLength
+            );
+
+    }
+
+
+    this.setCustomValidity('');
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| EMAIL VALIDATION
+|--------------------------------------------------------------------------
+*/
+
+function validateEmail() {
+
+    const email = emailInput.value.trim();
+
+
+    if (email === '') {
+
+        emailInput.setCustomValidity('');
+        return;
+
+    }
+
+
+    /*
+    | Complete allowed email structure.
+    */
+
+    const emailPattern =
+        /^[^\s@]+@[^\s@]+\.(com|lk)$/i;
+
+
+    if (!emailPattern.test(email)) {
+
+        emailInput.setCustomValidity(
+            'Please enter a valid email address ending with .com or .lk.'
+        );
+
+        return;
+
+    }
+
+
+    emailInput.setCustomValidity('');
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| VALIDATE WHEN LEAVING EMAIL FIELD
+|--------------------------------------------------------------------------
+*/
+
+emailInput.addEventListener('blur', function () {
+
+    validateEmail();
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| VALIDATE BEFORE FORM SUBMIT
+|--------------------------------------------------------------------------
+*/
+
+emailInput.form.addEventListener('submit', function (event) {
+
+    validateEmail();
+
+
+    if (!emailInput.checkValidity()) {
+
+        event.preventDefault();
+
+        emailInput.reportValidity();
+
+    }
+
+});
+
+</script>
