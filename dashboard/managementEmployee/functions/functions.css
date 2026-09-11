@@ -4379,3 +4379,468 @@
         width: 100%;
     }
 }
+
+/* =========================================================
+   MANAGE BANK DETAILS - FIXED RESPONSIVE STYLE
+   ========================================================= */
+
+.bank-details-form-panel,
+.bank-accounts-list {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   PANEL HEADER
+   ========================================================= */
+
+.bank-details-form-panel .panel-header,
+.bank-accounts-list .panel-header {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.bank-details-form-panel .panel-header h3,
+.bank-accounts-list .panel-header h3 {
+    margin: 0;
+}
+
+
+/* =========================================================
+   ADD FORM
+   ========================================================= */
+
+.bank-details-form {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 24px 22px;
+}
+
+
+/* =========================================================
+   FORM GRID
+   IMPORTANT:
+   minmax(0, 1fr) prevents columns from overflowing
+   ========================================================= */
+
+.bank-details-form .form-grid,
+.bank-edit-form .form-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr) !important;
+
+    gap: 20px !important;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   FORM GROUP
+   ========================================================= */
+
+.bank-details-form .form-group,
+.bank-edit-form .form-group {
+    width: 100%;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LABEL
+   ========================================================= */
+
+.bank-details-form .form-group label,
+.bank-edit-form .form-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #374151;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+
+.bank-details-form .form-group input[type="text"],
+.bank-edit-form .form-group input[type="text"] {
+    display: block;
+
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    height: 42px;
+
+    padding: 0 13px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #111827;
+
+    font-size: 13px;
+
+    outline: none;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.bank-details-form .form-group input[type="text"]:focus,
+.bank-edit-form .form-group input[type="text"]:focus {
+    border-color: #111827;
+
+    box-shadow:
+        0 0 0 3px rgba(17, 24, 39, .08);
+}
+
+.bank-details-form .form-group input[type="text"]::placeholder,
+.bank-edit-form .form-group input[type="text"]::placeholder {
+    color: #9ca3af;
+}
+
+
+/* =========================================================
+   ADD BUTTON
+   ========================================================= */
+
+.bank-details-form .primary-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 40px;
+
+    margin-top: 22px;
+    padding: 0 17px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: #111827;
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   BANK ACCOUNTS AREA
+   ========================================================= */
+
+.bank-accounts-list {
+    margin-top: 28px;
+}
+
+
+/* =========================================================
+   BANK ACCOUNT CARD
+   ========================================================= */
+
+.bank-account-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    margin-bottom: 18px;
+    padding: 22px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   ACCOUNT HEADER
+   ========================================================= */
+
+.bank-account-header {
+    width: 100%;
+    min-width: 0;
+
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+
+    border-bottom: 1px solid #eef0f2;
+
+    box-sizing: border-box;
+}
+
+.bank-account-header h3 {
+    margin: 0 0 8px;
+
+    color: #111827;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.bank-active-badge,
+.bank-inactive-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: .4px;
+
+    white-space: nowrap;
+}
+
+.bank-active-badge {
+    background: #ecfdf5;
+    color: #15803d;
+
+    border: 1px solid #bbf7d0;
+}
+
+.bank-inactive-badge {
+    background: #f3f4f6;
+    color: #6b7280;
+
+    border: 1px solid #e5e7eb;
+}
+
+
+/* =========================================================
+   EDIT FORM
+   ========================================================= */
+
+.bank-edit-form {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.bank-account-actions,
+.bank-secondary-actions {
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    box-sizing: border-box;
+}
+
+.bank-account-actions {
+    margin-top: 20px;
+    padding-top: 17px;
+
+    border-top: 1px solid #eef0f2;
+}
+
+.bank-secondary-actions {
+    margin-top: 10px;
+}
+
+
+/* Remove form whitespace problem */
+.bank-secondary-actions form {
+    margin: 0;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.bank-account-actions .primary-button,
+.bank-secondary-actions .secondary-button,
+.bank-secondary-actions .danger-button {
+    min-height: 40px;
+
+    padding: 0 15px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+}
+
+
+/* Save */
+.bank-account-actions .primary-button {
+    border: 0;
+
+    background: #111827;
+    color: #ffffff;
+}
+
+
+/* Activate */
+.bank-secondary-actions .secondary-button {
+    background: #f3f4f6;
+    color: #374151;
+
+    border: 1px solid #d1d5db;
+}
+
+
+/* Remove */
+.bank-secondary-actions .danger-button {
+    background: #ffffff;
+    color: #dc2626;
+
+    border: 1px solid #fecaca;
+}
+
+.bank-secondary-actions .danger-button:hover {
+    background: #fef2f2;
+}
+
+
+/* =========================================================
+   MESSAGES
+   ========================================================= */
+
+.booking-success-message,
+.booking-error-message {
+    width: 100%;
+    max-width: 100%;
+
+    box-sizing: border-box;
+
+    margin: 16px 0;
+    padding: 12px 15px;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+}
+
+.booking-success-message {
+    background: #ecfdf5;
+    color: #166534;
+
+    border: 1px solid #bbf7d0;
+}
+
+.booking-error-message {
+    background: #fef2f2;
+    color: #b91c1c;
+
+    border: 1px solid #fecaca;
+}
+
+
+/* =========================================================
+   TABLET / SMALL LAPTOP
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .bank-details-form .form-grid,
+    .bank-edit-form .form-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .bank-details-form {
+        padding: 20px 16px;
+    }
+
+    .bank-account-card {
+        padding: 18px 16px;
+    }
+
+    .bank-account-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .bank-account-actions,
+    .bank-secondary-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .bank-account-actions .primary-button,
+    .bank-secondary-actions .secondary-button,
+    .bank-secondary-actions .danger-button {
+        width: 100%;
+    }
+
+}

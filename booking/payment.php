@@ -1085,21 +1085,60 @@ unset(
 |
 */
 
-$bankDetails = [
+/*
+|--------------------------------------------------------------------------
+| BANK INFORMATION
+|--------------------------------------------------------------------------
+| Load the currently active bank account managed by Management.
+|--------------------------------------------------------------------------
+*/
 
-    'bank_name' =>
-        'VEYRO Commercial Bank',
+try {
 
-    'account_name' =>
-        'VEYRO Vehicle Service Centre',
+    $bankStmt = $pdo->query("
+        SELECT
+            id,
+            bank_name,
+            account_name,
+            account_number,
+            branch
 
-    'account_number' =>
-        '1234567890',
+        FROM bank_accounts
 
-    'branch' =>
-        'Colombo Main Branch'
+        WHERE is_active = 1
 
-];
+        ORDER BY id DESC
+
+        LIMIT 1
+    ");
+
+    $bankDetails =
+        $bankStmt->fetch();
+
+} catch (PDOException $e) {
+
+    $bankDetails = false;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| BANK ACCOUNT SAFETY CHECK
+|--------------------------------------------------------------------------
+*/
+
+if (!$bankDetails) {
+
+    $_SESSION['booking_message'] =
+        'Bank deposit is currently unavailable because no bank account has been configured.';
+
+    $_SESSION['booking_message_type'] =
+        'error';
+
+    header('Location: booking.php');
+
+    exit;
+}
 
 
 $totalPrice =
