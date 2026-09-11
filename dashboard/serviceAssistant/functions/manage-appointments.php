@@ -329,6 +329,16 @@ try {
 
                     </a>
 
+                    <?php if ($status === 'service_ongoing'): ?>
+
+                        <a
+                            href="?page=replaced-parts&booking_id=<?= (int) $appointment['id'] ?>"
+                        >
+                            🔧 Replaced Parts
+                        </a>
+
+                    <?php endif; ?>
+
 
                     <!-- STATUS ACTION -->
 

@@ -730,3 +730,413 @@
     }
 
 }
+
+
+
+/* =========================================================
+   REPLACED PARTS - SERVICE ASSISTANT
+========================================================= */
+
+/* Main card */
+.booking-card {
+    background: #ffffff;
+    border: 1px solid #e1e6ec;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+}
+
+.booking-card h3 {
+    margin: 0 0 20px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #172033;
+}
+
+.booking-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.booking-card-header h3 {
+    margin-bottom: 6px;
+}
+
+.booking-card-header p {
+    margin: 0;
+    color: #7b8494;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.booking-card form {
+    width: 100%;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 22px;
+    margin-bottom: 18px;
+}
+
+.form-grid > div,
+.booking-card form > div {
+    min-width: 0;
+}
+
+.booking-card label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #273142;
+}
+
+.booking-card input[type="text"],
+.booking-card input[type="number"],
+.booking-card textarea {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 11px 13px;
+
+    border: 1px solid #d7dde5;
+    border-radius: 9px;
+
+    background: #ffffff;
+    color: #202938;
+
+    font-size: 14px;
+    font-family: inherit;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.booking-card input[type="text"]:focus,
+.booking-card input[type="number"]:focus,
+.booking-card textarea:focus {
+    border-color: #4f46e5;
+
+    box-shadow:
+        0 0 0 3px rgba(79, 70, 229, 0.10);
+}
+
+.booking-card textarea {
+    min-height: 95px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   ADD BUTTON
+========================================================= */
+
+.booking-card button[name="add_replaced_part"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 18px;
+
+    padding: 11px 18px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #111827;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease;
+}
+
+.booking-card button[name="add_replaced_part"]:hover {
+    background: #293241;
+    transform: translateY(-1px);
+}
+
+.booking-card button[name="add_replaced_part"]:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   REPLACED PARTS LIST
+========================================================= */
+
+.replaced-parts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+/* Individual part */
+.replaced-part-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 25px;
+
+    padding: 17px 18px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e5e9ef;
+    border-radius: 12px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.replaced-part-item:hover {
+    border-color: #d5dae2;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.04);
+}
+
+
+/* Left content */
+.replaced-part-item > div:first-child {
+    flex: 1;
+    min-width: 0;
+}
+
+.replaced-part-item h4 {
+    margin: 0 0 10px;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    color: #172033;
+
+    text-transform: capitalize;
+}
+
+.replaced-part-item p {
+    margin: 5px 0;
+
+    font-size: 13px;
+    color: #667085;
+}
+
+.replaced-part-item p strong {
+    display: inline;
+    color: #303846;
+    font-weight: 600;
+}
+
+
+/* Right side */
+.replaced-part-item > div:last-child {
+    min-width: 125px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    gap: 9px;
+
+    text-align: right;
+}
+
+.replaced-part-item > div:last-child > strong {
+    font-size: 16px;
+    color: #172033;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   REMOVE BUTTON
+========================================================= */
+
+.replaced-part-item .cancel-booking-btn {
+    padding: 7px 12px;
+
+    border: 1px solid #e0e3e8;
+    border-radius: 7px;
+
+    background: #ffffff;
+    color: #c62828;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.replaced-part-item .cancel-booking-btn:hover {
+    background: #fff4f4;
+    border-color: #efb2b2;
+}
+
+
+/* =========================================================
+   TOTAL
+========================================================= */
+
+.booking-payment-section {
+    margin-top: 18px;
+    padding-top: 17px;
+
+    border-top: 1px solid #e5e7eb;
+}
+
+.booking-payment-section > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+}
+
+.booking-payment-section span {
+    color: #667085;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.booking-payment-section strong {
+    color: #172033;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   EMPTY MESSAGE
+========================================================= */
+
+.empty-message {
+    padding: 30px 20px;
+
+    text-align: center;
+
+    border: 1px dashed #d7dce3;
+    border-radius: 10px;
+
+    background: #fafbfc;
+}
+
+.empty-message h3 {
+    margin: 0 0 7px;
+
+    font-size: 16px;
+}
+
+.empty-message p {
+    margin: 0;
+
+    color: #7b8494;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   SUCCESS / ERROR
+========================================================= */
+
+.booking-success-message,
+.booking-error-message {
+    margin-bottom: 18px;
+
+    padding: 12px 15px;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.booking-success-message {
+    background: #ecfdf3;
+    border: 1px solid #b7ebc6;
+    color: #18794e;
+}
+
+.booking-error-message {
+    background: #fff4f4;
+    border: 1px solid #f1b5b5;
+    color: #b42318;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .booking-card {
+        padding: 18px;
+        border-radius: 13px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .replaced-part-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .replaced-part-item > div:last-child {
+        width: 100%;
+        min-width: 0;
+
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        text-align: left;
+    }
+
+    .booking-payment-section > div {
+        flex-direction: row;
+    }
+
+}
+
+
+@media (max-width: 450px) {
+
+    .booking-payment-section > div {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .replaced-part-item > div:last-child {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+}

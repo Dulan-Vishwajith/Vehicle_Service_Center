@@ -73,7 +73,8 @@ $allowedPages = [
     'available',
     'details',
     'profile',
-    'customers'
+    'customers',
+    'replaced-parts'
 
 ];
 
@@ -222,7 +223,14 @@ if (!in_array($page, $allowedPages, true)) {
                         break;
 
                     
+                    case 'replaced-parts':
 
+                        include __DIR__
+                            . '/functions/replaced-parts.php';
+
+                        break;
+                                    
+                    
                     case 'today':
 
                     default:

@@ -439,6 +439,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form
                 method="POST"
                 enctype="multipart/form-data"
+                data-payment-form
             >
 
                 <input
@@ -501,6 +502,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 <?php include '../includes/footer.php'; ?>
+<script src="js/payment-leave-warning.js"></script>
 
 </body>
 </html>

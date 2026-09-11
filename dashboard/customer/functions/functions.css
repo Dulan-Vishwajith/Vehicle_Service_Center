@@ -1067,3 +1067,73 @@
     background: #f8d7da;
     color: #721c24;
 }
+
+
+/* =====================================================
+   REPLACED PARTS
+===================================================== */
+
+.replaced-parts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.replaced-part-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+
+    padding: 16px;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+
+    background: #fafafa;
+}
+
+.replaced-part-item h4 {
+    margin: 0 0 8px;
+}
+
+.replaced-part-item p {
+    margin: 4px 0;
+}
+
+.replaced-part-item strong {
+    display: block;
+}
+
+.replaced-part-item small {
+    display: block;
+    margin-top: 8px;
+    opacity: 0.7;
+}
+
+.replaced-part-item > div:last-child {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.replaced-part-item > div:last-child > strong {
+    font-size: 17px;
+}
+
+.replaced-part-item form {
+    margin-top: 10px;
+}
+
+@media (max-width: 700px) {
+
+    .replaced-part-item {
+        flex-direction: column;
+    }
+
+    .replaced-part-item > div:last-child {
+        width: 100%;
+        text-align: left;
+    }
+
+}

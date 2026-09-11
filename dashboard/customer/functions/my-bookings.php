@@ -565,6 +565,183 @@ if ($userId > 0) {
                 </div>
 
 
+
+                <!-- =====================================================
+                    REPLACED PARTS
+                ===================================================== -->
+
+                <?php
+
+                $replacedParts = [];
+
+                $replacedPartsTotal = 0;
+
+                try {
+
+                    $partsStmt = $pdo->prepare("
+                        SELECT
+                            part_name,
+                            part_number,
+                            quantity,
+                            unit_price,
+                            total_price,
+                            notes,
+                            created_at
+
+                        FROM replaced_parts
+
+                        WHERE booking_id = ?
+
+                        ORDER BY created_at DESC
+                    ");
+
+                    $partsStmt->execute([
+                        $booking['id']
+                    ]);
+
+                    $replacedParts =
+                        $partsStmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+                    foreach ($replacedParts as $part) {
+
+                        $replacedPartsTotal +=
+                            (float) $part['total_price'];
+
+                    }
+
+                } catch (PDOException $e) {
+
+                    $replacedParts = [];
+
+                    $replacedPartsTotal = 0;
+
+                }
+
+                ?>
+
+
+                <div class="booking-services-section">
+
+                    <span class="booking-section-title">
+
+                        🔧 Replaced Parts
+
+                    </span>
+
+
+                    <?php if (empty($replacedParts)): ?>
+
+                        <p>
+
+                            No parts have been replaced
+                            during this service.
+
+                        </p>
+
+                    <?php else: ?>
+
+                        <div class="replaced-parts-list">
+
+                            <?php foreach ($replacedParts as $part): ?>
+
+                                <div class="replaced-part-item">
+
+                                    <div>
+
+                                        <strong>
+
+                                            <?= htmlspecialchars(
+                                                $part['part_name']
+                                            ) ?>
+
+                                        </strong>
+
+
+                                        <?php if (
+                                            !empty($part['part_number'])
+                                        ): ?>
+
+                                            <p>
+
+                                                Part No:
+                                                <?= htmlspecialchars(
+                                                    $part['part_number']
+                                                ) ?>
+
+                                            </p>
+
+                                        <?php endif; ?>
+
+
+                                        <p>
+
+                                            Quantity:
+                                            <?= (int) $part['quantity'] ?>
+
+                                        </p>
+
+
+                                        <?php if (
+                                            !empty($part['notes'])
+                                        ): ?>
+
+                                            <p>
+
+                                                <?= htmlspecialchars(
+                                                    $part['notes']
+                                                ) ?>
+
+                                            </p>
+
+                                        <?php endif; ?>
+
+                                    </div>
+
+
+                                    <strong>
+
+                                        Rs.
+                                        <?= number_format(
+                                            (float) $part['total_price'],
+                                            2
+                                        ) ?>
+
+                                    </strong>
+
+                                </div>
+
+                            <?php endforeach; ?>
+
+                        </div>
+
+
+                        <div class="booking-payment-section">
+
+                            <div>
+
+                                <span>
+                                    Replaced Parts Total
+                                </span>
+
+                                <strong>
+
+                                    Rs.
+                                    <?= number_format(
+                                        $replacedPartsTotal,
+                                        2
+                                    ) ?>
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    <?php endif; ?>
+
+                </div>
+
                 <!-- =============================================
                      NOTES
                 ============================================== -->

@@ -321,6 +321,39 @@ $isMyBooking =
     </p>
 
 
+    <?php if (
+        $isMyBooking
+        && $booking['status'] === 'service_ongoing'
+    ): ?>
+
+        <div
+            class="booking-card"
+            style="margin-top:20px;"
+        >
+
+            <h3>
+                🔧 Replaced Parts
+            </h3>
+
+            <p>
+                Add and manage parts replaced during this service.
+            </p>
+
+            <a
+                href="?page=replaced-parts&booking_id=<?= (int) $booking['id'] ?>"
+                class="btn btn-primary"
+            >
+                Manage Replaced Parts
+            </a>
+
+        </div>
+
+    <?php endif; ?>
+
+
+
+
+
     <!-- ACTIONS -->
 
     <div class="booking-status-actions">
@@ -396,43 +429,34 @@ $isMyBooking =
 
 
         <?php elseif (
+                $isMyBooking
+                && $booking['status'] === 'service'
+            ): ?>
 
-            $isMyBooking
-            && $booking['status'] === 'service'
-
-        ): ?>
-
-
-            <form
-                method="POST"
-                action="./serviceAssistant/functions/update-booking-status.php"
-            >
-
-                <input
-                    type="hidden"
-                    name="booking_id"
-                    value="<?= (int) $booking['id'] ?>"
+                <form
+                    method="POST"
+                    action="./serviceAssistant/functions/update-booking-status.php"
                 >
 
+                    <input
+                        type="hidden"
+                        name="booking_id"
+                        value="<?= (int) $booking['id'] ?>"
+                    >
 
-                <input
-                    type="hidden"
-                    name="status"
-                    value="completed"
-                >
+                    <input
+                        type="hidden"
+                        name="status"
+                        value="vehicle_arrived"
+                    >
 
+                    <button type="submit">
+                        Vehicle Arrived
+                    </button>
 
-                <button type="submit">
+                </form>
 
-                    Complete Service
-
-                </button>
-
-
-            </form>
-
-
-        <?php endif; ?>
+<?php endif; ?>
 
 
         <!-- DYNAMIC BACK BUTTON -->
