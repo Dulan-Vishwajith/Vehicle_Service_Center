@@ -102,6 +102,10 @@ require_once __DIR__ . '/../../config/database.php';
                     include __DIR__ . '/functions/my-reviews.php';
                     break;
 
+                case 'review-booking':
+                    include __DIR__ . '/functions/review-booking.php';
+                    break;
+
                 default:
                     include __DIR__ . '/functions/booking-status-panel.php';
                     break;

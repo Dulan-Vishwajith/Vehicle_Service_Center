@@ -76,6 +76,7 @@ if ($userId > 0) {
                 b.deposit_amount,
                 b.status,
                 b.payment_status,
+                r.id AS review_id,
 
                 ts.slot_name,
                 ts.start_time,
@@ -98,6 +99,9 @@ if ($userId > 0) {
             LEFT JOIN services s
                 ON bs.service_id = s.id
 
+            LEFT JOIN reviews r
+                ON b.id = r.booking_id
+
             WHERE b.user_id = ?
 
             GROUP BY
@@ -113,6 +117,7 @@ if ($userId > 0) {
                 b.deposit_amount,
                 b.status,
                 b.payment_status,
+                r.id,
                 ts.slot_name,
                 ts.start_time,
                 ts.end_time
@@ -1009,6 +1014,46 @@ if ($userId > 0) {
         <?php endif; ?>
 
     </div>
+
+
+                <!-- =============================================
+                     REVIEW ACTION
+                ============================================== -->
+
+                <?php if ($status === 'completed'): ?>
+
+                    <div class="booking-review-section">
+
+                        <?php if (empty($booking['review_id'])): ?>
+
+                            <div>
+                                <span class="booking-section-title">Your Experience</span>
+                                <p>Your service is complete. Tell us how we did.</p>
+                            </div>
+
+                            <a
+                                class="leave-review-btn"
+                                href="?page=review-booking&id=<?= (int) $booking['id'] ?>"
+                            >
+                                ⭐ Leave a Review
+                            </a>
+
+                        <?php else: ?>
+
+                            <div>
+                                <span class="booking-section-title">Your Experience</span>
+                                <p class="review-submitted-text">✓ Review Submitted</p>
+                            </div>
+
+                            <a class="view-review-btn" href="?page=reviews">
+                                View Your Review
+                            </a>
+
+                        <?php endif; ?>
+
+                    </div>
+
+                <?php endif; ?>
 
 
             </div>
