@@ -4,19 +4,33 @@ require_once "config/database.php";
 
 /* =========================================================
    GET ACTIVE PACKAGES
+   PACKAGE PRICE IS CALCULATED FROM INCLUDED SERVICES
    ========================================================= */
 
 $packageStatus = 1;
 
 $packageSQL = "
     SELECT
-        id,
-        package_name,
-        price,
-        duration
-    FROM service_packages
-    WHERE status = ?
-    ORDER BY id ASC
+        sp.id,
+        sp.package_name,
+        sp.duration,
+        COALESCE(SUM(s.price), 0) AS price
+    FROM service_packages sp
+
+    LEFT JOIN package_services ps
+        ON sp.id = ps.package_id
+
+    LEFT JOIN services s
+        ON ps.service_id = s.id
+
+    WHERE sp.status = ?
+
+    GROUP BY
+        sp.id,
+        sp.package_name,
+        sp.duration
+
+    ORDER BY sp.id ASC
 ";
 
 $packageStmt = $pdo->prepare($packageSQL);
