@@ -7,53 +7,122 @@
     position: relative;
     display: flex;
     align-items: center;
-    background:
-        linear-gradient(
-            90deg,
-            rgba(10, 15, 20, 0.95),
-            rgba(10, 15, 20, 0.70),
-            rgba(10, 15, 20, 0.25)
-        ),
-        url("../images/hero-car.jpg") center/cover no-repeat;
-    color: var(--color-white);
+
+    /* Photo background */
+    background: url("../images/hero-car.jpg") center center / cover no-repeat;
+
+    color: #ffffff;
+    overflow: hidden;
 }
+
+
+/* =========================================================
+   DARK READABILITY OVERLAY
+   Keeps the photo visible while making text clear
+   ========================================================= */
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    background: linear-gradient(
+        100deg,
+        rgba(5, 10, 15, 0.95) 0%,
+        rgba(5, 10, 15, 0.80) 30%,
+        rgba(5, 10, 15, 0.65) 55%,
+        rgba(5, 10, 15, 0.50) 100%
+    );
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   HERO CONTAINER
+   ========================================================= */
 
 .hero-container {
     position: relative;
     z-index: 2;
 }
 
+
+/* =========================================================
+   HERO CONTENT
+   ========================================================= */
+
 .hero-content {
     max-width: 680px;
     padding: 80px 0;
 }
 
+
+/* =========================================================
+   BADGE
+   ========================================================= */
+
 .hero-badge {
     display: inline-block;
     margin-bottom: 22px;
     padding: 8px 14px;
-    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: 50px;
-    background: rgba(255, 255, 255, 0.12);
+
+    background: rgba(0, 0, 0, 0.35);
+
+    color: #ffffff;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 1px;
+
+    backdrop-filter: blur(4px);
 }
+
+
+/* =========================================================
+   HEADING
+   ========================================================= */
 
 .hero h1 {
     margin-bottom: 22px;
+
+    color: #ffffff;
+
     font-size: clamp(42px, 6vw, 72px);
     line-height: 1.05;
     font-weight: 800;
+
+    /* Makes white text readable on the image */
+    text-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.75),
+        0 1px 3px rgba(0, 0, 0, 0.9);
 }
+
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
 
 .hero p {
     max-width: 600px;
     margin-bottom: 32px;
-    color: #e7eaed;
+
+    color: #ffffff;
+
     font-size: 18px;
     line-height: 1.7;
+
+    text-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.85);
 }
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
 
 .hero-buttons {
     display: flex;
@@ -65,12 +134,16 @@
     min-width: 180px;
     min-height: 52px;
     font-size: 15px;
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
 }
 
-/* Hero-specific light button behavior */
+
+/* Light button */
+
 .hero-buttons .btn-light {
-    background: var(--color-white);
-    border-color: var(--color-white);
+    background: #ffffff;
+    border-color: #ffffff;
     color: #111827;
 }
 
@@ -78,6 +151,11 @@
     background: #f1f1f1;
     border-color: #f1f1f1;
 }
+
+
+/* =========================================================
+   HERO STATS
+   ========================================================= */
 
 .hero-stats {
     display: flex;
@@ -91,18 +169,34 @@
 }
 
 .hero-stat strong {
+    color: #ffffff;
+
     font-size: 28px;
     line-height: 1.2;
     font-weight: 800;
+
+    text-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.8);
 }
 
 .hero-stat span {
     margin-top: 5px;
-    color: #cbd0d5;
+
+    color: #ffffff;
+
     font-size: 13px;
+
+    text-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.9);
 }
 
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
 @media (max-width: 1000px) {
+
     .hero {
         min-height: 600px;
     }
@@ -111,18 +205,24 @@
         max-width: 600px;
         padding: 70px 0;
     }
+
 }
 
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media (max-width: 700px) {
+
     .hero {
         min-height: 600px;
-        background:
-            linear-gradient(
-                90deg,
-                rgba(10, 15, 20, 0.94),
-                rgba(10, 15, 20, 0.78)
-            ),
-            url("../images/hero-car.jpg") center/cover no-repeat;
+
+        background-position: 65% center;
+    }
+
+    .hero::before {
+        background: rgba(5, 10, 15, 0.68);
     }
 
     .hero-content {
@@ -161,9 +261,16 @@
     }
 }
 
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
 @media (max-width: 450px) {
+
     .hero {
         min-height: 580px;
+        background-position: 65% center;
     }
 
     .hero-badge {
@@ -190,4 +297,143 @@
     .hero-stat span {
         font-size: 10px;
     }
+}
+
+
+/* =========================================================
+   HERO SERVICE RATINGS
+   ========================================================= */
+
+.hero-ratings {
+    width: 100%;
+    max-width: 480px; /* shows about 2 cards */
+    margin-top: 42px;
+    overflow: hidden;
+    position: relative;
+}
+
+
+/* =========================================================
+   TRACK
+   ========================================================= */
+
+.hero-ratings-track {
+    display: flex;
+    width: max-content;
+    gap: 16px;
+
+    animation: heroRatingsScroll 10s linear infinite;
+}
+
+
+/* Pause on hover */
+
+.hero-ratings:hover .hero-ratings-track {
+    animation-play-state: paused;
+}
+
+
+/* =========================================================
+   RATING CARD
+   ========================================================= */
+
+.hero-rating-card {
+    flex: 0 0 220px;
+    padding: 14px 18px;
+}
+
+
+/* =========================================================
+   STARS
+   ========================================================= */
+
+.hero-rating-stars {
+    display: inline-flex;
+    gap: 1px;
+    margin-right: 7px;
+}
+
+.hero-rating-stars span {
+    color: rgba(255, 255, 255, 0.30);
+    font-size: 15px;
+}
+
+.hero-rating-stars span.active {
+    color: #fbbf24;
+}
+
+
+/* =========================================================
+   RATING NUMBER
+   ========================================================= */
+
+.hero-rating-score {
+    color: #ffffff;
+
+    font-size: 18px;
+    font-weight: 800;
+
+    text-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+
+/* =========================================================
+   CUSTOMER NAME
+   ========================================================= */
+
+.hero-rating-customer {
+    margin-top: 6px;
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    text-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+
+/* =========================================================
+   AUTO SCROLL
+   ========================================================= */
+
+@keyframes heroRatingsScroll {
+
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(calc(-50% - 8px));
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .hero-ratings {
+        max-width: 100%;
+    }
+
+    .hero-rating-card {
+        flex-basis: 200px;
+        padding: 13px 15px;
+    }
+
+    .hero-ratings-track {
+        gap: 12px;
+        animation-duration: 10s;
+    }
+
 }

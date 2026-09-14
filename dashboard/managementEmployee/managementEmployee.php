@@ -115,6 +115,12 @@ $quickActions = [
     'title' => 'Manage Bank Details',
     'link' => '?page=bank-details'
     ],
+
+    [
+    'icon' => '🖼️',
+    'title' => 'Manage Hero Image',
+    'link' => '?page=hero-image'
+    ],
     
     [
         'icon' => '📜',
@@ -180,6 +186,7 @@ $quickActions = [
                     'service-form'      => 'service-form.php',
                     'packages'          => 'manage-packages.php',
                     'package-form'      => 'package-form.php',
+                    'hero-image' => 'manage-hero-image.php',
                     'assistants'        => 'manage-service-assistants.php',
                     'contact-details'   => 'manage-contact-details.php',
                     'profile'           => 'my-profile.php',
