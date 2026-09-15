@@ -250,8 +250,9 @@ try {
     </div>
 <?php endif; ?>
 
+
 <div class="booking-flow-guide">
-    <div class="booking-flow-item is-done">
+    <div class="booking-flow-item">
         <span>1</span>
         <div>
             <strong>Payment Accepted</strong>
@@ -261,7 +262,7 @@ try {
 
     <div class="booking-flow-arrow">→</div>
 
-    <div class="booking-flow-item is-active">
+    <div class="booking-flow-item">
         <span>2</span>
         <div>
             <strong>Confirm Booking</strong>
@@ -289,6 +290,7 @@ try {
         </div>
     </div>
 </div>
+
 
 <section class="booking-management-section">
     <div class="booking-management-section-header">

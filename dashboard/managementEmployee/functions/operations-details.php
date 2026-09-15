@@ -101,7 +101,10 @@ function detailsStatusClass($status)
 
 <div class="panel-header">
     <h2>Operation Details</h2>
-    <a href="?page=operations">&larr; Back to Operations</a>
+
+    <a href="#" onclick="history.back(); return false;">
+        &larr; Back
+    </a>
 </div>
 
 
