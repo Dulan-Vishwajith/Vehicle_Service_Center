@@ -41,6 +41,26 @@ $dashboardButtonText = "View Reports";
 $dashboardButtonLink = "?page=reports";
 
 
+// Count pending payments and bookings for quick action panel
+
+$pendingPaymentCount = (int) $pdo->query("
+    SELECT COUNT(*)
+    FROM payments
+    WHERE verification_status = 'pending'
+")->fetchColumn();
+
+$pendingBookingCount = (int) $pdo->query("
+    SELECT COUNT(*)
+    FROM bookings
+    WHERE status = 'pending'
+      AND assigned_assistant_id IS NULL
+      AND payment_status IN ('partial', 'paid')
+")->fetchColumn();
+
+
+
+
+
 /*
 |--------------------------------------------------------------------------
 | QUICK ACTIONS
@@ -48,19 +68,27 @@ $dashboardButtonLink = "?page=reports";
 */
 
 $quickActions = [
-
     [
-        'icon' => '💳',
-        'title' => 'Manage Payments',
+        'icon' => $pendingPaymentCount > 0
+            ? sprintf('%d', $pendingPaymentCount)
+            : '💳',
+        'title' => $pendingPaymentCount > 0
+            ? sprintf('🔴 Manage Payments')
+            : 'Manage Payments',
         'link' => '?page=payments'
     ],
 
     [
-        'icon' => '📋',
-        'title' => 'Confirm & Assign Bookings',
+        'icon' => $pendingBookingCount > 0
+            ? sprintf('%d', $pendingBookingCount)
+            : '📋',
+        'title' => $pendingBookingCount > 0
+            ? sprintf('🔴 Confirm & Assign Bookings')
+            : 'Confirm & Assign Bookings',
         'link' => '?page=bookings'
     ],
-    
+
+
     [
         'icon' => '📡',
         'title' => 'Monitor Operations',

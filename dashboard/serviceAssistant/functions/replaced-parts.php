@@ -13,6 +13,13 @@ $errorMessage = '';
 
 $parts = [];
 
+
+/*
+|--------------------------------------------------------------------------
+| VALIDATE BOOKING ID
+|--------------------------------------------------------------------------
+*/
+
 if ($bookingId <= 0) {
 
     echo '
@@ -40,6 +47,7 @@ try {
             b.vehicle_model,
             b.license_plate,
             b.status,
+            b.total_price,
             u.name AS customer_name
 
         FROM bookings b
@@ -66,6 +74,12 @@ try {
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| CHECK BOOKING
+|--------------------------------------------------------------------------
+*/
+
 if (!$booking) {
 
     echo '
@@ -81,7 +95,7 @@ if (!$booking) {
 
 /*
 |--------------------------------------------------------------------------
-| ONLY ALLOW ADDING PARTS DURING SERVICE
+| ONLY ALLOW ADDING / REMOVING PARTS DURING SERVICE
 |--------------------------------------------------------------------------
 */
 
@@ -93,7 +107,6 @@ if (!in_array($booking['status'], $allowedStatuses, true)) {
 
     $errorMessage =
         'Replaced parts can only be added while the service is ongoing.';
-
 }
 
 
@@ -113,10 +126,20 @@ if (
 
     try {
 
+        /*
+        |--------------------------------------------------------------------------
+        | GET PART PRICE BEFORE DELETE
+        |--------------------------------------------------------------------------
+        */
+
         $stmt = $pdo->prepare("
-            DELETE FROM replaced_parts
+            SELECT
+                id,
+                total_price
+            FROM replaced_parts
             WHERE id = ?
             AND booking_id = ?
+            LIMIT 1
         ");
 
         $stmt->execute([
@@ -124,23 +147,88 @@ if (
             $bookingId
         ]);
 
-        if ($stmt->rowCount() > 0) {
+        $part = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $successMessage =
-                'Replaced part removed successfully.';
+
+        if (!$part) {
+
+            $errorMessage =
+                'Unable to find the replaced part.';
 
         } else {
 
-            $errorMessage =
-                'Unable to remove the replaced part.';
+            $partTotal = (float) $part['total_price'];
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | START TRANSACTION
+            |--------------------------------------------------------------------------
+            */
+
+            $pdo->beginTransaction();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | DELETE REPLACED PART
+            |--------------------------------------------------------------------------
+            */
+
+            $stmt = $pdo->prepare("
+                DELETE FROM replaced_parts
+                WHERE id = ?
+                AND booking_id = ?
+            ");
+
+            $stmt->execute([
+                $partId,
+                $bookingId
+            ]);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SUBTRACT PART PRICE FROM BOOKING TOTAL
+            |--------------------------------------------------------------------------
+            */
+
+            $stmt = $pdo->prepare("
+                UPDATE bookings
+                SET total_price = GREATEST(
+                    0,
+                    COALESCE(total_price, 0) - ?
+                )
+                WHERE id = ?
+            ");
+
+            $stmt->execute([
+                $partTotal,
+                $bookingId
+            ]);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | COMMIT TRANSACTION
+            |--------------------------------------------------------------------------
+            */
+
+            $pdo->commit();
+
+
+            $successMessage =
+                'Replaced part removed successfully and booking total updated.';
         }
 
     } catch (PDOException $e) {
 
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+
         $errorMessage =
             'Database error while removing the part.';
-
     }
 }
 
@@ -198,17 +286,43 @@ if (
 
         $errorMessage =
             'Unit price cannot be negative.';
-
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | ADD PART + UPDATE TOTAL
+    |--------------------------------------------------------------------------
+    */
+
     if (empty($errorMessage)) {
+
+        /*
+        |--------------------------------------------------------------------------
+        | CALCULATE PART TOTAL
+        |--------------------------------------------------------------------------
+        */
 
         $totalPrice =
             $quantity * $unitPrice;
 
 
         try {
+
+            /*
+            |--------------------------------------------------------------------------
+            | START TRANSACTION
+            |--------------------------------------------------------------------------
+            */
+
+            $pdo->beginTransaction();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | INSERT REPLACED PART
+            |--------------------------------------------------------------------------
+            */
 
             $stmt = $pdo->prepare("
                 INSERT INTO replaced_parts (
@@ -221,40 +335,118 @@ if (
                     total_price,
                     notes
                 )
-
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ");
 
             $stmt->execute([
 
                 $bookingId,
+
                 $assistantId,
+
                 $partName,
+
                 $partNumber !== ''
                     ? $partNumber
                     : null,
+
                 $quantity,
+
                 $unitPrice,
+
                 $totalPrice,
+
                 $notes !== ''
                     ? $notes
                     : null
-
             ]);
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | ADD PART PRICE TO BOOKING TOTAL
+            |--------------------------------------------------------------------------
+            */
+
+            $stmt = $pdo->prepare("
+                UPDATE bookings
+                SET total_price =
+                    COALESCE(total_price, 0) + ?
+                WHERE id = ?
+            ");
+
+            $stmt->execute([
+                $totalPrice,
+                $bookingId
+            ]);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | COMMIT TRANSACTION
+            |--------------------------------------------------------------------------
+            */
+
+            $pdo->commit();
+
+
             $successMessage =
-                'Replaced part added successfully.';
+                'Replaced part added successfully and booking total updated.';
 
 
         } catch (PDOException $e) {
 
+            /*
+            |--------------------------------------------------------------------------
+            | ROLLBACK
+            |--------------------------------------------------------------------------
+            */
+
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+
             $errorMessage =
                 'Unable to add the replaced part.';
-
         }
-
     }
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| RELOAD BOOKING TOTAL
+|--------------------------------------------------------------------------
+|
+| The total may have changed after adding/removing a part.
+|
+*/
+
+try {
+
+    $stmt = $pdo->prepare("
+        SELECT
+            total_price
+        FROM bookings
+        WHERE id = ?
+        LIMIT 1
+    ");
+
+    $stmt->execute([
+        $bookingId
+    ]);
+
+    $updatedBooking = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($updatedBooking) {
+
+        $booking['total_price'] =
+            $updatedBooking['total_price'];
+    }
+
+} catch (PDOException $e) {
+
+    // Keep existing booking total if reload fails.
 }
 
 
@@ -295,13 +487,15 @@ try {
 
         $errorMessage =
             'Unable to load replaced parts.';
-
     }
-
 }
 
 ?>
 
+
+<!-- =====================================================
+     PAGE HEADER
+====================================================== -->
 
 <div class="panel-header">
 
@@ -316,6 +510,7 @@ try {
         </h2>
 
         <p>
+
             <?= htmlspecialchars(
                 $booking['vehicle_model']
             ) ?>
@@ -325,12 +520,17 @@ try {
             <?= htmlspecialchars(
                 $booking['license_plate']
             ) ?>
+
         </p>
 
     </div>
 
 </div>
 
+
+<!-- =====================================================
+     SUCCESS MESSAGE
+====================================================== -->
 
 <?php if ($successMessage): ?>
 
@@ -344,6 +544,10 @@ try {
 
 <?php endif; ?>
 
+
+<!-- =====================================================
+     ERROR MESSAGE
+====================================================== -->
 
 <?php if ($errorMessage): ?>
 
@@ -360,128 +564,142 @@ try {
 
 <!-- =====================================================
      ADD PART FORM
-===================================================== -->
+====================================================== -->
 
 <?php if (
     $booking['status'] === 'service_ongoing'
 ): ?>
 
-<div class="booking-card">
+    <div class="booking-card">
 
-    <h3>
-        Add Replaced Part
-    </h3>
+        <h3>
+            Add Replaced Part
+        </h3>
 
-    <form
-        method="POST"
-        action="?page=replaced-parts&booking_id=<?= (int) $bookingId ?>"
-    >
-
-        <div class="form-grid">
-
-            <div>
-
-                <label>
-                    Part Name *
-                </label>
-
-                <input
-                    type="text"
-                    name="part_name"
-                    required
-                    maxlength="150"
-                    placeholder="e.g. Brake Pad"
-                >
-
-            </div>
-
-
-            <div>
-
-                <label>
-                    Part Number
-                </label>
-
-                <input
-                    type="text"
-                    name="part_number"
-                    maxlength="100"
-                    placeholder="e.g. BP-1234"
-                >
-
-            </div>
-
-
-            <div>
-
-                <label>
-                    Quantity *
-                </label>
-
-                <input
-                    type="number"
-                    name="quantity"
-                    value="1"
-                    min="1"
-                    required
-                >
-
-            </div>
-
-
-            <div>
-
-                <label>
-                    Unit Price (Rs.) *
-                </label>
-
-                <input
-                    type="number"
-                    name="unit_price"
-                    value="0.00"
-                    min="0"
-                    step="0.01"
-                    required
-                >
-
-            </div>
-
-        </div>
-
-
-        <div>
-
-            <label>
-                Notes
-            </label>
-
-            <textarea
-                name="notes"
-                rows="3"
-                placeholder="Reason for replacement or additional information..."
-            ></textarea>
-
-        </div>
-
-
-        <button
-            type="submit"
-            name="add_replaced_part"
-            value="1"
+        <form
+            method="POST"
+            action="?page=replaced-parts&booking_id=<?= (int) $bookingId ?>"
         >
-            + Add Replaced Part
-        </button>
 
-    </form>
+            <div class="form-grid">
 
-</div>
+
+                <!-- PART NAME -->
+
+                <div>
+
+                    <label>
+                        Part Name *
+                    </label>
+
+                    <input
+                        type="text"
+                        name="part_name"
+                        required
+                        maxlength="150"
+                        placeholder="e.g. Brake Pad"
+                    >
+
+                </div>
+
+
+                <!-- PART NUMBER -->
+
+                <div>
+
+                    <label>
+                        Part Number
+                    </label>
+
+                    <input
+                        type="text"
+                        name="part_number"
+                        maxlength="100"
+                        placeholder="e.g. BP-1234"
+                    >
+
+                </div>
+
+
+                <!-- QUANTITY -->
+
+                <div>
+
+                    <label>
+                        Quantity *
+                    </label>
+
+                    <input
+                        type="number"
+                        name="quantity"
+                        value="1"
+                        min="1"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- UNIT PRICE -->
+
+                <div>
+
+                    <label>
+                        Unit Price (Rs.) *
+                    </label>
+
+                    <input
+                        type="number"
+                        name="unit_price"
+                        value="0.00"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+
+                </div>
+
+
+            </div>
+
+
+            <!-- NOTES -->
+
+            <div>
+
+                <label>
+                    Notes
+                </label>
+
+                <textarea
+                    name="notes"
+                    rows="3"
+                    placeholder="Reason for replacement or additional information..."
+                ></textarea>
+
+            </div>
+
+
+            <!-- SUBMIT -->
+
+            <button
+                type="submit"
+                name="add_replaced_part"
+                value="1"
+            >
+                + Add Replaced Part
+            </button>
+
+        </form>
+
+    </div>
 
 <?php endif; ?>
 
 
 <!-- =====================================================
      PARTS LIST
-===================================================== -->
+====================================================== -->
 
 <div class="booking-card">
 
@@ -504,6 +722,9 @@ try {
 
     <?php if (empty($parts)): ?>
 
+
+        <!-- NO PARTS -->
+
         <div class="empty-message">
 
             <h3>
@@ -517,13 +738,20 @@ try {
 
         </div>
 
+
     <?php else: ?>
+
+
+        <!-- PARTS -->
 
         <div class="replaced-parts-list">
 
             <?php foreach ($parts as $part): ?>
 
                 <div class="replaced-part-item">
+
+
+                    <!-- PART INFORMATION -->
 
                     <div>
 
@@ -566,6 +794,22 @@ try {
                         </p>
 
 
+                        <p>
+
+                            <strong>
+                                Unit Price:
+                            </strong>
+
+                            Rs.
+
+                            <?= number_format(
+                                (float) $part['unit_price'],
+                                2
+                            ) ?>
+
+                        </p>
+
+
                         <?php if (
                             !empty($part['notes'])
                         ): ?>
@@ -587,11 +831,14 @@ try {
                     </div>
 
 
+                    <!-- PRICE + REMOVE -->
+
                     <div>
 
                         <strong>
 
                             Rs.
+
                             <?= number_format(
                                 (float) $part['total_price'],
                                 2
@@ -634,6 +881,7 @@ try {
 
                     </div>
 
+
                 </div>
 
             <?php endforeach; ?>
@@ -641,7 +889,9 @@ try {
         </div>
 
 
-        <!-- TOTAL -->
+        <!-- =====================================================
+             REPLACED PARTS TOTAL
+        ====================================================== -->
 
         <?php
 
@@ -651,7 +901,6 @@ try {
 
             $partsTotal +=
                 (float) $part['total_price'];
-
         }
 
         ?>
@@ -668,6 +917,7 @@ try {
                 <strong>
 
                     Rs.
+
                     <?= number_format(
                         $partsTotal,
                         2
@@ -677,7 +927,30 @@ try {
 
             </div>
 
+
+            <!-- UPDATED BOOKING TOTAL -->
+
+            <div>
+
+                <span>
+                    Booking Total
+                </span>
+
+                <strong>
+
+                    Rs.
+
+                    <?= number_format(
+                        (float) $booking['total_price'],
+                        2
+                    ) ?>
+
+                </strong>
+
+            </div>
+
         </div>
+
 
     <?php endif; ?>
 

@@ -293,6 +293,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $pdo->commit();
 
+            /*
+            |--------------------------------------------------------------------------
+            | AFTER ACCEPTING PAYMENT
+            |--------------------------------------------------------------------------
+            | Once a pending payment is accepted, send management directly to
+            | Confirm & Assign Bookings so the booking can be confirmed and an
+            | assistant can be assigned. Rejected payments stay on this page.
+            */
+            if ($action === 'confirm') {
+                header('Location: ?page=bookings');
+                exit;
+            }
+
 
         } catch (Throwable $e) {
 
@@ -490,7 +503,7 @@ try {
 
 
 <div class="booking-flow-guide">
-    <div class="booking-flow-item is-done">
+    <div class="booking-flow-item">
         <span>1</span>
         <div>
             <strong>Payment Accepted</strong>
@@ -500,7 +513,7 @@ try {
 
     <div class="booking-flow-arrow">→</div>
 
-    <div class="booking-flow-item is-active">
+    <div class="booking-flow-item">
         <span>2</span>
         <div>
             <strong>Confirm Booking</strong>
