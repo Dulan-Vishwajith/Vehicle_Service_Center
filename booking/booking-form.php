@@ -386,7 +386,6 @@ try {
                                     <?= htmlspecialchars(
                                         $service["service_name"]
                                     ) ?>
-
                                     -
                                     Rs.
                                     <?= number_format(
@@ -1126,11 +1125,6 @@ try {
     </div>
 
 </div>
-
-
-
-
-
 
 
 

@@ -921,23 +921,31 @@
 
 /* =========================================
    RESPONSIVE
-========================================= */
+   Mobile-safe layout
+   ========================================= */
 
+/* Tablet */
 @media (max-width: 1100px) {
 
+    /*
+     * Do NOT give the whole booking panel a large min-width.
+     * The old 900px min-width caused the complete page to overflow
+     * and appear extremely narrow on mobile devices.
+     */
     .booking-status-panel {
-        overflow-x: auto;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
     }
 
     .booking-status-panel .status-table-heading,
     .booking-status-panel .status-table-row {
-        min-width: 900px;
+        min-width: 0;
     }
 
-}
-
-
-@media (max-width: 900px) {
+    .booking-main-row {
+        gap: 18px;
+    }
 
     .booking-status-step {
         width: 75px;
@@ -946,60 +954,236 @@
     .booking-status-step span {
         font-size: 9px;
     }
-
 }
 
 
+/* Mobile */
 @media (max-width: 768px) {
 
-    .booking-detail-grid {
+    .booking-status-panel {
+        width: 100%;
+        max-width: 100%;
+        padding: 16px;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    /* Hide the desktop table header */
+    .booking-status-panel .status-table-heading {
+        display: none;
+    }
+
+    /* Each booking becomes a normal mobile card/row */
+    .booking-status-panel .status-table-row {
+        width: 100%;
+        min-width: 0;
+        padding: 16px 0;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .booking-main-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 16px;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .booking-vehicle {
+        grid-column: 1 / -1;
+        min-width: 0;
+    }
+
+    .booking-vehicle strong {
+        font-size: 14px;
+        overflow-wrap: anywhere;
+    }
+
+    .booking-vehicle small {
+        font-size: 11px;
+        overflow-wrap: anywhere;
+    }
+
+    .booking-date {
+        min-width: 0;
+        white-space: normal;
+        font-size: 12px;
+    }
+
+    .booking-status {
+        min-width: 0;
+    }
+
+    .booking-status .status {
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 5px 9px;
+        font-size: 10px;
+        white-space: normal;
+        text-align: center;
+    }
+
+    .booking-total {
+        grid-column: 1 / -1;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    /* Payment line stays inside the mobile width */
+    .booking-payment-status {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+        margin-top: 12px;
+        font-size: 11px;
+        box-sizing: border-box;
+    }
+
+    .payment-status-badge {
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 5px 9px;
+        font-size: 10px;
+    }
+
+    /*
+     * Keep the 8-step progress in one line, but scroll ONLY this
+     * progress area horizontally instead of the entire page.
+     */
+    .booking-progress-row {
+        width: 100%;
+        min-width: 0;
+        margin-top: 16px;
+        padding: 6px 0 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        box-sizing: border-box;
+    }
+
+    .booking-status-progress {
+        display: flex;
+        width: max-content;
+        min-width: 680px;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 0;
+    }
+
+    .booking-status-step {
+        width: 68px;
+        min-width: 68px;
+        flex: 0 0 68px;
+        font-size: 9px;
+    }
+
+    .booking-status-step span {
+        width: 68px;
+        min-height: 30px;
+        font-size: 9px;
+        line-height: 1.25;
+    }
+
+    .booking-status-circle {
+        width: 27px;
+        height: 27px;
+        font-size: 10px;
+    }
+
+    .booking-status-line {
+        flex: 0 0 22px;
+        min-width: 22px;
+        margin-top: 13px;
+    }
+
+    /* Cancelled state also stays inside the panel */
+    .booking-cancelled-progress {
+        width: 100%;
+        min-width: 0;
+        gap: 8px;
+    }
+
+    .cancelled-circle {
+        width: 27px;
+        height: 27px;
+    }
+
+    .cancelled-text {
+        font-size: 11px;
+        white-space: normal;
+    }
+
+    /* Profile */
+    .profile-details {
         grid-template-columns: 1fr 1fr;
     }
 
-}
-
-
-@media (max-width: 700px) {
-
-    .profile-details,
     .profile-form-grid {
         grid-template-columns: 1fr;
     }
 
     .profile-actions {
-        width: 100%;
-
-        flex-direction: column;
-
-        align-items: stretch;
+        flex-wrap: wrap;
     }
 
-    .profile-form-actions {
-        flex-direction: column;
+    /* Booking details */
+    .booking-detail-grid {
+        grid-template-columns: 1fr 1fr;
     }
 
-    .profile-save-btn,
-    .profile-cancel-btn {
-        width: 100%;
+    .booking-detail-card {
+        padding: 18px;
     }
 
-}
-
-
-@media (max-width: 600px) {
-
-    .booking-status-panel {
-        padding: 20px;
-    }
-
-    .profile-details {
+    /* Reviews */
+    .review-summary-details,
+    .review-ratings-grid {
         grid-template-columns: 1fr;
     }
 
+    .booking-review-section,
+    .review-card-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .leave-review-btn,
+    .view-review-btn {
+        width: 100%;
+    }
 }
 
 
+/* Small phones */
 @media (max-width: 500px) {
+
+    .booking-status-panel {
+        padding: 14px;
+    }
+
+    .booking-main-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .booking-vehicle,
+    .booking-total {
+        grid-column: 1;
+    }
+
+    .booking-date,
+    .booking-status {
+        width: 100%;
+    }
+
+    .booking-total {
+        text-align: left;
+    }
 
     .booking-detail-grid {
         grid-template-columns: 1fr;
@@ -1007,16 +1191,46 @@
 
     .booking-detail-header {
         flex-direction: column;
-
         gap: 15px;
     }
 
     .booking-payment-section {
         justify-content: space-between;
-
         gap: 10px;
+        flex-wrap: wrap;
     }
 
+    .profile-details {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-actions,
+    .profile-form-actions,
+    .review-form-actions {
+        flex-direction: column;
+    }
+
+    .profile-actions > *,
+    .profile-save-btn,
+    .profile-cancel-btn,
+    .review-cancel-button,
+    .review-submit-button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .review-form-actions {
+        display: flex;
+    }
+
+    .replaced-part-item {
+        flex-direction: column;
+    }
+
+    .replaced-part-item > div:last-child {
+        width: 100%;
+        text-align: left;
+    }
 }
 
 
