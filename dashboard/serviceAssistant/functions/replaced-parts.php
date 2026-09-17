@@ -187,25 +187,8 @@ if (
             ]);
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | SUBTRACT PART PRICE FROM BOOKING TOTAL
-            |--------------------------------------------------------------------------
-            */
-
-            $stmt = $pdo->prepare("
-                UPDATE bookings
-                SET total_price = GREATEST(
-                    0,
-                    COALESCE(total_price, 0) - ?
-                )
-                WHERE id = ?
-            ");
-
-            $stmt->execute([
-                $partTotal,
-                $bookingId
-            ]);
+            // booking.total_price remains the original service total.
+            // The final total is calculated as service total + replaced parts total.
 
 
             /*
@@ -218,7 +201,7 @@ if (
 
 
             $successMessage =
-                'Replaced part removed successfully and booking total updated.';
+                'Replaced part removed successfully.';
         }
 
     } catch (PDOException $e) {
@@ -362,23 +345,8 @@ if (
             ]);
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | ADD PART PRICE TO BOOKING TOTAL
-            |--------------------------------------------------------------------------
-            */
-
-            $stmt = $pdo->prepare("
-                UPDATE bookings
-                SET total_price =
-                    COALESCE(total_price, 0) + ?
-                WHERE id = ?
-            ");
-
-            $stmt->execute([
-                $totalPrice,
-                $bookingId
-            ]);
+            // Do not change bookings.total_price here.
+            // It represents the service total; parts are calculated separately.
 
 
             /*
@@ -391,7 +359,7 @@ if (
 
 
             $successMessage =
-                'Replaced part added successfully and booking total updated.';
+                'Replaced part added successfully.';
 
 
         } catch (PDOException $e) {
@@ -410,43 +378,6 @@ if (
                 'Unable to add the replaced part.';
         }
     }
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| RELOAD BOOKING TOTAL
-|--------------------------------------------------------------------------
-|
-| The total may have changed after adding/removing a part.
-|
-*/
-
-try {
-
-    $stmt = $pdo->prepare("
-        SELECT
-            total_price
-        FROM bookings
-        WHERE id = ?
-        LIMIT 1
-    ");
-
-    $stmt->execute([
-        $bookingId
-    ]);
-
-    $updatedBooking = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($updatedBooking) {
-
-        $booking['total_price'] =
-            $updatedBooking['total_price'];
-    }
-
-} catch (PDOException $e) {
-
-    // Keep existing booking total if reload fails.
 }
 
 
@@ -933,7 +864,7 @@ try {
             <div>
 
                 <span>
-                    Booking Total
+                    Service Total
                 </span>
 
                 <strong>
@@ -942,6 +873,25 @@ try {
 
                     <?= number_format(
                         (float) $booking['total_price'],
+                        2
+                    ) ?>
+
+                </strong>
+
+            </div>
+
+            <div>
+
+                <span>
+                    Grand Total
+                </span>
+
+                <strong>
+
+                    Rs.
+
+                    <?= number_format(
+                        (float) $booking['total_price'] + $partsTotal,
                         2
                     ) ?>
 
