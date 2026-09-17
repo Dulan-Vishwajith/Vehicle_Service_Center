@@ -6,6 +6,14 @@ $user = null;
 $message = '';
 $messageType = '';
 
+function formatCustomerPhone(string $phone): string {
+    $digits = preg_replace('/\D/', '', $phone);
+    if (preg_match('/^0[0-9]{9}$/', $digits)) {
+        return substr($digits,0,3).' '.substr($digits,3,3).' '.substr($digits,6,4);
+    }
+    return trim($phone);
+}
+
 /* =====================================================
    GET USER
 ===================================================== */
@@ -37,63 +45,66 @@ if ($userId > 0) {
    HANDLE PROFILE UPDATE
 ===================================================== */
 
-if (
-    $_SERVER['REQUEST_METHOD'] === 'POST'
-    && isset($_POST['update_profile'])
-) {
-
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
+    $phoneDigits = preg_replace('/\D/', '', $phone);
+    $formattedPhone = formatCustomerPhone($phoneDigits);
+    $errors = [];
 
-    if (empty($name) || empty($email)) {
-
-        $message = "Name and email are required.";
-        $messageType = "error";
-
-    } else {
-
-        try {
-
-            $stmt = $pdo->prepare("
-                UPDATE users
-                SET
-                    name = ?,
-                    email = ?,
-                    phone = ?
-                WHERE user_id = ?
-            ");
-
-            $stmt->execute([
-                $name,
-                $email,
-                $phone,
-                $userId
-            ]);
-
-            $message = "Profile updated successfully.";
-            $messageType = "success";
-
-            $stmt = $pdo->prepare("
-                SELECT *
-                FROM users
-                WHERE user_id = ?
-                LIMIT 1
-            ");
-
-            $stmt->execute([$userId]);
-
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        } catch (PDOException $e) {
-
-            $message = "Unable to update your profile.";
-            $messageType = "error";
-
-        }
-
+    if ($name === '') {
+        $errors[] = 'Full name is required.';
+    } elseif (!preg_match('/^[A-Za-z ]+$/', $name)) {
+        $errors[] = 'Full name can contain letters and spaces only.';
     }
 
+    if ($email === '') {
+        $errors[] = 'Email address is required.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'Please enter a valid email address.';
+    } elseif (!preg_match('/\.(com|lk)$/i', $email)) {
+        $errors[] = 'Email address must end with .com or .lk.';
+    }
+
+    if ($phoneDigits === '') {
+        $errors[] = 'Phone number is required.';
+    } elseif (!preg_match('/^0[0-9]{9}$/', $phoneDigits)) {
+        $errors[] = 'Phone number must contain exactly 10 digits and start with 0.';
+    }
+
+    if ($errors) {
+        $message = $errors[0];
+        $messageType = 'error';
+    } else {
+        try {
+            $stmt = $pdo->prepare("SELECT user_id, email, phone FROM users WHERE user_id <> ? AND (LOWER(email)=LOWER(?) OR REPLACE(phone, ' ', '')=?) LIMIT 1");
+            $stmt->execute([$userId, $email, $phoneDigits]);
+            $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($existing) {
+                if (strcasecmp(trim((string)$existing['email']), $email) === 0) {
+                    throw new RuntimeException('This email address is already registered.');
+                }
+                if (preg_replace('/\D/', '', (string)$existing['phone']) === $phoneDigits) {
+                    throw new RuntimeException('This phone number is already registered.');
+                }
+            }
+
+            $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ? WHERE user_id = ?");
+            $stmt->execute([$name, $email, $formattedPhone, $userId]);
+            $message = 'Profile updated successfully.';
+            $messageType = 'success';
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = ? LIMIT 1");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            $message = $e->getCode() === '23000' ? 'This email address or phone number is already registered.' : 'Unable to update your profile.';
+            $messageType = 'error';
+        } catch (RuntimeException $e) {
+            $message = $e->getMessage();
+            $messageType = 'error';
+        }
+    }
 }
 
 
@@ -302,8 +313,13 @@ $view = $_GET['view'] ?? 'details';
 
                         <input
                             type="text"
+                            id="customer-name"
                             name="name"
                             value="<?= htmlspecialchars($user['name'] ?? '') ?>"
+                            maxlength="100"
+                            pattern="[A-Za-z ]+"
+                            title="Full name can contain letters and spaces only."
+                            oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '')"
                             required
                         >
 
@@ -318,8 +334,13 @@ $view = $_GET['view'] ?? 'details';
 
                         <input
                             type="email"
+                            id="customer-email"
                             name="email"
                             value="<?= htmlspecialchars($user['email'] ?? '') ?>"
+                            placeholder="customer@veyro.lk"
+                            maxlength="150"
+                            pattern="^[^@\s]+@[^@\s]+\.(com|lk)$"
+                            title="Email address must end with .com or .lk"
                             required
                         >
 
@@ -333,9 +354,15 @@ $view = $_GET['view'] ?? 'details';
                         </label>
 
                         <input
-                            type="text"
+                            type="tel"
+                            id="customer-phone"
                             name="phone"
-                            value="<?= htmlspecialchars($user['phone'] ?? '') ?>"
+                            value="<?= htmlspecialchars(formatCustomerPhone((string) ($user['phone'] ?? ''))) ?>"
+                            placeholder="071 234 5689"
+                            maxlength="12"
+                            inputmode="numeric"
+                            title="Enter a 10-digit phone number. Example: 0712345689"
+                            required
                         >
 
                     </div>
@@ -521,7 +548,7 @@ $view = $_GET['view'] ?? 'details';
 
                 <strong>
                     <?= htmlspecialchars(
-                        $user['phone'] ?? 'Not Available'
+                        !empty($user['phone']) ? formatCustomerPhone((string) $user['phone']) : 'Not Available'
                     ) ?>
                 </strong>
 
@@ -535,3 +562,18 @@ $view = $_GET['view'] ?? 'details';
 
 
 </div>
+
+<script>
+const customerPhoneInput=document.getElementById('customer-phone');
+if(customerPhoneInput){
+ const formatPhone=()=>{let n=customerPhoneInput.value.replace(/\D/g,'').slice(0,10); customerPhoneInput.value=n.length<=3?n:n.length<=6?n.slice(0,3)+' '+n.slice(3):n.slice(0,3)+' '+n.slice(3,6)+' '+n.slice(6);};
+ const validatePhone=()=>{let n=customerPhoneInput.value.replace(/\D/g,''); customerPhoneInput.setCustomValidity(n.length===10&&n[0]==='0'?'':'Phone number must contain exactly 10 digits and start with 0.'); return customerPhoneInput.checkValidity();};
+ customerPhoneInput.addEventListener('input',()=>{customerPhoneInput.setCustomValidity('');formatPhone();}); customerPhoneInput.addEventListener('blur',validatePhone); formatPhone();
+}
+const customerEmailInput=document.getElementById('customer-email');
+if(customerEmailInput){
+ customerEmailInput.addEventListener('keydown',function(e){let done=/\.(com|lk)$/i.test(this.value); let atEnd=this.selectionStart===this.value.length&&this.selectionEnd===this.value.length; let allowed=['Backspace','Delete','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','Tab','Escape']; if(done&&atEnd&&!allowed.includes(e.key)&&!e.ctrlKey&&!e.metaKey)e.preventDefault();});
+ customerEmailInput.addEventListener('input',function(){this.setCustomValidity(''); let m=this.value.match(/^([^@\s]+@[^@\s]*?\.(?:com|lk))/i); if(m&&this.value.length>m[1].length)this.value=m[1];});
+ customerEmailInput.addEventListener('blur',function(){let ok=/^[^\s@]+@[^\s@]+\.(com|lk)$/i.test(this.value.trim()); this.setCustomValidity(ok?'':'Please enter a valid email address ending with .com or .lk.');});
+}
+</script>

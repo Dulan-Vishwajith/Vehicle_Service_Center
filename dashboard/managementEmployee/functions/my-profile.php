@@ -7,6 +7,25 @@ $message = '';
 $messageType = '';
 
 /* =====================================================
+   PHONE FORMAT HELPER
+===================================================== */
+
+function formatManagerPhone(string $phone): string
+{
+    $digits = preg_replace('/\\D/', '', $phone);
+
+    if (preg_match('/^0[0-9]{9}$/', $digits)) {
+        return substr($digits, 0, 3)
+            . ' '
+            . substr($digits, 3, 3)
+            . ' '
+            . substr($digits, 6, 4);
+    }
+
+    return trim($phone);
+}
+
+/* =====================================================
    GET USER
 ===================================================== */
 
@@ -46,14 +65,93 @@ if (
     $email = trim($_POST['email'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
 
-    if (empty($name) || empty($email)) {
+    $phoneDigits = preg_replace('/\D/', '', $phone);
+    $formattedPhone = formatManagerPhone($phoneDigits);
 
-        $message = "Name and email are required.";
+    $errors = [];
+
+    /* Full Name: letters and spaces only */
+    if ($name === '') {
+        $errors[] = "Full name is required.";
+    } elseif (!preg_match('/^[A-Za-z ]+$/', $name)) {
+        $errors[] = "Full name can contain letters and spaces only.";
+    }
+
+    /* Email: valid and must end exactly with .com or .lk */
+    if ($email === '') {
+        $errors[] = "Email address is required.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Please enter a valid email address.";
+    } elseif (!preg_match('/\.(com|lk)$/i', $email)) {
+        $errors[] = "Email address must end with .com or .lk.";
+    }
+
+    /* Phone: exactly 10 digits and starts with 0 */
+    if ($phoneDigits === '') {
+        $errors[] = "Phone number is required.";
+    } elseif (!preg_match('/^0[0-9]{9}$/', $phoneDigits)) {
+        $errors[] =
+            "Phone number must contain exactly 10 digits and start with 0.";
+    }
+
+    if (!empty($errors)) {
+
+        $message = $errors[0];
         $messageType = "error";
 
     } else {
 
         try {
+
+            /*
+             * Check duplicate email / phone.
+             * Exclude the currently logged-in manager.
+             */
+            $stmt = $pdo->prepare("
+                SELECT user_id, email, phone
+                FROM users
+                WHERE user_id <> ?
+                AND (
+                    LOWER(email) = LOWER(?)
+                    OR REPLACE(phone, ' ', '') = ?
+                )
+                LIMIT 1
+            ");
+
+            $stmt->execute([
+                $userId,
+                $email,
+                $phoneDigits
+            ]);
+
+            $existingUser = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($existingUser) {
+
+                if (
+                    isset($existingUser['email'])
+                    && strcasecmp(
+                        trim((string) $existingUser['email']),
+                        $email
+                    ) === 0
+                ) {
+                    throw new RuntimeException(
+                        "This email address is already registered."
+                    );
+                }
+
+                $existingPhoneDigits = preg_replace(
+                    '/\D/',
+                    '',
+                    (string) ($existingUser['phone'] ?? '')
+                );
+
+                if ($existingPhoneDigits === $phoneDigits) {
+                    throw new RuntimeException(
+                        "This phone number is already registered."
+                    );
+                }
+            }
 
             $stmt = $pdo->prepare("
                 UPDATE users
@@ -67,7 +165,7 @@ if (
             $stmt->execute([
                 $name,
                 $email,
-                $phone,
+                $formattedPhone,
                 $userId
             ]);
 
@@ -87,13 +185,21 @@ if (
 
         } catch (PDOException $e) {
 
-            $message = "Unable to update your profile.";
+            if ($e->getCode() === '23000') {
+                $message =
+                    "This email address or phone number is already registered.";
+            } else {
+                $message = "Unable to update your profile.";
+            }
+
             $messageType = "error";
 
+        } catch (RuntimeException $e) {
+
+            $message = $e->getMessage();
+            $messageType = "error";
         }
-
     }
-
 }
 
 
@@ -302,8 +408,12 @@ $view = $_GET['view'] ?? 'details';
 
                         <input
                             type="text"
+                            id="manager-name"
                             name="name"
                             value="<?= htmlspecialchars($user['name'] ?? '') ?>"
+                            maxlength="100"
+                            pattern="[A-Za-z ]+"
+                            title="Full name can contain letters and spaces only."
                             required
                         >
 
@@ -318,8 +428,14 @@ $view = $_GET['view'] ?? 'details';
 
                         <input
                             type="email"
+                            id="manager-email"
                             name="email"
                             value="<?= htmlspecialchars($user['email'] ?? '') ?>"
+                            placeholder="manager@veyro.lk"
+                            maxlength="150"
+                            pattern="^[^@\s]+@[^@\s]+\.(com|lk)$"
+                            title="Email address must end with .com or .lk"
+                            autocomplete="email"
                             required
                         >
 
@@ -333,9 +449,16 @@ $view = $_GET['view'] ?? 'details';
                         </label>
 
                         <input
-                            type="text"
+                            type="tel"
+                            id="manager-phone"
                             name="phone"
-                            value="<?= htmlspecialchars($user['phone'] ?? '') ?>"
+                            value="<?= htmlspecialchars(formatManagerPhone((string) ($user['phone'] ?? ''))) ?>"
+                            placeholder="071 234 5689"
+                            maxlength="12"
+                            inputmode="numeric"
+                            autocomplete="tel"
+                            title="Enter a 10-digit phone number. Example: 0712345689"
+                            required
                         >
 
                     </div>
@@ -521,7 +644,9 @@ $view = $_GET['view'] ?? 'details';
 
                 <strong>
                     <?= htmlspecialchars(
-                        $user['phone'] ?? 'Not Available'
+                        !empty($user['phone'])
+                            ? formatManagerPhone((string) $user['phone'])
+                            : 'Not Available'
                     ) ?>
                 </strong>
 
@@ -535,3 +660,140 @@ $view = $_GET['view'] ?? 'details';
 
 
 </div>
+
+<script>
+const managerNameInput = document.getElementById('manager-name');
+const managerEmailInput = document.getElementById('manager-email');
+const managerPhoneInput = document.getElementById('manager-phone');
+
+/* Full name: letters and spaces only */
+if (managerNameInput) {
+    managerNameInput.addEventListener('input', function () {
+        this.value = this.value.replace(/[^A-Za-z ]/g, '');
+    });
+}
+
+/* Phone: numbers only, automatically format 0712345689 -> 071 234 5689 */
+function formatManagerPhoneInput() {
+    if (!managerPhoneInput) return;
+
+    let numbers = managerPhoneInput.value.replace(/\D/g, '').slice(0, 10);
+
+    if (numbers.length <= 3) {
+        managerPhoneInput.value = numbers;
+    } else if (numbers.length <= 6) {
+        managerPhoneInput.value =
+            numbers.slice(0, 3) + ' ' + numbers.slice(3);
+    } else {
+        managerPhoneInput.value =
+            numbers.slice(0, 3) + ' '
+            + numbers.slice(3, 6) + ' '
+            + numbers.slice(6, 10);
+    }
+}
+
+function validateManagerPhone() {
+    if (!managerPhoneInput) return true;
+
+    const numbers = managerPhoneInput.value.replace(/\D/g, '');
+
+    if (numbers.length !== 10 || numbers.charAt(0) !== '0') {
+        managerPhoneInput.setCustomValidity(
+            'Phone number must contain exactly 10 digits and start with 0.'
+        );
+        return false;
+    }
+
+    managerPhoneInput.setCustomValidity('');
+    return true;
+}
+
+if (managerPhoneInput) {
+    managerPhoneInput.addEventListener('input', function () {
+        this.setCustomValidity('');
+        formatManagerPhoneInput();
+    });
+
+    managerPhoneInput.addEventListener('blur', validateManagerPhone);
+    formatManagerPhoneInput();
+}
+
+/* Email: must end with .com or .lk and block extra typing after it */
+if (managerEmailInput) {
+    managerEmailInput.addEventListener('keydown', function (event) {
+        const email = this.value.toLowerCase();
+        const finished = email.endsWith('.com') || email.endsWith('.lk');
+        const cursorAtEnd =
+            this.selectionStart === this.value.length
+            && this.selectionEnd === this.value.length;
+
+        if (finished && cursorAtEnd) {
+            const allowed = [
+                'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight',
+                'ArrowUp', 'ArrowDown', 'Home', 'End', 'Tab', 'Escape'
+            ];
+
+            if (
+                !allowed.includes(event.key)
+                && !event.ctrlKey
+                && !event.metaKey
+            ) {
+                event.preventDefault();
+            }
+        }
+    });
+
+    managerEmailInput.addEventListener('input', function () {
+        this.setCustomValidity('');
+
+        const match = this.value.match(
+            /^([^@\s]+@[^@\s]*?\.(?:com|lk))/i
+        );
+
+        if (match && this.value.length > match[1].length) {
+            this.value = match[1];
+        }
+    });
+}
+
+function validateManagerEmail() {
+    if (!managerEmailInput) return true;
+
+    const email = managerEmailInput.value.trim();
+    const pattern = /^[^\s@]+@[^\s@]+\.(com|lk)$/i;
+
+    if (!pattern.test(email)) {
+        managerEmailInput.setCustomValidity(
+            'Please enter a valid email address ending with .com or .lk.'
+        );
+        return false;
+    }
+
+    managerEmailInput.setCustomValidity('');
+    return true;
+}
+
+if (managerEmailInput) {
+    managerEmailInput.addEventListener('blur', validateManagerEmail);
+}
+
+/* Validate edit-profile form before submit */
+const managerProfileForm =
+    managerEmailInput ? managerEmailInput.closest('form') : null;
+
+if (managerProfileForm) {
+    managerProfileForm.addEventListener('submit', function (event) {
+        if (!validateManagerPhone()) {
+            event.preventDefault();
+            managerPhoneInput.reportValidity();
+            return;
+        }
+
+        if (!validateManagerEmail()) {
+            event.preventDefault();
+            managerEmailInput.reportValidity();
+        }
+    });
+}
+</script>
+
