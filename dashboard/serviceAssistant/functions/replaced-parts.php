@@ -580,11 +580,14 @@ try {
                     </label>
 
                     <input
-                        type="number"
+                        type="text"
+                        id="unit-price"
                         name="unit_price"
-                        value="0.00"
-                        min="0"
-                        step="0.01"
+                        placeholder="0.00"
+                        inputmode="decimal"
+                        autocomplete="off"
+                        pattern="^[0-9]+(?:\.[0-9]{1,2})?$"
+                        title="Enter a valid price with a maximum of 2 decimal places."
                         required
                     >
 
@@ -905,3 +908,102 @@ try {
     <?php endif; ?>
 
 </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const unitPriceInput = document.getElementById('unit-price');
+
+    if (!unitPriceInput) {
+        return;
+    }
+
+    unitPriceInput.addEventListener('beforeinput', function (event) {
+
+        /*
+         * Let browser control actions such as delete, undo,
+         * cut and history operations work normally.
+         */
+        if (
+            event.inputType.startsWith('delete') ||
+            event.inputType === 'historyUndo' ||
+            event.inputType === 'historyRedo'
+        ) {
+            return;
+        }
+
+        /*
+         * Paste is cleaned by the normal input event below.
+         */
+        if (event.inputType === 'insertFromPaste') {
+            return;
+        }
+
+        if (event.inputType !== 'insertText' || event.data === null) {
+            return;
+        }
+
+        const start = this.selectionStart ?? this.value.length;
+        const end = this.selectionEnd ?? this.value.length;
+
+        const nextValue =
+            this.value.slice(0, start) +
+            event.data +
+            this.value.slice(end);
+
+        /*
+         * Valid while typing:
+         *   ""       allowed
+         *   "12"     allowed
+         *   "12."    allowed
+         *   "12.5"   allowed
+         *   "12.50"  allowed
+         *
+         * Not allowed:
+         *   "12.500"
+         *   "12..5"
+         *   letters / minus signs
+         */
+        if (!/^\d*(?:\.\d{0,2})?$/.test(nextValue)) {
+            event.preventDefault();
+        }
+    });
+
+    unitPriceInput.addEventListener('input', function () {
+
+        let value = this.value;
+
+        /* Keep digits and only the first decimal point. */
+        value = value.replace(/[^0-9.]/g, '');
+
+        const firstDot = value.indexOf('.');
+
+        if (firstDot !== -1) {
+
+            const wholePart = value.slice(0, firstDot);
+
+            const decimalPart = value
+                .slice(firstDot + 1)
+                .replace(/\./g, '')
+                .slice(0, 2);
+
+            value = wholePart + '.' + decimalPart;
+        }
+
+        this.value = value;
+    });
+
+    unitPriceInput.addEventListener('blur', function () {
+
+        /*
+         * A decimal point by itself is not a complete price.
+         * Leave the field empty so required validation can handle it.
+         */
+        if (this.value === '.') {
+            this.value = '';
+        }
+    });
+});
+</script>
+

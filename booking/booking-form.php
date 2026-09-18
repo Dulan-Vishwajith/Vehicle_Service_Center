@@ -844,7 +844,7 @@ try {
                         class="back-link"
                     >
 
-                        ← Dashboard
+                        ← Back to Dashboard
 
                     </a>
 
@@ -855,7 +855,7 @@ try {
                         class="btn btn-primary booking-submit"
                     >
 
-                        Continue to Payment →
+                        Continue to Payment
 
                     </button>
 
