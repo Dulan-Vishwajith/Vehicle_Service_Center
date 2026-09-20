@@ -62,7 +62,6 @@ switch ($role_id) {
         exit();
 }
 ?>
- 
+
 <!--Include the footer -->
 <?php   include_once '../includes/footer.php';  ?>
- 

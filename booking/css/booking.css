@@ -71,6 +71,19 @@
 }
 
 
+/* Pages that render only the form card with no summary sidebar
+   (e.g. the payment page) get a single, centered column instead
+   of sitting in the left track of the two-column grid. */
+
+.booking-layout:has(> .booking-form-card:only-child) {
+
+    grid-template-columns: minmax(0, 640px);
+
+    justify-content: center;
+
+}
+
+
 /* =========================================================
    FORM CARD
    ========================================================= */
@@ -971,189 +984,607 @@ textarea.form-control {
 
 }
 
-/* =====================================================
+
+/* =========================================================================
    PAYMENT PAGE
-===================================================== */
+   Redesigned as a dedicated, trust-first payment experience. Tokens are
+   scoped to .booking-page so nothing here leaks into the rest of the site.
+   ========================================================================= */
+
+.booking-page {
+
+    --pay-ink: var(--color-dark, #17202a);
+    --pay-muted: var(--color-muted, #6b7280);
+    --pay-line: var(--color-border-light, #eceef1);
+    --pay-line-strong: var(--color-border, #e1e4e8);
+    --pay-accent: var(--color-primary, #e63946);
+    --pay-accent-ink: var(--color-primary-dark, #a8202b);
+    --pay-accent-wash: var(--color-primary-soft, #fdeef0);
+    --pay-surface: var(--color-white, #ffffff);
+    --pay-canvas: #fafafa;
+    --pay-radius: var(--radius-md, 10px);
+    --pay-radius-lg: var(--radius-lg, 14px);
+    --pay-mono: 'SFMono-Regular', 'Consolas', 'Liberation Mono', Menlo, Courier, monospace;
+    --pay-shadow: var(--shadow-sm, 0 1px 2px rgba(15, 23, 30, 0.06));
+
+}
+
+
+/* ---------------------------------------------------------
+   BOOKING SUMMARY (top of the payment form card)
+   --------------------------------------------------------- */
 
 .booking-payment-summary {
+
     margin-top: 25px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+    padding: 20px 22px;
+
+    border: 1px solid var(--pay-line-strong);
+    border-radius: var(--pay-radius);
+
+    background: var(--pay-canvas);
+
     box-sizing: border-box;
+
 }
+
 
 .booking-payment-summary h2 {
-    margin-top: 0;
+
+    margin: 0 0 14px;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    color: var(--pay-ink);
+
 }
 
 
-/* =====================================================
-   PAYMENT METHODS
-===================================================== */
+.booking-payment-summary p {
+
+    margin: 0;
+    padding: 7px 0;
+
+    font-size: 13.5px;
+    line-height: 1.5;
+
+    color: var(--pay-muted);
+
+    border-bottom: 1px solid var(--pay-line);
+
+}
+
+
+.booking-payment-summary p:last-child {
+
+    border-bottom: none;
+    padding-bottom: 0;
+
+}
+
+
+.booking-payment-summary p strong {
+
+    display: inline-block;
+    width: 82px;
+
+    font-weight: 600;
+    color: var(--pay-ink);
+
+}
+
+
+/* ---------------------------------------------------------
+   TOTALS BREAKDOWN
+   Every row reads at the same weight except the one that
+   matters right now: what's being charged today.
+   --------------------------------------------------------- */
+
+.booking-payment-section {
+
+    margin-top: 22px;
+
+    border: 1px solid var(--pay-line-strong);
+    border-radius: var(--pay-radius);
+    overflow: hidden;
+
+}
+
+
+.booking-payment-section > div {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+
+    gap: 20px;
+
+    padding: 13px 18px;
+
+    background: var(--pay-surface);
+
+    border-bottom: 1px solid var(--pay-line);
+
+    font-size: 13.5px;
+    color: var(--pay-muted);
+
+    box-sizing: border-box;
+
+}
+
+
+.booking-payment-section > div:last-child {
+
+    border-bottom: none;
+
+}
+
+
+.booking-payment-section > div strong {
+
+    font-size: 14px;
+    color: var(--pay-ink);
+    font-weight: 700;
+
+}
+
+
+/* "Pay Now" is the third row — make it the one thing the eye lands on */
+
+.booking-payment-section > div:nth-child(3) {
+
+    background: var(--pay-accent-wash);
+
+}
+
+
+.booking-payment-section > div:nth-child(3) span {
+
+    color: var(--pay-accent-ink);
+    font-weight: 700;
+
+}
+
+
+.booking-payment-section > div:nth-child(3) strong {
+
+    color: var(--pay-accent-ink);
+    font-size: 17px;
+
+}
+
+
+/* Remaining balance row reads as a quiet footnote */
+
+.booking-payment-section > div:last-child span,
+.booking-payment-section > div:last-child strong {
+
+    font-size: 12.5px;
+    color: var(--pay-muted);
+    font-weight: 600;
+
+}
+
+
+/* ---------------------------------------------------------
+   PAYMENT METHOD SWITCH
+   A real segmented control rather than two loose buttons.
+   --------------------------------------------------------- */
 
 .payment-methods {
+
     display: flex;
-    gap: 12px;
-    margin: 25px 0;
+    gap: 4px;
+
+    margin: 26px 0 0;
+
+    padding: 4px;
+
+    background: var(--pay-canvas);
+    border: 1px solid var(--pay-line-strong);
+    border-radius: var(--pay-radius);
+
     flex-wrap: wrap;
+
 }
+
 
 .payment-method-button {
-    padding: 12px 18px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: #fff;
-    cursor: pointer;
+
+    flex: 1 1 160px;
+
+    padding: 12px 16px;
+
+    border: 1px solid transparent;
+    border-radius: calc(var(--pay-radius) - 4px);
+
+    background: transparent;
+
+    color: var(--pay-muted);
+
+    font-size: 13.5px;
     font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease,
+        box-shadow 0.15s ease;
+
 }
+
+
+.payment-method-button:hover {
+
+    color: var(--pay-ink);
+
+}
+
 
 .payment-method-button.active {
-    border-color: #111;
+
+    background: var(--pay-surface);
+    border-color: var(--pay-line-strong);
+    color: var(--pay-ink);
+
+    box-shadow: 0 1px 3px rgba(15, 23, 30, 0.08);
+
 }
 
 
-/* =====================================================
-   PAYMENT METHOD PANEL
-===================================================== */
+.payment-method-button:focus-visible {
+
+    outline: 2px solid var(--pay-accent);
+    outline-offset: 2px;
+
+}
+
+
+/* ---------------------------------------------------------
+   PAYMENT PANEL
+   --------------------------------------------------------- */
 
 .payment-method-panel {
-    margin-top: 20px;
-    padding: 25px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+
+    margin-top: 18px;
+    padding: 26px;
+
+    border: 1px solid var(--pay-line-strong);
+    border-radius: var(--pay-radius-lg);
+
+    background: var(--pay-surface);
+    box-shadow: var(--pay-shadow);
+
     box-sizing: border-box;
-    background: #fff;
+
 }
+
 
 .payment-method-panel h2 {
-    margin-top: 0;
+
+    margin: 0 0 6px;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    color: var(--pay-ink);
+
 }
 
 
-/* =====================================================
-   PAYMENT LABELS
-===================================================== */
+.payment-method-panel > p {
+
+    margin: 0;
+
+    font-size: 12.5px;
+    line-height: 1.5;
+
+    color: var(--pay-muted);
+
+}
+
+
+/* Academic-mock disclaimer reads as an inline notice, not throwaway copy */
+
+#cardPaymentPanel > p {
+
+    padding: 9px 12px;
+    margin-bottom: 4px;
+
+    border-radius: 8px;
+
+    background: var(--pay-canvas);
+    border: 1px solid var(--pay-line);
+
+}
+
 
 .payment-method-panel label {
+
     display: block;
-    margin-top: 15px;
-    margin-bottom: 6px;
-    font-weight: 600;
+
+    margin-top: 18px;
+    margin-bottom: 7px;
+
+    font-size: 12.5px;
+    font-weight: 700;
+
+    letter-spacing: 0.2px;
+
+    color: var(--pay-ink);
+
 }
 
 
-/* =====================================================
-   PAYMENT INPUTS
-===================================================== */
+/* ---------------------------------------------------------
+   INPUTS
+   --------------------------------------------------------- */
 
 .payment-method-panel input[type="text"],
 .payment-method-panel input[type="password"],
 .payment-method-panel input[type="email"],
 .payment-method-panel input[type="number"],
 .payment-method-panel input[type="file"] {
+
     display: block;
     width: 100%;
-    min-height: 42px;
-    padding: 12px;
+    min-height: 46px;
+
+    padding: 0 14px;
     box-sizing: border-box;
 
-    border: 1px solid #999;
-    border-radius: 3px;
+    border: 1px solid var(--pay-line-strong);
+    border-radius: 8px;
 
-    background: #fff;
-    color: #111;
+    background: var(--pay-surface);
+    color: var(--pay-ink);
+
     font-size: 14px;
+    font-family: inherit;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+
 }
 
 
-/* =====================================================
+.payment-method-panel input[type="text"]::placeholder,
+.payment-method-panel input[type="password"]::placeholder {
+
+    color: #b7bcc4;
+
+}
+
+
+.payment-method-panel input:focus {
+
+    outline: none;
+
+    border-color: var(--pay-accent);
+
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+
+}
+
+
+.payment-method-panel input:invalid:not(:placeholder-shown) {
+
+    border-color: #f0a5ab;
+
+}
+
+
+/* Card number reads like an embossed card, not a generic text field */
+
+#cardPaymentForm input[name="card_number"] {
+
+    font-family: var(--pay-mono);
+    font-size: 15px;
+    letter-spacing: 2.5px;
+
+}
+
+
+/* CVV is a secret — give it a fixed, deliberately narrow footprint */
+
+#cardPaymentForm input[name="cvv"] {
+
+    font-family: var(--pay-mono);
+    letter-spacing: 4px;
+
+}
+
+
+.payment-method-panel input[type="file"] {
+
+    padding: 10px 14px;
+
+    background: var(--pay-canvas);
+
+    cursor: pointer;
+
+}
+
+
+.payment-method-panel input[type="file"]::file-selector-button {
+
+    margin-right: 12px;
+    padding: 7px 14px;
+
+    border: 1px solid var(--pay-line-strong);
+    border-radius: 6px;
+
+    background: var(--pay-surface);
+    color: var(--pay-ink);
+
+    font-size: 12.5px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background 0.15s ease;
+
+}
+
+
+.payment-method-panel input[type="file"]::file-selector-button:hover {
+
+    background: var(--pay-canvas);
+
+}
+
+
+/* ---------------------------------------------------------
    EXPIRY / CVV ROW
-===================================================== */
+   --------------------------------------------------------- */
 
 .payment-form-row {
+
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 
     width: 100%;
 
-    column-gap: 15px;
+    column-gap: 16px;
     row-gap: 0;
 
     margin: 0;
     padding: 0;
 
     box-sizing: border-box;
+
 }
 
+
 .payment-form-row > div {
+
     min-width: 0;
     width: 100%;
     box-sizing: border-box;
+
 }
 
 
-/* =====================================================
+/* ---------------------------------------------------------
    CARD PAYMENT FORM
-===================================================== */
+   --------------------------------------------------------- */
 
 #cardPaymentForm {
+
     display: block;
     width: 100%;
     margin: 0;
     padding: 0;
+
 }
+
 
 #cardPaymentForm > .payment-form-row {
-    margin-bottom: 20px;
+
+    margin-bottom: 6px;
+
 }
 
+
 #cardPaymentForm > button[type="submit"] {
+
     display: inline-flex;
 
     width: auto;
-    min-width: 158px;
+    min-width: 172px;
     min-height: 48px;
 
-    margin: 0 !important;
-    padding: 0 20px;
+    margin: 24px 0 0 !important;
+    padding: 0 22px;
 
     align-items: center;
     justify-content: center;
+    gap: 8px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: var(--pay-accent);
+    color: #fff;
+
+    font-size: 14.5px;
+    font-weight: 700;
 
     box-sizing: border-box;
-
     line-height: 1;
+
+    cursor: pointer;
+
+    box-shadow: 0 2px 8px rgba(230, 57, 70, 0.28);
+
+    transition:
+        background 0.15s ease,
+        transform 0.1s ease,
+        box-shadow 0.15s ease;
+
 }
 
 
-/* =====================================================
+#cardPaymentForm > button[type="submit"]::before {
+
+    content: '🔒';
+    font-size: 13px;
+
+}
+
+
+#cardPaymentForm > button[type="submit"]:hover {
+
+    background: var(--pay-accent-ink);
+
+    box-shadow: 0 4px 12px rgba(230, 57, 70, 0.32);
+
+    transform: translateY(-1px);
+
+}
+
+
+#cardPaymentForm > button[type="submit"]:active {
+
+    transform: translateY(0);
+
+}
+
+
+#cardPaymentForm > button[type="submit"]:focus-visible {
+
+    outline: 2px solid var(--pay-accent-ink);
+    outline-offset: 3px;
+
+}
+
+
+/* ---------------------------------------------------------
    BANK PAYMENT FORM
-===================================================== */
+   --------------------------------------------------------- */
 
 #bankPaymentForm {
+
     display: block;
     width: 100%;
     margin: 0;
     padding: 0;
+
 }
 
-
-/* =====================================================
-   BANK PAYMENT INPUTS
-===================================================== */
 
 #bankPaymentForm input[type="text"],
 #bankPaymentForm input[type="file"] {
+
     display: block;
     width: 100%;
     box-sizing: border-box;
+
 }
 
-
-/* =====================================================
-   PAYMENT SLIP HELP TEXT
-===================================================== */
 
 /*
    IMPORTANT:
@@ -1162,24 +1593,22 @@ textarea.form-control {
 */
 
 #bankPaymentForm small {
+
     display: block;
 
     width: 100%;
 
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 8px;
+    margin-bottom: 6px;
 
-    color: var(--color-muted);
+    color: var(--pay-muted);
     font-size: 12px;
     line-height: 1.5;
 
     box-sizing: border-box;
+
 }
 
-
-/* =====================================================
-   BANK SUBMIT BUTTON
-===================================================== */
 
 /*
    Keep the Submit Deposit Slip button
@@ -1187,152 +1616,329 @@ textarea.form-control {
 */
 
 #bankPaymentForm > button[type="submit"] {
+
     display: inline-flex;
 
     width: auto;
-    min-width: 182px;
+    min-width: 196px;
     min-height: 48px;
 
-    margin: 0 !important;
-    padding: 0 20px;
+    margin: 20px 0 0 !important;
+    padding: 0 22px;
 
     align-items: center;
     justify-content: center;
+    gap: 8px;
 
-    box-sizing: border-box;
-
-    line-height: 1;
-}
-
-
-/* =====================================================
-   BANK DETAILS
-===================================================== */
-
-.bank-details {
-    padding: 18px;
-    margin-bottom: 20px;
-
+    border: 1px solid var(--pay-ink);
     border-radius: 8px;
 
-    background: #f5f5f5;
+    background: var(--pay-ink);
+    color: #fff;
+
+    font-size: 14.5px;
+    font-weight: 700;
 
     box-sizing: border-box;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        transform 0.1s ease;
+
 }
+
+
+#bankPaymentForm > button[type="submit"]:hover {
+
+    background: #000;
+
+    transform: translateY(-1px);
+
+}
+
+
+#bankPaymentForm > button[type="submit"]:focus-visible {
+
+    outline: 2px solid var(--pay-accent);
+    outline-offset: 3px;
+
+}
+
+
+/* ---------------------------------------------------------
+   BANK DETAILS
+   Styled like a deposit slip: labelled fields, a dashed
+   separator before the amount due, monospaced numerals.
+   --------------------------------------------------------- */
+
+.bank-details {
+
+    padding: 20px 22px;
+    margin-bottom: 22px;
+
+    border-radius: var(--pay-radius);
+    border: 1px solid var(--pay-line-strong);
+
+    background: var(--pay-canvas);
+
+    box-sizing: border-box;
+
+}
+
 
 .bank-details p {
-    margin: 7px 0;
-}
 
-
-/* =====================================================
-   BOOKING PAYMENT SECTION
-===================================================== */
-
-.booking-payment-section {
-    margin-top: 25px;
-}
-
-.booking-payment-section > div {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
 
-    gap: 20px;
+    gap: 16px;
 
-    padding: 12px 0;
+    margin: 0;
+    padding: 9px 0;
 
-    border-bottom: 1px solid #eee;
+    font-size: 13.5px;
 
-    box-sizing: border-box;
+    border-bottom: 1px dashed var(--pay-line-strong);
+
 }
 
 
-/* =====================================================
+.bank-details p:last-child {
+
+    border-bottom: none;
+    padding-top: 12px;
+
+}
+
+
+.bank-details p strong {
+
+    flex-shrink: 0;
+
+    font-weight: 600;
+    color: var(--pay-muted);
+
+}
+
+
+.bank-details p:last-child strong {
+
+    color: var(--pay-accent-ink);
+    font-weight: 700;
+
+}
+
+
+/* Right-hand value of each row */
+
+.bank-details p {
+
+    color: var(--pay-ink);
+    font-weight: 600;
+
+}
+
+
+.bank-details p:nth-child(3) {
+
+    font-family: var(--pay-mono);
+    letter-spacing: 1px;
+
+}
+
+
+/* ---------------------------------------------------------
    SUCCESS MESSAGE
-===================================================== */
+   --------------------------------------------------------- */
 
 .booking-success-message {
-    padding: 20px;
+
+    padding: 18px 20px;
     margin-bottom: 25px;
-    border-radius: 10px;
+
+    border-radius: var(--pay-radius);
+    border: 1px solid #bfe5c7;
+
+    background: #eef9f1;
+    color: #26733a;
+
+    font-size: 14px;
+    line-height: 1.5;
+
     box-sizing: border-box;
+
 }
 
 
-/* =====================================================
+/* ---------------------------------------------------------
    PAYMENT ERROR / MESSAGE
-===================================================== */
+   --------------------------------------------------------- */
 
 .payment-error,
 .payment-message {
-    margin-bottom: 15px;
-    padding: 12px 15px;
 
-    border-radius: 7px;
+    margin-bottom: 20px;
+    padding: 13px 16px;
+
+    border-radius: 8px;
+
+    font-size: 13.5px;
+    line-height: 1.5;
 
     box-sizing: border-box;
+
 }
 
 
-/* =====================================================
+.payment-error {
+
+    background: var(--pay-accent-wash);
+    border: 1px solid #ffc5ca;
+    color: var(--pay-accent-ink);
+
+}
+
+
+.payment-message {
+
+    background: var(--pay-canvas);
+    border: 1px solid var(--pay-line-strong);
+    color: var(--pay-ink);
+
+}
+
+
+/* ---------------------------------------------------------
    MOBILE
-===================================================== */
+   --------------------------------------------------------- */
 
 @media (max-width: 700px) {
 
     .payment-method-panel {
+
         padding: 20px;
+
     }
+
 
     .payment-form-row {
+
         grid-template-columns: 1fr;
-        row-gap: 0;
+        row-gap: 14px;
+
     }
 
+
     #cardPaymentForm > .payment-form-row {
-        margin-bottom: 20px;
+
+        margin-bottom: 10px;
+
     }
+
 
     #cardPaymentForm > button[type="submit"],
     #bankPaymentForm > button[type="submit"] {
+
         width: 100%;
         min-width: 0;
+
+    }
+
+
+    .payment-methods {
+
+        flex-wrap: nowrap;
+
+    }
+
+
+    .payment-method-button {
+
+        flex: 1 1 0;
+
     }
 
 }
 
 
-/* =====================================================
-   SMALL MOBILE
-===================================================== */
-
 @media (max-width: 480px) {
 
     .payment-method-panel {
-        padding: 15px;
+
+        padding: 16px;
+
     }
+
 
     .payment-methods {
-        gap: 8px;
-        margin: 18px 0;
+
+        gap: 3px;
+
+        margin-top: 22px;
+
     }
 
+
     .payment-method-button {
-        width: 100%;
-        text-align: center;
+
+        padding: 11px 10px;
+        font-size: 12.5px;
+
     }
+
 
     .payment-method-panel input[type="text"],
     .payment-method-panel input[type="password"],
     .payment-method-panel input[type="email"],
     .payment-method-panel input[type="number"],
     .payment-method-panel input[type="file"] {
-        padding: 10px;
+
+        padding: 0 12px;
+
+    }
+
+
+    .bank-details {
+
+        padding: 16px;
+
+    }
+
+
+    .bank-details p {
+
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3px;
+
     }
 
 }
 
+
+@media (prefers-reduced-motion: reduce) {
+
+    #cardPaymentForm > button[type="submit"],
+    #bankPaymentForm > button[type="submit"],
+    .payment-method-button {
+
+        transition: none;
+
+    }
+
+
+    #cardPaymentForm > button[type="submit"]:hover,
+    #bankPaymentForm > button[type="submit"]:hover {
+
+        transform: none;
+
+    }
+
+}
 
 
 /* =========================================================
@@ -1340,19 +1946,27 @@ textarea.form-control {
    ========================================================= */
 
 .terms-link {
+
     border: 0;
     background: transparent;
     padding: 0;
     margin: 0;
-    color: #e63946;
+
+    color: var(--pay-accent, #e63946);
+
     font: inherit;
     font-weight: 600;
+
     text-decoration: underline;
     cursor: pointer;
+
 }
 
+
 .terms-link:hover {
-    color: #c92535;
+
+    color: var(--pay-accent-ink, #c92535);
+
 }
 
 
@@ -1361,6 +1975,7 @@ textarea.form-control {
    ========================================================= */
 
 .terms-modal {
+
     position: fixed;
     inset: 0;
     z-index: 99999;
@@ -1370,28 +1985,35 @@ textarea.form-control {
     justify-content: center;
 
     padding: 20px;
+
 }
 
+
 .terms-modal.active {
+
     display: flex;
+
 }
 
 
 /* BACKGROUND */
 
 .terms-modal-overlay {
+
     position: absolute;
     inset: 0;
 
     background: rgba(15, 23, 30, 0.65);
 
     backdrop-filter: blur(3px);
+
 }
 
 
 /* DIALOG */
 
 .terms-modal-dialog {
+
     position: relative;
     z-index: 2;
 
@@ -1401,13 +2023,13 @@ textarea.form-control {
     background: #ffffff;
     border-radius: 14px;
 
-    box-shadow:
-        0 25px 70px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
 
     display: flex;
     flex-direction: column;
 
     overflow: hidden;
+
 }
 
 
@@ -1416,6 +2038,7 @@ textarea.form-control {
    ========================================================= */
 
 .terms-modal-header {
+
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1423,9 +2046,12 @@ textarea.form-control {
     padding: 22px 26px;
 
     border-bottom: 1px solid #e5e7eb;
+
 }
 
+
 .terms-modal-label {
+
     display: block;
 
     margin-bottom: 4px;
@@ -1435,21 +2061,26 @@ textarea.form-control {
     letter-spacing: 1px;
 
     color: #e63946;
+
 }
 
+
 .terms-modal-header h2 {
+
     margin: 0;
 
     font-size: 22px;
     font-weight: 700;
 
     color: #17202a;
+
 }
 
 
 /* CLOSE BUTTON */
 
 .terms-modal-close {
+
     width: 38px;
     height: 38px;
 
@@ -1468,10 +2099,14 @@ textarea.form-control {
     display: flex;
     align-items: center;
     justify-content: center;
+
 }
 
+
 .terms-modal-close:hover {
+
     background: #e5e7eb;
+
 }
 
 
@@ -1480,20 +2115,25 @@ textarea.form-control {
    ========================================================= */
 
 .terms-modal-body {
+
     padding: 0;
 
     overflow-y: auto;
 
     max-height: 60vh;
+
 }
 
+
 .terms-content {
+
     padding: 26px;
 
     font-size: 14px;
     line-height: 1.7;
 
     color: #4b5563;
+
 }
 
 
@@ -1503,31 +2143,45 @@ textarea.form-control {
 .terms-content h2,
 .terms-content h3,
 .terms-content h4 {
+
     margin-top: 22px;
     margin-bottom: 10px;
 
     color: #17202a;
+
 }
+
 
 .terms-content h1:first-child,
 .terms-content h2:first-child,
 .terms-content h3:first-child,
 .terms-content h4:first-child {
+
     margin-top: 0;
+
 }
 
+
 .terms-content p {
+
     margin: 0 0 14px;
+
 }
+
 
 .terms-content ul,
 .terms-content ol {
+
     margin: 10px 0 16px;
     padding-left: 25px;
+
 }
 
+
 .terms-content li {
+
     margin-bottom: 7px;
+
 }
 
 
@@ -1536,6 +2190,7 @@ textarea.form-control {
    ========================================================= */
 
 .terms-modal-footer {
+
     display: flex;
     justify-content: flex-end;
     gap: 10px;
@@ -1545,10 +2200,13 @@ textarea.form-control {
     border-top: 1px solid #e5e7eb;
 
     background: #fafafa;
+
 }
+
 
 .terms-modal-cancel,
 .terms-modal-agree {
+
     border: 0;
 
     padding: 11px 20px;
@@ -1559,24 +2217,37 @@ textarea.form-control {
     font-weight: 600;
 
     cursor: pointer;
+
 }
+
 
 .terms-modal-cancel {
+
     background: #e5e7eb;
     color: #374151;
+
 }
+
 
 .terms-modal-cancel:hover {
+
     background: #d1d5db;
+
 }
+
 
 .terms-modal-agree {
+
     background: #e63946;
     color: #ffffff;
+
 }
 
+
 .terms-modal-agree:hover {
+
     background: #c92535;
+
 }
 
 
@@ -1587,28 +2258,45 @@ textarea.form-control {
 @media (max-width: 600px) {
 
     .terms-modal {
+
         padding: 10px;
+
     }
+
 
     .terms-modal-dialog {
+
         max-height: 94vh;
         border-radius: 10px;
+
     }
+
 
     .terms-modal-header {
+
         padding: 18px;
+
     }
+
 
     .terms-modal-body {
+
         max-height: 65vh;
+
     }
+
 
     .terms-content {
+
         padding: 20px;
+
     }
 
+
     .terms-modal-footer {
+
         padding: 14px 18px;
+
     }
 
 }

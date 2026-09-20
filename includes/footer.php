@@ -4,11 +4,22 @@
 
 /*
 |--------------------------------------------------------------------------
+| START SESSION IF NEEDED
+|--------------------------------------------------------------------------
+*/
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+/*
+|--------------------------------------------------------------------------
 | LOAD DATABASE CONNECTION
 |--------------------------------------------------------------------------
 |
 | Use the existing database configuration.
-| Do not create a new database connection.
+| Do not create another database connection.
 |
 */
 
@@ -19,12 +30,29 @@ if (!isset($pdo)) {
 
 /*
 |--------------------------------------------------------------------------
+| SAFE DEFAULT VALUES
+|--------------------------------------------------------------------------
+|
+| These prevent undefined-variable warnings if the footer is included
+| from a page where $basePath or $isLoggedIn was not created earlier.
+|
+*/
+
+$basePath = $basePath ?? '';
+
+$isLoggedIn = isset($_SESSION['user_id']);
+
+$footerRoleId = isset($_SESSION['role_id'])
+    ? (int) $_SESSION['role_id']
+    : null;
+
+
+/*
+|--------------------------------------------------------------------------
 | LOAD WEBSITE CONTACT DETAILS
 |--------------------------------------------------------------------------
 |
-| Default fallback values are used if:
-| - contact_details table has no record
-| - database query fails
+| These values are used only if the database record cannot be loaded.
 |
 */
 
@@ -37,14 +65,11 @@ $footerContact = [
 
 try {
 
-    /*
-    |----------------------------------------------------------------------
-    | Get the single active contact record
-    |----------------------------------------------------------------------
-    */
-
     $stmt = $pdo->prepare("
-        SELECT phone, email, address
+        SELECT
+            phone,
+            email,
+            address
         FROM contact_details
         ORDER BY id ASC
         LIMIT 1
@@ -55,12 +80,6 @@ try {
     $contactRecord = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
-    /*
-    |----------------------------------------------------------------------
-    | Replace fallback values with database values
-    |----------------------------------------------------------------------
-    */
-
     if ($contactRecord) {
 
         $footerContact = [
@@ -68,17 +87,199 @@ try {
             'email'   => $contactRecord['email'],
             'address' => $contactRecord['address']
         ];
-
     }
 
 } catch (PDOException $e) {
 
     /*
-    |----------------------------------------------------------------------
-    | Keep fallback values if database query fails
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
+    | DATABASE FALLBACK
+    |--------------------------------------------------------------------------
+    |
+    | If the contact query fails, the fallback contact information above
+    | will continue to be displayed.
+    |
     */
+}
 
+
+/*
+|--------------------------------------------------------------------------
+| ROLE-SPECIFIC FOOTER NAVIGATION
+|--------------------------------------------------------------------------
+|
+| Guest
+|     Customer
+|     - Register
+|     - Login
+|     - Book Appointment
+|
+| Customer (Role 1)
+|     Customer
+|     - Dashboard
+|     - Profile
+|     - Book Appointment
+|
+| Service Assistant (Role 2)
+|     Service Assistant
+|     - Dashboard
+|     - Profile
+|     - My Appointments
+|
+| Manager (Role 3)
+|     Manager
+|     - Dashboard
+|     - Profile
+|     - Monitor Operations
+|
+*/
+
+$footerSectionTitle = 'Customer';
+
+$footerRoleLinks = [];
+
+
+/*
+|--------------------------------------------------------------------------
+| GUEST USER
+|--------------------------------------------------------------------------
+*/
+
+if (!$isLoggedIn) {
+
+    $footerSectionTitle = 'Customer';
+
+    $footerRoleLinks = [
+
+        [
+            'label' => 'Register',
+            'url'   => $basePath . '/register/register-form.php'
+        ],
+
+        [
+            'label' => 'Login',
+            'url'   => $basePath . '/login/login-form.php'
+        ],
+
+        [
+            'label' => 'Book Appointment',
+            'url'   => $basePath . '/booking/booking.php'
+        ]
+
+    ];
+
+
+/*
+|--------------------------------------------------------------------------
+| CUSTOMER
+|--------------------------------------------------------------------------
+*/
+
+} elseif ($footerRoleId === 1) {
+
+    $footerSectionTitle = 'Customer';
+
+    $footerRoleLinks = [
+
+        [
+            'label' => 'Dashboard',
+            'url'   => $basePath . '/dashboard/dashboard.php'
+        ],
+
+        [
+            'label' => 'Profile',
+            'url'   => $basePath . '/dashboard/dashboard.php?page=profile'
+        ],
+
+        [
+            'label' => 'Book Appointment',
+            'url'   => $basePath . '/booking/booking.php'
+        ]
+
+    ];
+
+
+/*
+|--------------------------------------------------------------------------
+| SERVICE ASSISTANT
+|--------------------------------------------------------------------------
+*/
+
+} elseif ($footerRoleId === 2) {
+
+    $footerSectionTitle = 'Service Assistant';
+
+    $footerRoleLinks = [
+
+        [
+            'label' => 'Dashboard',
+            'url'   => $basePath . '/dashboard/dashboard.php'
+        ],
+
+        [
+            'label' => 'Profile',
+            'url'   => $basePath . '/dashboard/dashboard.php?page=profile'
+        ],
+
+        [
+            'label' => 'My Appointments',
+            'url'   => $basePath . '/dashboard/dashboard.php?page=appointments'
+        ]
+
+    ];
+
+
+/*
+|--------------------------------------------------------------------------
+| MANAGER
+|--------------------------------------------------------------------------
+*/
+
+} elseif ($footerRoleId === 3) {
+
+    $footerSectionTitle = 'Manager';
+
+    $footerRoleLinks = [
+
+        [
+            'label' => 'Dashboard',
+            'url'   => $basePath . '/dashboard/dashboard.php'
+        ],
+
+        [
+            'label' => 'Profile',
+            'url'   => $basePath . '/dashboard/dashboard.php?page=profile'
+        ],
+
+        [
+            'label' => 'Monitor Operations',
+            'url'   => $basePath . '/dashboard/dashboard.php'
+        ]
+
+    ];
+
+
+/*
+|--------------------------------------------------------------------------
+| OTHER LOGGED-IN ROLE
+|--------------------------------------------------------------------------
+|
+| Safe fallback for another role such as Admin.
+|
+*/
+
+} else {
+
+    $footerSectionTitle = 'Account';
+
+    $footerRoleLinks = [
+
+        [
+            'label' => 'Dashboard',
+            'url'   => $basePath . '/dashboard/dashboard.php'
+        ]
+
+    ];
 }
 
 ?>
@@ -91,12 +292,12 @@ try {
 
         <!-- =====================================================
              BRAND
-             ===================================================== -->
+        ====================================================== -->
 
         <div class="footer-brand">
 
             <a
-                href="<?= $basePath ?>/index.php#home"
+                href="<?= htmlspecialchars($basePath) ?>/index.php#home"
                 class="logo"
             >
 
@@ -119,10 +320,9 @@ try {
         </div>
 
 
-
         <!-- =====================================================
              SERVICES
-             ===================================================== -->
+        ====================================================== -->
 
         <div class="footer-column">
 
@@ -132,21 +332,21 @@ try {
 
 
             <a
-                href="<?= $basePath ?>/index.php?all=1#services"
+                href="<?= htmlspecialchars($basePath) ?>/index.php?all=1#services"
             >
                 All Services
             </a>
 
 
             <a
-                href="<?= $basePath ?>/index.php#packages"
+                href="<?= htmlspecialchars($basePath) ?>/index.php#packages"
             >
                 Service Packages
             </a>
 
 
             <a
-                href="<?= $basePath ?>/index.php#offers"
+                href="<?= htmlspecialchars($basePath) ?>/index.php#offers"
             >
                 Special Offers
             </a>
@@ -154,64 +354,33 @@ try {
         </div>
 
 
-
         <!-- =====================================================
-             CUSTOMER
-             ===================================================== -->
+             ROLE-SPECIFIC NAVIGATION
+        ====================================================== -->
 
         <div class="footer-column">
 
             <h3>
-                Customer
+                <?= htmlspecialchars($footerSectionTitle) ?>
             </h3>
 
 
-            <?php if ($isLoggedIn): ?>
+            <?php foreach ($footerRoleLinks as $footerLink): ?>
 
                 <a
-                    href="<?= $basePath ?>/dashboard/dashboard.php"
+                    href="<?= htmlspecialchars($footerLink['url']) ?>"
                 >
-                    Dashboard
+                    <?= htmlspecialchars($footerLink['label']) ?>
                 </a>
 
-
-                <a
-                    href="<?= $basePath ?>/dashboard/dashboard.php?page=profile"
-                >
-                    Profile
-                </a>
-
-            <?php else: ?>
-
-                <a
-                    href="<?= $basePath ?>/register/register-form.php"
-                >
-                    Register
-                </a>
-
-
-                <a
-                    href="<?= $basePath ?>/login/login-form.php"
-                >
-                    Login
-                </a>
-
-            <?php endif; ?>
-
-
-            <a
-                href="<?= $basePath ?>/booking/booking.php"
-            >
-                Book Appointment
-            </a>
+            <?php endforeach; ?>
 
         </div>
 
 
-
         <!-- =====================================================
              CONTACT
-             ===================================================== -->
+        ====================================================== -->
 
         <div class="footer-column">
 
@@ -263,23 +432,18 @@ try {
     </div>
 
 
-
     <!-- =====================================================
          FOOTER BOTTOM
-         ===================================================== -->
+    ====================================================== -->
 
     <div class="footer-bottom">
 
         <div class="container">
 
             <p>
-
-                © <?= date("Y"); ?>
-
+                © <?= date('Y') ?>
                 VEYRO Vehicle Service Centre.
-
                 All Rights Reserved.
-
             </p>
 
         </div>
