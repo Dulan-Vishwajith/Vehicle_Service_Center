@@ -42,6 +42,11 @@ if (!isset($pdo) || !isset($assistantId)) {
                 b.license_plate,
                 b.booking_date,
                 b.total_price,
+                COALESCE((
+                    SELECT SUM(rp.total_price)
+                    FROM replaced_parts rp
+                    WHERE rp.booking_id = b.id
+                ), 0) AS replaced_parts_total,
                 b.status,
                 u.name AS customer_name,
                 ts.slot_name,
@@ -336,7 +341,7 @@ if (!isset($allowedStatuses)) {
                         <h3>Booking #<?= (int) $appointment['id'] ?></h3>
                         <p><?= htmlspecialchars($appointment['customer_name']) ?></p>
                     </div>
-                    <span class="status">
+                    <span class="appointment-status-badge appointment-status-<?= htmlspecialchars($status) ?>">
                         <?= htmlspecialchars(ucwords(str_replace('_', ' ', $status))) ?>
                     </span>
                 </div>
@@ -360,6 +365,28 @@ if (!isset($allowedStatuses)) {
                     <?= htmlspecialchars($appointment['booking_date']) ?> |
                     <?= htmlspecialchars($appointment['start_time'] ?: '') ?> -
                     <?= htmlspecialchars($appointment['end_time'] ?: '') ?>
+                </p>
+
+                <!-- TOTALS -->
+                <?php
+                    $serviceTotal = (float) ($appointment['total_price'] ?? 0);
+                    $partsTotal = (float) ($appointment['replaced_parts_total'] ?? 0);
+                    $grandTotal = $serviceTotal + $partsTotal;
+                ?>
+
+                <p>
+                    <strong>Service Total:</strong>
+                    Rs. <?= number_format($serviceTotal, 2) ?>
+                </p>
+
+                <p>
+                    <strong>Replaced Parts Total:</strong>
+                    Rs. <?= number_format($partsTotal, 2) ?>
+                </p>
+
+                <p>
+                    <strong>Total Amount:</strong>
+                    Rs. <?= number_format($grandTotal, 2) ?>
                 </p>
 
                 <!-- ACTIONS -->

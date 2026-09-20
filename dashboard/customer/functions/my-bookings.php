@@ -234,11 +234,42 @@ if ($userId > 0) {
                 trim($booking['status'] ?? '')
             );
 
-            $statusClass = str_replace(
-                [' ', '_'],
-                '-',
-                $status
-            );
+            /*
+             * Map booking database statuses to the dashboard's
+             * existing visual status classes.
+             */
+            switch ($status) {
+
+                case 'pending':
+                    $statusClass = 'pending';
+                    break;
+
+                case 'booked':
+                case 'confirmed':
+                    $statusClass = 'confirmed';
+                    break;
+
+                case 'service':
+                case 'vehicle_arrived':
+                case 'service_ongoing':
+                case 'service_done':
+                case 'vehicle_handover':
+                    $statusClass = 'progress';
+                    break;
+
+                case 'completed':
+                    $statusClass = 'completed';
+                    break;
+
+                case 'cancelled':
+                case 'canceled':
+                    $statusClass = 'cancelled';
+                    break;
+
+                default:
+                    $statusClass = 'pending';
+                    break;
+            }
 
             $canCancel = in_array(
                 $status,
@@ -571,6 +602,34 @@ if ($userId > 0) {
 
 
 
+                <!-- =============================================
+                     NOTES
+                ============================================== -->
+
+                <?php if (!empty($booking['notes'])): ?>
+
+                    <div class="booking-notes-section">
+
+                        <span class="booking-section-title">
+
+                            Notes
+
+                        </span>
+
+                        <p>
+
+                            <?= htmlspecialchars(
+                                $booking['notes']
+                            ) ?>
+
+                        </p>
+
+                    </div>
+
+                <?php endif; ?>
+
+
+
                 <!-- =====================================================
                     REPLACED PARTS
                 ===================================================== -->
@@ -622,6 +681,11 @@ if ($userId > 0) {
                     $replacedPartsTotal = 0;
 
                 }
+
+                // Booking total_price stores the selected service total.
+                // Replaced parts are added separately so they are never double-counted.
+                $serviceTotal = (float) ($booking['total_price'] ?? 0);
+                $grandTotal = $serviceTotal + $replacedPartsTotal;
 
                 ?>
 
@@ -748,33 +812,6 @@ if ($userId > 0) {
                 </div>
 
                 <!-- =============================================
-                     NOTES
-                ============================================== -->
-
-                <?php if (!empty($booking['notes'])): ?>
-
-                    <div class="booking-notes-section">
-
-                        <span class="booking-section-title">
-
-                            Notes
-
-                        </span>
-
-                        <p>
-
-                            <?= htmlspecialchars(
-                                $booking['notes']
-                            ) ?>
-
-                        </p>
-
-                    </div>
-
-                <?php endif; ?>
-
-
-                <!-- =============================================
                     PAYMENT INFORMATION
                 ============================================= -->
 
@@ -790,26 +827,24 @@ if ($userId > 0) {
 
                                 Rs.
                                 <?= number_format(
-                                    (float) $booking['total_price'],
+                                    $serviceTotal,
                                     2
                                 ) ?>
 
                             </strong>
 
                         </div>
-
-
-                        <div>
+<div>
 
                             <span>
-                                Required Deposit
+                                Grand Total
                             </span>
 
                             <strong>
 
                                 Rs.
                                 <?= number_format(
-                                    (float) $booking['deposit_amount'],
+                                    $grandTotal,
                                     2
                                 ) ?>
 
@@ -857,7 +892,7 @@ if ($userId > 0) {
                         $remainingBalance =
                             max(
                                 0,
-                                (float) $booking['total_price']
+                                $grandTotal
                                 - $depositPaid
                             );
 

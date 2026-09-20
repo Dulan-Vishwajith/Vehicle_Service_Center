@@ -20,6 +20,12 @@ if ($bookingId > 0) {
 
                 b.*,
 
+                COALESCE((
+                    SELECT SUM(rp.total_price)
+                    FROM replaced_parts rp
+                    WHERE rp.booking_id = b.id
+                ), 0) AS replaced_parts_total,
+
                 u.name AS customer_name,
 
                 u.email,
@@ -272,16 +278,38 @@ $isMyBooking =
     </p>
 
 
+    <?php
+        // bookings.total_price stores the selected service total.
+        // Replaced parts are calculated separately to avoid double-counting.
+        $serviceTotal = (float) ($booking['total_price'] ?? 0);
+        $partsTotal = (float) ($booking['replaced_parts_total'] ?? 0);
+        $grandTotal = $serviceTotal + $partsTotal;
+    ?>
+
+
     <p>
 
-        <strong>Total Price:</strong>
+        <strong>Service Total:</strong>
 
-        Rs.
+        Rs. <?= number_format($serviceTotal, 2) ?>
 
-        <?= number_format(
-            (float) $booking['total_price'],
-            2
-        ) ?>
+    </p>
+
+
+    <p>
+
+        <strong>Replaced Parts Total:</strong>
+
+        Rs. <?= number_format($partsTotal, 2) ?>
+
+    </p>
+
+
+    <p>
+
+        <strong>Total Amount:</strong>
+
+        Rs. <?= number_format($grandTotal, 2) ?>
 
     </p>
 

@@ -691,6 +691,63 @@
 }
 
 
+
+
+/* =========================================================
+   MY APPOINTMENTS - BOOKING STATUS BADGE
+   Matches the Customer "My Bookings" status style.
+========================================================= */
+
+.appointment-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    padding: 8px 14px;
+
+    background: #fdecee;
+    border: 1px solid transparent;
+    border-radius: 999px;
+
+    color: var(--color-primary, #e63946);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Active service-flow statuses use the same soft-red VEYRO pill. */
+.appointment-status-confirmed,
+.appointment-status-service,
+.appointment-status-vehicle_arrived,
+.appointment-status-service_ongoing,
+.appointment-status-service_done,
+.appointment-status-vehicle_handover {
+    background: #fdecee;
+    color: var(--color-primary, #e63946);
+}
+
+/* Completed keeps the familiar success treatment. */
+.appointment-status-completed {
+    background: #e8f8ef;
+    color: #198754;
+}
+
+@media (max-width: 700px) {
+    .booking-card-header {
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .appointment-status-badge {
+        padding: 7px 12px;
+        font-size: 11px;
+    }
+}
+
+
 /* =========================================================
    RESPONSIVE
 ========================================================= */
