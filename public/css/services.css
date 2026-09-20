@@ -1,5 +1,5 @@
 /* =========================================================
-   SERVICES
+   SERVICES SECTION
    ========================================================= */
 
 .section {
@@ -7,17 +7,28 @@
     background: var(--color-white);
 }
 
+
+/* =========================================================
+   SERVICES GRID
+   ========================================================= */
+
 .services-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 22px;
 }
 
+
+/* =========================================================
+   SERVICE CARD
+   ========================================================= */
+
 .service-card {
     overflow: hidden;
     background: var(--color-white);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
+
     transition:
         transform var(--transition-normal),
         box-shadow var(--transition-normal);
@@ -25,138 +36,290 @@
 
 .service-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(20, 30, 40, 0.10);
+
+    box-shadow:
+        0 15px 35px rgba(20, 30, 40, 0.10);
 }
 
+
+/* =========================================================
+   SERVICE IMAGE / EMOJI AREA
+   ========================================================= */
+
 .service-card-top {
-    height: 150px;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     background: #f3f5f7;
-    font-size: 55px;
+
+    overflow: hidden;
 }
+
+
+/* =========================================================
+   SERVICE PHOTO
+   ========================================================= */
+
+.service-card-image {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    margin: 0;
+    padding: 0;
+
+    border: 0;
+}
+
+
+/* =========================================================
+   FALLBACK EMOJI
+   ========================================================= */
+
+.service-card-icon {
+    display: flex;
+
+    width: 100%;
+    height: 100%;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 55px;
+    line-height: 1;
+
+    background: #f3f5f7;
+}
+
+
+/* =========================================================
+   SERVICE CONTENT
+   ========================================================= */
 
 .service-card-content {
     padding: 22px;
 }
 
+
+/* =========================================================
+   SERVICE CATEGORY
+   ========================================================= */
+
 .service-tag {
     display: inline-block;
+
     margin-bottom: 10px;
     padding: 5px 9px;
+
     background: var(--color-primary-soft);
+
     border-radius: 5px;
+
     color: var(--color-primary);
+
     font-size: 11px;
     font-weight: 700;
+
     text-transform: capitalize;
 }
 
+
+/* =========================================================
+   SERVICE TITLE
+   ========================================================= */
+
 .service-card h3 {
     margin-bottom: 9px;
+
     color: var(--color-dark);
+
     font-size: 19px;
     line-height: 1.3;
 }
 
+
+/* =========================================================
+   SERVICE DESCRIPTION
+   ========================================================= */
+
 .service-card p {
     min-height: 63px;
+
     margin: 0;
+
     color: #737c86;
+
     font-size: 13px;
     line-height: 1.6;
 }
 
+
+/* =========================================================
+   PRICE + DURATION
+   ========================================================= */
+
 .service-bottom {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
+
     margin: 20px 0;
     padding-top: 15px;
+
     border-top: 1px solid var(--color-border-light);
 }
 
+
 .service-bottom strong {
     color: var(--color-primary);
+
     font-size: 15px;
 }
 
+
 .service-bottom span {
     color: #7c858d;
+
     font-size: 12px;
 }
 
+
+/* =========================================================
+   BOOK SERVICE LINK
+   ========================================================= */
+
 .service-link {
     display: inline-block;
+
     color: var(--color-dark);
+
     font-size: 13px;
     font-weight: 700;
-    transition: color var(--transition-fast);
+
+    transition:
+        color var(--transition-fast);
 }
+
 
 .service-link:hover {
     color: var(--color-primary);
 }
 
+
+/* =========================================================
+   NO SERVICES
+   ========================================================= */
+
 .no-results,
 .database-no-services {
     text-align: center;
+
     color: #777;
 }
 
+
 .no-results {
     display: none;
+
     padding: 25px;
+
     font-size: 14px;
 }
 
+
 .database-no-services {
     grid-column: 1 / -1;
+
     padding: 40px 20px;
 }
 
-/* Scoped button */
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
 .services-section .btn-dark,
 .section .btn-dark {
     min-height: 48px;
 }
 
+
 .center-button {
     margin-top: 35px;
+
     text-align: center;
 }
 
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
 @media (max-width: 1000px) {
+
     .services-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
 }
 
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media (max-width: 700px) {
+
     .section {
         padding: 65px 0;
     }
+
 
     .services-grid {
         grid-template-columns: 1fr;
     }
 
+
     .service-card-top {
-        height: 130px;
+        aspect-ratio: 16 / 9;
     }
+
 }
 
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
 @media (max-width: 450px) {
+
     .section-heading {
         margin-bottom: 30px;
     }
+
 
     .section-heading h2 {
         font-size: 30px;
     }
 
+
     .service-card-content {
         padding: 20px;
     }
+
+
+    .service-card-icon {
+        font-size: 48px;
+    }
+
 }
