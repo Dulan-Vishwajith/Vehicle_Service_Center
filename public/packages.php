@@ -2,6 +2,24 @@
 
 require_once "config/database.php";
 
+
+/*
+|--------------------------------------------------------------------------
+| MANAGEMENT EMPLOYEE CHECK
+|--------------------------------------------------------------------------
+| Management Employee = role_id 3
+|--------------------------------------------------------------------------
+*/
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$isManagementEmployee =
+    isset($_SESSION['user_id']) &&
+    isset($_SESSION['role_id']) &&
+    (int) $_SESSION['role_id'] === 3;
+
 /* =========================================================
    GET ACTIVE PACKAGES
    PACKAGE PRICE IS CALCULATED FROM INCLUDED SERVICES
@@ -330,8 +348,23 @@ if (isset($packages[1])) {
                             Book Package
                         </a>
 
+                          <!-- =============================================
+                             EDIT PACKAGE BUTTON
+                             ============================================= -->
+
+                            <?php if ($isManagementEmployee): ?>
+                                <a
+                                    href="dashboard/dashboard.php?page=package-form&id=<?= (int) $package['id'] ?>"
+                                    class="package-edit-link"
+                                >
+                                    Edit
+                                </a>
+                            <?php endif; ?>
+
 
                     </div>
+
+                  
 
 
                 <?php endforeach; ?>

@@ -8,6 +8,11 @@
     background: var(--color-bg);
 }
 
+
+/* =========================================================
+   PACKAGES GRID
+   ========================================================= */
+
 .packages-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -15,16 +20,27 @@
     align-items: stretch;
 }
 
+
+/* =========================================================
+   PACKAGE CARD
+   ========================================================= */
+
 .package-card {
     position: relative;
+
     display: flex;
     flex-direction: column;
+
     height: 100%;
     padding: 32px;
+
     background: var(--color-white);
+
     border: 1px solid #e1e5e8;
     border-radius: var(--radius-xl);
+
     box-shadow: var(--shadow-sm);
+
     transition:
         transform var(--transition-normal),
         box-shadow var(--transition-normal);
@@ -35,6 +51,11 @@
     box-shadow: var(--shadow-md);
 }
 
+
+/* =========================================================
+   FEATURED / POPULAR PACKAGE
+   ========================================================= */
+
 .featured-package {
     border: 2px solid var(--color-primary);
     transform: translateY(-8px);
@@ -44,86 +65,252 @@
     transform: translateY(-14px);
 }
 
+
+/* =========================================================
+   MOST POPULAR LABEL
+   ========================================================= */
+
 .popular-label {
     position: absolute;
+
     top: 0;
     right: 25px;
+
     padding: 7px 14px;
+
     background: var(--color-primary);
+
     border-radius: 0 0 7px 7px;
+
     color: var(--color-white);
+
     font-size: 10px;
     font-weight: 700;
+
+    z-index: 5;
 }
+
+
+/* =========================================================
+   PACKAGE LABEL
+   ========================================================= */
 
 .package-label {
     display: inline-block;
+
     margin-bottom: 5px;
+
     color: var(--color-primary);
+
     font-size: 11px;
     font-weight: 800;
+
     letter-spacing: 1px;
 }
 
+
+/* =========================================================
+   PACKAGE TITLE
+   ========================================================= */
+
 .package-card h3 {
     margin-top: 10px;
+
     color: var(--color-dark-2);
+
     font-size: 24px;
 }
 
+
+/* =========================================================
+   PACKAGE PRICE
+   ========================================================= */
+
 .package-price {
     margin: 18px 0 22px;
+
     color: var(--color-dark-2);
+
     font-size: 28px;
     font-weight: 800;
 }
 
+
+/* =========================================================
+   PACKAGE SERVICES LIST
+   ========================================================= */
+
 .package-card ul {
     flex-grow: 1;
+
     margin: 0 0 28px;
     padding: 0;
+
     list-style: none;
 }
 
 .package-card li {
     margin-bottom: 12px;
+
     color: #626c76;
+
     font-size: 14px;
     line-height: 1.5;
 }
 
-/* IMPORTANT: scoped to prevent conflicts with CTA/Hero buttons */
+
+/* =========================================================
+   PACKAGE ACTIONS
+   ========================================================= */
+
+.package-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    width: 100%;
+
+    margin-top: auto;
+}
+
+
+/* =========================================================
+   BOOK PACKAGE BUTTON
+   ========================================================= */
+
+/* IMPORTANT:
+   Scoped to packages section so it does not affect
+   buttons elsewhere on the website.
+*/
+
 .packages-section .btn {
     width: 100%;
-    margin-top: auto;
+
     min-height: 46px;
+
+    margin-top: auto;
 }
+
+
+/* =========================================================
+   OUTLINE BOOK BUTTON
+   ========================================================= */
 
 .packages-section .btn-outline-dark {
     background: var(--color-white);
+
     border: 1px solid var(--color-dark);
+
     color: var(--color-dark);
 }
 
 .packages-section .btn-outline-dark:hover {
     background: var(--color-dark);
+
     border-color: var(--color-dark);
+
     color: var(--color-white);
 }
 
+
+/* =========================================================
+   RED BOOK BUTTON
+   ========================================================= */
+
 .packages-section .btn-red {
     background: var(--color-primary);
+
     border: 1px solid var(--color-primary);
+
     color: var(--color-white);
 }
 
 .packages-section .btn-red:hover {
     background: var(--color-white);
+
     border-color: var(--color-primary);
+
     color: var(--color-primary);
 }
 
+
+/* =========================================================
+   MANAGEMENT EMPLOYEE - EDIT BUTTON
+   ========================================================= */
+
+.package-edit-link {
+    position: absolute;
+
+    top: 14px;
+    right: 14px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 40px;
+    height: 28px;
+
+    padding: 4px 10px;
+
+    background: var(--color-white);
+
+    border: 1px solid var(--color-primary);
+
+    border-radius: 5px;
+
+    color: var(--color-primary);
+
+    font-size: 12px;
+    font-weight: 600;
+
+    line-height: 1;
+
+    text-decoration: none;
+
+    z-index: 10;
+
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.package-edit-link:hover {
+    background: var(--color-primary);
+
+    color: var(--color-white);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   POPULAR PACKAGE EDIT BUTTON
+   ========================================================= */
+
+/*
+   The Popular package has the "MOST POPULAR"
+   label at the top.
+
+   Move Edit button below that label so
+   they do not overlap.
+*/
+
+.featured-package .package-edit-link {
+    top: 43px;
+    right: 12px;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
 @media (max-width: 900px) {
+
     .packages-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -132,9 +319,16 @@
     .featured-package:hover {
         transform: none;
     }
+
 }
 
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+   ========================================================= */
+
 @media (max-width: 600px) {
+
     .packages-section {
         padding: 60px 0;
     }
@@ -154,4 +348,32 @@
     .package-price {
         font-size: 26px;
     }
+
+    /*
+       On mobile, keep the Edit button
+       inside the card without overlapping
+       the package title.
+    */
+
+    .package-edit-link {
+        top: 12px;
+        right: 12px;
+
+        min-width: 40px;
+        height: 27px;
+
+        padding: 4px 9px;
+
+        font-size: 11px;
+    }
+
+    /*
+       Popular label + Edit button
+    */
+
+    .featured-package .package-edit-link {
+        top: 40px;
+        right: 12px;
+    }
+
 }

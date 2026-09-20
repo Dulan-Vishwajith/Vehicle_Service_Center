@@ -3,6 +3,23 @@
 require_once "config/database.php";
 
 
+/*
+|--------------------------------------------------------------------------
+| MANAGEMENT EMPLOYEE CHECK
+|--------------------------------------------------------------------------
+| Management Employee = role_id 3
+|--------------------------------------------------------------------------
+*/
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$isManagementEmployee =
+    isset($_SESSION['user_id']) &&
+    isset($_SESSION['role_id']) &&
+    (int) $_SESSION['role_id'] === 3;
+
 /* =========================================================
    SERVICES
    ========================================================= */
@@ -421,12 +438,34 @@ function getServiceImage($image)
 
                             <!-- BOOK SERVICE -->
 
-                            <a
-                                href="booking/booking.php?services[]=<?= (int) $service['id'] ?>"
-                                class="service-link"
-                            >
-                                Book Service →
-                            </a>
+                           <!-- =================================================
+                                SERVICE ACTIONS
+                                ================================================= -->
+
+                            <div class="service-actions">
+
+                                <!-- BOOK SERVICE -->
+                                <a
+                                    href="booking/booking.php?services[]=<?= (int) $service['id'] ?>"
+                                    class="service-link"
+                                >
+                                    Book Service →
+                                </a>
+
+
+                                <?php if ($isManagementEmployee): ?>
+
+                                    <!-- EDIT SERVICE - MANAGEMENT EMPLOYEE ONLY -->
+                                    <a
+                                        href="dashboard/dashboard.php?page=service-form&id=<?= (int) $service['id'] ?>"
+                                        class="service-edit-link"
+                                    >
+                                        Edit
+                                    </a>
+
+                                <?php endif; ?>
+
+                            </div>
 
 
                         </div>
