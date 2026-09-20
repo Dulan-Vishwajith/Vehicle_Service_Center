@@ -3,16 +3,32 @@
 require_once "config/database.php";
 
 
+/*
+|--------------------------------------------------------------------------
+| MANAGEMENT EMPLOYEE CHECK
+|--------------------------------------------------------------------------
+| Management Employee = role_id 3
+|--------------------------------------------------------------------------
+*/
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$isManagementEmployee =
+    isset($_SESSION['user_id']) &&
+    isset($_SESSION['role_id']) &&
+    (int) $_SESSION['role_id'] === 3;
+
 /* =========================================================
-   GET ACTIVE SERVICES
+   SERVICES
    ========================================================= */
 
-// Check whether all services should be displayed
 $showAll = isset($_GET['all']) && $_GET['all'] == '1';
 
 
 /* =========================================================
-   SERVICE QUERY
+   GET ACTIVE SERVICES
    ========================================================= */
 
 $serviceQuery = "
@@ -23,17 +39,14 @@ $serviceQuery = "
         description,
         price,
         duration,
-        icon
-
+        icon,
+        image
     FROM services
-
     WHERE status = :status
-
     ORDER BY id DESC
 ";
 
 
-// Show only 4 services normally
 if (!$showAll) {
     $serviceQuery .= " LIMIT :limit";
 }
@@ -41,24 +54,18 @@ if (!$showAll) {
 
 $serviceStmt = $pdo->prepare($serviceQuery);
 
-
-$status = 1;
-$limit = 4;
-
-
 $serviceStmt->bindValue(
     ':status',
-    $status,
+    1,
     PDO::PARAM_INT
 );
 
 
-// Bind limit only when showing 4 services
 if (!$showAll) {
 
     $serviceStmt->bindValue(
         ':limit',
-        $limit,
+        4,
         PDO::PARAM_INT
     );
 
@@ -67,8 +74,126 @@ if (!$showAll) {
 
 $serviceStmt->execute();
 
-
 $serviceResult = $serviceStmt->fetchAll();
+
+
+/* =========================================================
+   SERVICE IMAGE FUNCTION
+   ========================================================= */
+
+/*
+ * Database value:
+ *
+ * images/services/example.jpg
+ *
+ * Physical location:
+ *
+ * public/images/services/example.jpg
+ *
+ * Browser URL:
+ *
+ * public/images/services/example.jpg
+ */
+
+function getServiceImage($image)
+{
+    if (
+        empty($image) ||
+        !is_string($image)
+    ) {
+        return null;
+    }
+
+
+    $image = trim($image);
+
+
+    /*
+     * Only allow service image paths.
+     */
+
+    if (
+        strpos($image, 'images/services/') !== 0
+    ) {
+        return null;
+    }
+
+
+    /*
+     * Prevent ../ paths.
+     */
+
+    if (
+        strpos($image, '..') !== false
+    ) {
+        return null;
+    }
+
+
+    /*
+     * Because this file is:
+     *
+     * public/services.php
+     *
+     * __DIR__ is:
+     *
+     * Vehicle_Service_Center/public
+     *
+     * Therefore:
+     *
+     * __DIR__ . '/' . $image
+     *
+     * becomes:
+     *
+     * Vehicle_Service_Center/public/images/services/file.jpg
+     */
+
+    $physicalPath =
+        __DIR__ . '/' . $image;
+
+
+    /*
+     * Make sure the actual image exists.
+     */
+
+    if (!is_file($physicalPath)) {
+        return null;
+    }
+
+
+    /*
+     * Make sure it is an allowed image.
+     */
+
+    $extension = strtolower(
+        pathinfo(
+            $physicalPath,
+            PATHINFO_EXTENSION
+        )
+    );
+
+
+    $allowedExtensions = [
+        'jpg',
+        'jpeg',
+        'png',
+        'webp'
+    ];
+
+
+    if (
+        !in_array(
+            $extension,
+            $allowedExtensions,
+            true
+        )
+    ) {
+        return null;
+    }
+
+
+    return $image;
+}
 
 ?>
 
@@ -77,13 +202,16 @@ $serviceResult = $serviceStmt->fetchAll();
      SERVICES SECTION
      ========================================================= -->
 
-<section class="section" id="services">
+<section
+    class="section"
+    id="services"
+>
 
     <div class="container">
 
 
         <!-- =================================================
-             SECTION HEADING
+             HEADING
              ================================================= -->
 
         <div class="section-heading">
@@ -120,6 +248,29 @@ $serviceResult = $serviceStmt->fetchAll();
                 <?php foreach ($serviceResult as $service): ?>
 
 
+                    <?php
+
+                    /*
+                     * Check whether an actual image exists.
+                     */
+
+                    $serviceImage = getServiceImage(
+                        $service['image'] ?? null
+                    );
+
+
+                    /*
+                     * Emoji fallback.
+                     */
+
+                    $serviceIcon =
+                        !empty($service['icon'])
+                            ? $service['icon']
+                            : '🔧';
+
+                    ?>
+
+
                     <!-- =================================================
                          SERVICE CARD
                          ================================================= -->
@@ -127,45 +278,81 @@ $serviceResult = $serviceStmt->fetchAll();
                     <article
                         class="service-card"
 
-                        data-category="<?php
+                        data-category="<?= htmlspecialchars(
+                            $service['category'],
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>"
 
-                            echo htmlspecialchars(
-                                $service['category'],
-                                ENT_QUOTES,
-                                'UTF-8'
-                            );
-
-                        ?>"
-
-                        data-name="<?php
-
-                            echo htmlspecialchars(
-                                strtolower(
-                                    $service['service_name']
-                                ),
-                                ENT_QUOTES,
-                                'UTF-8'
-                            );
-
-                        ?>"
+                        data-name="<?= htmlspecialchars(
+                            strtolower(
+                                $service['service_name']
+                            ),
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>"
                     >
 
 
                         <!-- =============================================
-                             SERVICE ICON
+                             PHOTO / EMOJI
                              ============================================= -->
 
                         <div class="service-card-top">
 
-                            <?php
 
-                            echo htmlspecialchars(
-                                $service['icon'],
-                                ENT_QUOTES,
-                                'UTF-8'
-                            );
+                            <?php if ($serviceImage): ?>
 
-                            ?>
+
+                                <!-- =====================================
+                                     PHOTO AVAILABLE
+                                     ===================================== -->
+
+                                <img
+                                    src="public/<?= htmlspecialchars(
+                                        $serviceImage,
+                                        ENT_QUOTES,
+                                        'UTF-8'
+                                    ) ?>"
+                                    alt="<?= htmlspecialchars(
+                                        $service['service_name'],
+                                        ENT_QUOTES,
+                                        'UTF-8'
+                                    ) ?>"
+                                    class="service-card-image"
+                                    width="1200"
+                                    height="675"
+                                    loading="lazy"
+                                >
+
+
+                            <?php else: ?>
+
+
+                                <!-- =====================================
+                                     NO PHOTO → EMOJI
+                                     ===================================== -->
+
+                                <span
+                                    class="service-card-icon"
+                                    aria-label="<?= htmlspecialchars(
+                                        $service['service_name'],
+                                        ENT_QUOTES,
+                                        'UTF-8'
+                                    ) ?>"
+                                >
+
+                                    <?= htmlspecialchars(
+                                        $serviceIcon,
+                                        ENT_QUOTES,
+                                        'UTF-8'
+                                    ) ?>
+
+                                </span>
+
+
+                            <?php endif; ?>
+
 
                         </div>
 
@@ -177,21 +364,17 @@ $serviceResult = $serviceStmt->fetchAll();
                         <div class="service-card-content">
 
 
-                            <!-- SERVICE CATEGORY -->
+                            <!-- CATEGORY -->
 
                             <span class="service-tag">
 
-                                <?php
-
-                                echo htmlspecialchars(
+                                <?= htmlspecialchars(
                                     ucfirst(
                                         $service['category']
                                     ),
                                     ENT_QUOTES,
                                     'UTF-8'
-                                );
-
-                                ?>
+                                ) ?>
 
                             </span>
 
@@ -200,96 +383,93 @@ $serviceResult = $serviceStmt->fetchAll();
 
                             <h3>
 
-                                <?php
-
-                                echo htmlspecialchars(
+                                <?= htmlspecialchars(
                                     $service['service_name'],
                                     ENT_QUOTES,
                                     'UTF-8'
-                                );
-
-                                ?>
+                                ) ?>
 
                             </h3>
 
 
-                            <!-- SERVICE DESCRIPTION -->
+                            <!-- DESCRIPTION -->
 
                             <p>
 
-                                <?php
-
-                                echo htmlspecialchars(
+                                <?= htmlspecialchars(
                                     $service['description'],
                                     ENT_QUOTES,
                                     'UTF-8'
-                                );
-
-                                ?>
+                                ) ?>
 
                             </p>
 
 
-                            <!-- =========================================
-                                 PRICE AND DURATION
-                                 ========================================= -->
+                            <!-- PRICE + DURATION -->
 
                             <div class="service-bottom">
-
-
-                                <!-- PRICE -->
 
                                 <strong>
 
                                     Rs.
 
-                                    <?php
-
-                                    echo number_format(
+                                    <?= number_format(
                                         (float) $service['price'],
                                         2
-                                    );
-
-                                    ?>
+                                    ) ?>
 
                                 </strong>
 
-
-                                <!-- DURATION -->
 
                                 <span>
 
                                     ⏱
 
-                                    <?php
-
-                                    echo htmlspecialchars(
+                                    <?= htmlspecialchars(
                                         $service['duration'],
                                         ENT_QUOTES,
                                         'UTF-8'
-                                    );
-
-                                    ?>
+                                    ) ?>
 
                                 </span>
-
 
                             </div>
 
 
-                            <!-- =========================================
-                                 BOOK SERVICE
-                                 ========================================= -->
+                            <!-- BOOK SERVICE -->
 
-                            <a
-                                href="booking/booking.php?services[]=<?php echo (int) $service['id']; ?>"
-                                class="service-link"
-                            >
-                                Book Service →
-                            </a>
+                           <!-- =================================================
+                                SERVICE ACTIONS
+                                ================================================= -->
+
+                            <div class="service-actions">
+
+                                <!-- BOOK SERVICE -->
+                                <a
+                                    href="booking/booking.php?services[]=<?= (int) $service['id'] ?>"
+                                    class="service-link"
+                                >
+                                    Book Service →
+                                </a>
+
+
+                                <?php if ($isManagementEmployee): ?>
+
+                                    <!-- EDIT SERVICE - MANAGEMENT EMPLOYEE ONLY -->
+                                    <a
+                                        href="dashboard/dashboard.php?page=service-form&id=<?= (int) $service['id'] ?>"
+                                        class="service-edit-link"
+                                    >
+                                        Edit
+                                    </a>
+
+                                <?php endif; ?>
+
+                            </div>
 
 
                         </div>
+
 
                     </article>
 
@@ -300,14 +480,8 @@ $serviceResult = $serviceStmt->fetchAll();
             <?php else: ?>
 
 
-                <!-- =============================================
-                     NO SERVICES
-                     ============================================= -->
-
                 <p class="database-no-services">
-
                     No services are currently available.
-
                 </p>
 
 
@@ -316,36 +490,29 @@ $serviceResult = $serviceStmt->fetchAll();
 
         </div>
 
+
         <!-- =================================================
-             VIEW ALL / HIDE SERVICES BUTTON
+             VIEW ALL
              ================================================= -->
 
         <div class="center-button">
 
             <?php if (!$showAll): ?>
 
-                <!-- VIEW ALL SERVICES -->
-
                 <a
                     href="index.php?all=1#services"
                     class="btn btn-dark"
                 >
-
                     View All Services
-
                 </a>
 
             <?php else: ?>
-
-                <!-- HIDE SERVICES -->
 
                 <a
                     href="index.php#services"
                     class="btn btn-dark"
                 >
-
                     Hide Services
-
                 </a>
 
             <?php endif; ?>

@@ -425,11 +425,11 @@ foreach ($selectedServices as $service) {
 |--------------------------------------------------------------------------
 |
 | Existing project rule:
-| Fixed booking deposit = Rs. 2,500
+| Fixed booking deposit = Rs. 1,000
 |
 */
 
-$depositAmount = 2500.00;
+$depositAmount = 1,000.00;
 
 
 /*

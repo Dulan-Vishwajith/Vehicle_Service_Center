@@ -386,7 +386,6 @@ try {
                                     <?= htmlspecialchars(
                                         $service["service_name"]
                                     ) ?>
-
                                     -
                                     Rs.
                                     <?= number_format(
@@ -951,7 +950,7 @@ try {
                         </span>
 
                         <strong>
-                            Rs. 2,500.00
+                            Rs. 1,000.00
                         </strong>
 
                     </div>
@@ -987,7 +986,7 @@ try {
                         </span>
 
                         <strong>
-                            Rs. 2,500.00
+                            Rs. 1,000.00
                         </strong>
 
                     </div>
@@ -1126,11 +1125,6 @@ try {
     </div>
 
 </div>
-
-
-
-
-
 
 
 
