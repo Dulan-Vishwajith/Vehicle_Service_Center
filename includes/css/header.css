@@ -219,7 +219,6 @@
     transform: translateY(-2px);
 }
 
-
 /* =========================================================
    REGISTER BUTTON
    ========================================================= */
@@ -232,17 +231,32 @@
     border: 1px solid var(--color-primary);
 
     color: var(--color-white);
+
+    transition:
+        background-color var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
 }
 
+
+/* =========================================================
+   REGISTER BUTTON - HOVER
+   ========================================================= */
 
 .auth-buttons .register-btn:hover {
-    background: var(--color-primary-dark);
+    background: var(--color-white);
 
-    border-color: var(--color-primary-dark);
+    border-color: var(--color-primary);
+
+    color: var(--color-primary);
 
     transform: translateY(-2px);
-}
 
+    box-shadow:
+        0 5px 15px rgba(230, 57, 70, 0.18);
+}
 
 /* =========================================================
    DASHBOARD BUTTON
@@ -259,12 +273,21 @@
 }
 
 
-.auth-buttons .dashboard-btn:hover {
-    background: var(--color-primary-dark);
+/* =========================================================
+   DASHBOARD BUTTON - HOVER
+   ========================================================= */
 
-    border-color: var(--color-primary-dark);
+.auth-buttons .dashboard-btn:hover {
+    background: var(--color-white);
+
+    border-color: var(--color-primary);
+
+    color: var(--color-primary);
 
     transform: translateY(-2px);
+
+    box-shadow:
+        0 5px 15px rgba(230, 57, 70, 0.18);
 }
 
 

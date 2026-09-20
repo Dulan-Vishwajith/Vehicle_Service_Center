@@ -53,35 +53,44 @@ $profileImage = $basePath . "/public/images/profile.png";
 
         <!-- NAVIGATION -->
         <nav class="main-nav">
+            <nav class="main-nav">
 
-            <a
-                href="<?= $basePath ?>/index.php#home"
-                class="active"
-            >
-                Home
-            </a>
+                <a
+                    href="<?= $basePath ?>/index.php#home"
+                    data-section="home"
+                >
+                    Home
+                </a>
 
+                <a
+                    href="<?= $basePath ?>/index.php#services"
+                    data-section="services"
+                >
+                    Services
+                </a>
 
-            <a href="<?= $basePath ?>/index.php#services">
-                Services
-            </a>
+                <a
+                    href="<?= $basePath ?>/index.php#packages"
+                    data-section="packages"
+                >
+                    Packages
+                </a>
 
+                <a
+                    href="<?= $basePath ?>/index.php#offers"
+                    data-section="offers"
+                >
+                    Offers
+                </a>
 
-            <a href="<?= $basePath ?>/index.php#packages">
-                Packages
-            </a>
+                <a
+                    href="<?= $basePath ?>/index.php#contact"
+                    data-section="contact"
+                >
+                    Contact
+                </a>
 
-
-            <a href="<?= $basePath ?>/index.php#offers">
-                Offers
-            </a>
-
-
-            <a href="#contact">
-                Contact
-            </a>
-
-        </nav>
+            </nav>
 
 
         <!-- AUTHENTICATION -->
@@ -207,4 +216,7 @@ $profileImage = $basePath . "/public/images/profile.png";
 
 <script
     src="<?= $basePath ?>/includes/js/profile-dropdown.js"
+></script>
+<script
+    src="<?= $basePath ?>/includes/js/smooth-scroll.js"
 ></script>
