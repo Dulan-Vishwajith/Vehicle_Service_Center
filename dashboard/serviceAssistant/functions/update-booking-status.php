@@ -52,7 +52,7 @@ if (
 |     ↓
 | service_done
 |     ↓
-| vehicle_handover
+| ready_to_handover
 |     ↓
 | completed
 |
@@ -68,9 +68,7 @@ $statusFlow = [
 
     'service_done' => 'service_ongoing',
 
-    'vehicle_handover' => 'service_done',
-
-    'completed' => 'vehicle_handover'
+    'ready_to_handover' => 'service_done'
 
 ];
 
@@ -129,6 +127,30 @@ try {
     ]);
 
     $customerId = (int) $customerStmt->fetchColumn();
+
+    /*
+    |--------------------------------------------------------------------------
+    | GET MANAGEMENT EMPLOYEES
+    |--------------------------------------------------------------------------
+    | Management employees have role_id = 3.
+    | They should receive a notification when a vehicle is
+    | ready for handover and the remaining payment needs confirmation.
+    */
+
+    $managementIds = [];
+
+    if ($newStatus === 'ready_to_handover') {
+
+        $managementStmt = $pdo->prepare("
+            SELECT user_id
+            FROM users
+            WHERE role_id = 3
+        ");
+
+        $managementStmt->execute();
+
+        $managementIds = $managementStmt->fetchAll(PDO::FETCH_COLUMN);
+    }
 
 
     if ($customerId <= 0) {
@@ -221,7 +243,7 @@ try {
             break;
 
 
-        case 'vehicle_handover':
+        case 'ready_to_handover':
 
             $notificationTitle =
                 'Vehicle Ready for Handover';
@@ -326,6 +348,36 @@ try {
             );
 
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MANAGEMENT EMPLOYEE NOTIFICATION
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $newStatus === 'ready_to_handover'
+            && !empty($managementIds)
+        ) {
+
+            foreach ($managementIds as $managementId) {
+
+                createNotification(
+                    $pdo,
+                    (int) $managementId,
+                    $bookingId,
+                    'payment',
+                    'Vehicle Ready for Handover',
+                    'Booking #'
+                        . $bookingId
+                        . ' is ready for handover. Please confirm the remaining payment.'
+                );
+
+            }
+
+        }
+
 
 
         header(

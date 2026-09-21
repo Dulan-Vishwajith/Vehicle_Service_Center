@@ -28,6 +28,37 @@ if (
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| MARK NOTIFICATION AS READ
+|--------------------------------------------------------------------------
+| The notification form also submits to this page.
+| Handle it before the payment actions.
+*/
+
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['mark_notification_read'])
+) {
+
+    $notificationId =
+        (int) ($_POST['notification_id'] ?? 0);
+
+    if ($notificationId > 0) {
+
+        markNotificationAsRead(
+            $pdo,
+            $notificationId,
+            $managementId
+        );
+
+    }
+
+    header('Location: ?page=payments');
+    exit;
+}
+
+
 $paymentMessage = '';
 $paymentMessageType = '';
 
@@ -47,14 +78,223 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_POST['payment_action'] ?? '';
 
 
-    if (
-        $paymentId <= 0
-        || !in_array(
-            $action,
-            ['confirm', 'reject'],
-            true
-        )
-    ) {
+        /*
+        |--------------------------------------------------------------------------
+        | CONFIRM REMAINING PAYMENT
+        |--------------------------------------------------------------------------
+        | The customer has paid the remaining balance physically
+        | at the service center.
+        */
+
+        if ($action === 'confirm_remaining') {
+
+            $bookingId =
+                (int) ($_POST['booking_id'] ?? 0);
+
+            if ($bookingId <= 0) {
+
+                $paymentMessage =
+                    'Invalid booking.';
+
+                $paymentMessageType =
+                    'error';
+
+            } else {
+
+                try {
+
+                    $pdo->beginTransaction();
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Get and lock the booking
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $bookingStmt = $pdo->prepare("
+                        SELECT
+                            id,
+                            user_id,
+                            total_price,
+                            payment_status,
+                            status
+                        FROM bookings
+                        WHERE id = ?
+                        FOR UPDATE
+                    ");
+
+                    $bookingStmt->execute([
+                        $bookingId
+                    ]);
+
+                    $booking = $bookingStmt->fetch(PDO::FETCH_ASSOC);
+
+
+                    if (!$booking) {
+
+                        throw new Exception(
+                            'Booking not found.'
+                        );
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Make sure the service is ready for handover
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if ($booking['status'] !== 'ready_to_handover') {
+
+                        throw new Exception(
+                            'This booking is not ready for handover.'
+                        );
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Calculate confirmed initial payments
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $paidStmt = $pdo->prepare("
+                        SELECT
+                            COALESCE(SUM(amount), 0)
+                        FROM payments
+                        WHERE booking_id = ?
+                        AND verification_status = 'confirmed'
+                        AND payment_type = 'deposit'
+                    ");
+
+                    $paidStmt->execute([
+                        $bookingId
+                    ]);
+
+                    $paidAmount =
+                        (float) $paidStmt->fetchColumn();
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Calculate remaining balance
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $totalAmount =
+                        (float) $booking['total_price'];
+
+                    $remainingAmount =
+                        max(
+                            0,
+                            $totalAmount - $paidAmount
+                        );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Mark payment as fully paid
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $updateBooking = $pdo->prepare("
+                        UPDATE bookings
+                        SET
+                            payment_status = 'paid',
+                            status = 'completed'
+                        WHERE id = ?
+                        AND status = 'ready_to_handover'
+                    ");
+
+                    $updateBooking->execute([
+                        $bookingId
+                    ]);
+
+
+                    if ($updateBooking->rowCount() !== 1) {
+
+                        throw new Exception(
+                            'Booking could not be completed.'
+                        );
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | CUSTOMER NOTIFICATION
+                    |--------------------------------------------------------------------------
+                    */
+
+                    createNotification(
+                        $pdo,
+                        (int) $booking['user_id'],
+                        $bookingId,
+                        'payment',
+                        'Remaining Payment Confirmed',
+                        'Your remaining payment of Rs. '
+                            . number_format($remainingAmount, 2)
+                            . ' for Booking #'
+                            . $bookingId
+                            . ' has been confirmed. Your booking is now completed.'
+                    );
+
+
+                    $pdo->commit();
+
+
+                    $paymentMessage =
+                        'Remaining payment confirmed and booking completed successfully.';
+
+                    $paymentMessageType =
+                        'success';
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Redirect
+                    |--------------------------------------------------------------------------
+                    */
+
+                    header(
+                        'Location: ?page=payments&payment_success=remaining'
+                    );
+
+                    exit;
+
+
+                } catch (Throwable $e) {
+
+                    if ($pdo->inTransaction()) {
+
+                        $pdo->rollBack();
+                    }
+
+
+                    $paymentMessage =
+                        $e->getMessage();
+
+                    $paymentMessageType =
+                        'error';
+                }
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Do not process the initial-payment action block when the
+        | confirm_remaining action has already been handled above.
+        |--------------------------------------------------------------------------
+        */
+
+        if ($action !== 'confirm_remaining' && (
+            $paymentId <= 0
+            || !in_array(
+                $action,
+                ['confirm', 'reject'],
+                true
+            )
+        )) {
 
         $paymentMessage =
             'Invalid payment action.';
@@ -400,6 +640,66 @@ if (
 }
 
 
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| READY TO HANDOVER BOOKINGS
+|--------------------------------------------------------------------------
+| These bookings have completed the vehicle service.
+| Management must collect the remaining balance physically
+| at the service center before completing the booking.
+*/
+
+$readyToHandoverBookings = [];
+
+try {
+
+    $readyStmt = $pdo->prepare("
+        SELECT
+            b.id,
+            b.user_id,
+            b.vehicle_model,
+            b.license_plate,
+            b.total_price,
+            u.name AS customer_name,
+
+            COALESCE((
+                SELECT SUM(p.amount)
+                FROM payments p
+                WHERE p.booking_id = b.id
+                  AND p.verification_status = 'confirmed'
+                  AND p.payment_type = 'deposit'
+            ), 0) AS paid_amount
+
+        FROM bookings b
+
+        INNER JOIN users u
+            ON b.user_id = u.user_id
+
+        WHERE b.status = 'ready_to_handover'
+
+        ORDER BY b.id DESC
+    ");
+
+    $readyStmt->execute();
+
+    $readyToHandoverBookings = $readyStmt->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+
+    $readyToHandoverBookings = [];
+
+}
+
+
+
+
+
+
 /*
 |--------------------------------------------------------------------------
 | LOAD PAYMENTS
@@ -522,6 +822,172 @@ try {
 <?php endif; ?>
 
 
+
+
+<?php if (!empty($readyToHandoverBookings)): ?>
+
+    <section class="ready-handover-section">
+
+        <div class="ready-handover-header">
+            <div>
+                <span class="section-label">VEHICLE HANDOVER</span>
+
+                <h2>Ready for Handover</h2>
+
+                <p>
+                    These vehicles have completed their service.
+                    Collect the remaining balance physically before completing the booking.
+                </p>
+            </div>
+
+            <span class="ready-handover-count">
+                <?= count($readyToHandoverBookings) ?>
+                <?= count($readyToHandoverBookings) === 1 ? 'Booking' : 'Bookings' ?>
+            </span>
+        </div>
+
+
+        <div class="ready-handover-grid">
+
+            <?php foreach ($readyToHandoverBookings as $readyBooking): ?>
+
+                <?php
+                    $totalAmount = (float) ($readyBooking['total_price'] ?? 0);
+                    $paidAmount = (float) ($readyBooking['paid_amount'] ?? 0);
+
+                    $remainingAmount = max(
+                        0,
+                        $totalAmount - $paidAmount
+                    );
+                ?>
+
+                <div class="ready-handover-card">
+
+                    <div class="ready-handover-card-header">
+
+                        <div>
+                            <h3>
+                                Booking #<?= (int) $readyBooking['id'] ?>
+                            </h3>
+
+                            <p>
+                                <?= htmlspecialchars(
+                                    $readyBooking['customer_name'] ?? ''
+                                ) ?>
+                            </p>
+                        </div>
+
+                        <span class="ready-handover-status">
+                            Ready to Handover
+                        </span>
+
+                    </div>
+
+
+                    <div class="ready-handover-details">
+
+                        <div class="handover-detail-row">
+                            <strong>Vehicle:</strong>
+
+                            <span>
+                                <?= htmlspecialchars(
+                                    $readyBooking['vehicle_model'] ?? ''
+                                ) ?>
+
+                                -
+
+                                <?= htmlspecialchars(
+                                    $readyBooking['license_plate'] ?? ''
+                                ) ?>
+                            </span>
+                        </div>
+
+
+                        <div class="handover-detail-row">
+                            <strong>Total Service Cost:</strong>
+
+                            <span>
+                                Rs.
+                                <?= number_format(
+                                    $totalAmount,
+                                    2
+                                ) ?>
+                            </span>
+                        </div>
+
+
+                        <div class="handover-detail-row">
+                            <strong>Confirmed Payment:</strong>
+
+                            <span>
+                                Rs.
+                                <?= number_format(
+                                    $paidAmount,
+                                    2
+                                ) ?>
+                            </span>
+                        </div>
+
+
+                        <div class="handover-detail-row remaining-balance">
+
+                            <strong>Remaining Balance:</strong>
+
+                            <span>
+                                Rs.
+                                <?= number_format(
+                                    $remainingAmount,
+                                    2
+                                ) ?>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ready-handover-action">
+
+                        <form
+                            method="POST"
+                            onsubmit="return confirm('Are you sure the remaining payment has been received and this booking is ready to be completed?');"
+                        >
+                            <input
+                                type="hidden"
+                                name="booking_id"
+                                value="<?= (int) $readyBooking['id'] ?>"
+                            >
+
+                            <input
+                                type="hidden"
+                                name="payment_action"
+                                value="confirm_remaining"
+                            >
+
+                            <button
+                                type="submit"
+                                class="ready-payment-button"
+                            >
+                                Confirm Remaining Payment
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            <?php endforeach; ?>
+
+        </div>
+
+    </section>
+
+<?php endif; ?>
+
+
+
+
 <div class="payment-filter-links">
 
     <a href="?page=payments&filter=pending">
@@ -545,43 +1011,115 @@ try {
 
 
 <div class="booking-flow-guide">
+
     <div class="booking-flow-item">
         <span>1</span>
+
         <div>
             <strong>Payment Accepted</strong>
-            <small>Deposit/payment verified</small>
+
+            <small>
+                Initial deposit/payment verified
+            </small>
         </div>
     </div>
 
+
     <div class="booking-flow-arrow">→</div>
+
 
     <div class="booking-flow-item">
         <span>2</span>
+
         <div>
             <strong>Confirm Booking</strong>
-            <small>Management approves the appointment</small>
+
+            <small>
+                Management approves the appointment
+            </small>
         </div>
     </div>
 
+
     <div class="booking-flow-arrow">→</div>
+
 
     <div class="booking-flow-item">
         <span>3</span>
+
         <div>
             <strong>Assign Assistant</strong>
-            <small>Select the responsible assistant</small>
+
+            <small>
+                Select the responsible assistant
+            </small>
         </div>
     </div>
+
 
     <div class="booking-flow-arrow">→</div>
 
+
     <div class="booking-flow-item">
         <span>4</span>
+
         <div>
-            <strong>Confirmed</strong>
-            <small>Assistant can begin the service flow</small>
+            <strong>Service</strong>
+
+            <small>
+                Assistant completes the vehicle service
+            </small>
         </div>
     </div>
+
+
+    <div class="booking-flow-arrow">→</div>
+
+
+    <div class="booking-flow-item">
+        <span>5</span>
+
+        <div>
+            <strong>Ready to Handover</strong>
+
+            <small>
+                Vehicle service is completed
+            </small>
+        </div>
+    </div>
+
+
+    <div class="booking-flow-arrow">→</div>
+
+
+    <div class="booking-flow-item">
+        <span>6</span>
+
+        <div>
+            <strong>Remaining Payment</strong>
+
+            <small>
+                Management confirms final payment
+            </small>
+        </div>
+    </div>
+
+
+    <div class="booking-flow-arrow">→</div>
+
+
+    <div class="booking-flow-item">
+        <span>7</span>
+
+        <div>
+            <strong>Completed</strong>
+
+            <small>
+                Booking is fully completed
+            </small>
+        </div>
+    </div>
+
 </div>
 
 
