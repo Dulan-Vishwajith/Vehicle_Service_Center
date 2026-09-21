@@ -207,15 +207,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
                 /*
-                | Activate payment status.
+                |--------------------------------------------------------------------------
+                | Update booking payment status.
+                |--------------------------------------------------------------------------
+                | Confirmed payment may make the booking partial or fully paid.
                 */
 
+                $updateBooking = $pdo->prepare("
+                    UPDATE bookings
+                    SET payment_status = ?
+                    WHERE id = ?
+                ");
+
                 $updateBooking->execute([
-
                     $newPaymentStatus,
-
                     $payment['booking_id']
-
                 ]);
 
 

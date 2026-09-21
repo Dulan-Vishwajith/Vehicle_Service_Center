@@ -234,6 +234,11 @@
     scrollbar-color:
         var(--color-border)
         var(--color-border-light);
+
+    /*
+     * Prevent flex children from being compressed.
+     */
+    align-items: stretch;
 }
 
 
@@ -273,14 +278,21 @@
 
     gap: 15px;
 
-    /*
-     * Gives each notification enough height
-     * so approximately two are visible.
-     */
-
-    min-height: 125px;
+    width: 100%;
 
     box-sizing: border-box;
+
+    /*
+     * Prevent notification items from shrinking.
+     */
+    flex: 0 0 auto;
+
+    /*
+     * Allow the notification content to determine
+     * the actual height when necessary.
+     */
+    min-height: 125px;
+    height: auto;
 
     padding: 18px 0;
 
@@ -315,6 +327,25 @@
     background: var(--color-primary-soft);
 
     border-radius: var(--radius-md);
+
+    /*
+     * Include padding inside the element's
+     * calculated size.
+     */
+    box-sizing: border-box;
+
+    /*
+     * Prevent the unread card from shrinking.
+     */
+    flex: 0 0 auto;
+
+    /*
+     * Space for title, message, time and
+     * booking reference.
+     */
+    min-height: 145px;
+
+    height: auto;
 
     padding: 18px;
 
@@ -356,6 +387,8 @@
     border-radius: var(--radius-md);
 
     font-size: 20px;
+
+    box-sizing: border-box;
 }
 
 
@@ -364,9 +397,15 @@
    ========================================= */
 
 .notification-content {
-    flex: 1;
+    flex: 1 1 auto;
 
     min-width: 0;
+
+    /*
+     * Prevent notification content from
+     * overflowing into the next item.
+     */
+    overflow: visible;
 }
 
 .notification-title-row {
@@ -377,6 +416,8 @@
     gap: 10px;
 
     margin-bottom: 5px;
+
+    min-height: 20px;
 }
 
 .notification-title-row h3 {
@@ -387,6 +428,8 @@
     font-size: 15px;
 
     font-weight: 700;
+
+    line-height: 1.4;
 }
 
 .notification-content p {
@@ -405,6 +448,8 @@
     color: var(--color-muted);
 
     font-size: 12px;
+
+    line-height: 1.4;
 }
 
 
@@ -433,6 +478,8 @@
     font-weight: 700;
 
     letter-spacing: 0.4px;
+
+    line-height: 1;
 }
 
 
@@ -441,7 +488,9 @@
    ========================================= */
 
 .notification-booking {
-    display: inline-block;
+    display: inline-flex;
+
+    align-items: center;
 
     margin-top: 8px;
 
@@ -456,6 +505,16 @@
     font-size: 12px;
 
     font-weight: 700;
+
+    line-height: 1.3;
+
+    /*
+     * Keep the booking badge inside its
+     * notification card.
+     */
+    box-sizing: border-box;
+
+    white-space: nowrap;
 }
 
 
@@ -749,12 +808,21 @@
         gap: 10px;
 
         min-height: 130px;
+        height: auto;
+
+        flex: 0 0 auto;
 
         padding: 15px 0;
     }
 
     .notification-unread {
+        min-height: 145px;
+
+        height: auto;
+
         padding: 15px;
+
+        box-sizing: border-box;
     }
 
     .notification-icon {
