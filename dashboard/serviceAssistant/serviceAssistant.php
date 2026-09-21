@@ -12,6 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 $assistantId = (int) $_SESSION['user_id'];
 
 require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../includes/notifications.php';
 
 
 $dashboardRole = 'SERVICE ASSISTANT';
@@ -106,6 +107,24 @@ if (!in_array($page, $allowedPages, true)) {
 
         include __DIR__
             . '/functions/service-assistant-dashboard-cards.php';
+
+        ?>
+
+
+
+        <!-- NOTIFICATIONS -->
+
+        <?php
+
+        if (isset($_SESSION['user_id'])) {
+
+            renderNotifications(
+                $pdo,
+                (int) $_SESSION['user_id'],
+                10
+            );
+
+        }
 
         ?>
 

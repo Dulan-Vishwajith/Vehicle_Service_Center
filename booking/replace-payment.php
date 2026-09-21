@@ -5,6 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once '../config/database.php';
+require_once __DIR__ . '/../dashboard/includes/notifications.php';
 
 
 $userId =
@@ -299,13 +300,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             | management confirms.
                             */
 
-                            $update = $pdo->prepare("
-                                UPDATE bookings
-                                SET payment_status = 'unpaid'
-                                WHERE id = ?
-                                AND user_id = ?
-                            ");
-
                             $update->execute([
 
                                 $bookingId,
@@ -315,8 +309,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             ]);
 
 
-                            $pdo->commit();
+                            /*
+                            |--------------------------------------------------------------------------
+                            | MANAGEMENT NOTIFICATION
+                            |--------------------------------------------------------------------------
+                            |
+                            | This is a replacement payment submitted after the previous
+                            | payment was rejected.
+                            |
+                            | Role 3 = Management Employee
+                            |
+                            */
 
+                            notifyRole(
+                                $pdo,
+                                3,
+                                $bookingId,
+                                'payment_pending',
+                                'Replacement Payment Requires Verification',
+                                'A replacement bank payment of Rs. '
+                                    . number_format(
+                                        (float) $booking['deposit_amount'],
+                                        2
+                                    )
+                                    . ' for Booking #'
+                                    . $bookingId
+                                    . ' has been submitted and is waiting for verification.'
+                            );
+
+
+                            /*
+                            | Booking remains unpaid until
+                            | management confirms.
+                            */
+
+                            $pdo->commit();
 
                             header(
                                 'Location: ../dashboard/dashboard.php?page=bookings'

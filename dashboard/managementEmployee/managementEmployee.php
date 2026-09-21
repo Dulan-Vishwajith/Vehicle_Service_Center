@@ -28,7 +28,7 @@ if (($_SESSION['role_id'] ?? null) !== 3) {
 
 
 require_once __DIR__ . '/../../config/database.php';
-
+require_once __DIR__ . '/../includes/notifications.php';
 
 $dashboardRole = "MANAGEMENT";
 
@@ -180,6 +180,21 @@ $quickActions = [
             include __DIR__ . '/functions/management-dashboard-cards.php';
         ?>
 
+        <!-- NOTIFICATIONS -->
+
+        <?php
+
+        if (isset($_SESSION['user_id'])) {
+
+            renderNotifications(
+                $pdo,
+                (int) $_SESSION['user_id'],
+                10
+            );
+
+        }
+
+        ?>
 
 
         <!-- Dashboard Grid -->

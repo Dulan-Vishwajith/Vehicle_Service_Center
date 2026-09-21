@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../includes/notifications.php';
 
 $appointments = [];
 
@@ -51,6 +52,92 @@ try {
 
     $stmt->execute([$assistantId]);
     $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    /*
+    |--------------------------------------------------------------------------
+    | TODAY'S SCHEDULE NOTIFICATION
+    |--------------------------------------------------------------------------
+    |
+    | Create only one schedule notification per assistant per day.
+    |
+    | This prevents duplicate notifications when the dashboard is
+    | refreshed multiple times.
+    |
+    */
+
+    if (!empty($appointments) && $assistantId > 0) {
+
+        try {
+
+            /*
+            |--------------------------------------------------------------------------
+            | CHECK WHETHER TODAY'S SCHEDULE NOTIFICATION ALREADY EXISTS
+            |--------------------------------------------------------------------------
+            */
+
+            $notificationCheck = $pdo->prepare("
+                SELECT id
+                FROM notifications
+                WHERE user_id = ?
+                AND type = 'schedule'
+                AND DATE(created_at) = CURDATE()
+                LIMIT 1
+            ");
+
+            $notificationCheck->execute([
+                $assistantId
+            ]);
+
+            $scheduleNotificationExists =
+                $notificationCheck->fetchColumn();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | CREATE TODAY'S SCHEDULE NOTIFICATION
+            |--------------------------------------------------------------------------
+            */
+
+            if (!$scheduleNotificationExists) {
+
+                $appointmentCount =
+                    count($appointments);
+
+
+                $appointmentText =
+                    $appointmentCount === 1
+                        ? 'appointment'
+                        : 'appointments';
+
+
+                createNotification(
+                    $pdo,
+                    $assistantId,
+                    null,
+                    'schedule',
+                    "Today's Schedule",
+                    'You have '
+                        . $appointmentCount
+                        . ' active '
+                        . $appointmentText
+                        . ' scheduled for today.'
+                );
+
+            }
+
+        } catch (PDOException $e) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | Notification failure must not break today's schedule.
+            |--------------------------------------------------------------------------
+            */
+
+        }
+
+    }
+
+
 
 } catch (PDOException $e) {
     $appointments = [];

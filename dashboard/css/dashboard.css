@@ -17,19 +17,25 @@
     width: 100%;
 }
 
-/* Header */
+
+/* =========================================
+   HEADER
+   ========================================= */
 
 .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     gap: 25px;
     margin-bottom: 35px;
 }
 
 .dashboard-header h1 {
     margin: 4px 0 8px;
+
     color: var(--color-dark);
+
     font-size: 32px;
 }
 
@@ -41,23 +47,35 @@
     color: var(--color-primary);
 }
 
-/* Cards */
+
+/* =========================================
+   DASHBOARD CARDS
+   ========================================= */
 
 .dashboard-cards {
     display: grid;
+
     grid-template-columns: repeat(4, 1fr);
+
     gap: 20px;
+
     margin-bottom: 25px;
 }
 
 .dashboard-card {
     display: flex;
     align-items: center;
+
     gap: 15px;
+
     padding: 22px;
+
     background: var(--color-white);
+
     border: 1px solid var(--color-border);
+
     border-radius: var(--radius-lg);
+
     box-shadow: var(--shadow-sm);
 }
 
@@ -69,7 +87,10 @@
     align-items: center;
     justify-content: center;
 
+    flex-shrink: 0;
+
     background: var(--color-primary-soft);
+
     border-radius: var(--radius-md);
 
     font-size: 22px;
@@ -77,30 +98,44 @@
 
 .dashboard-card span {
     display: block;
+
     color: var(--color-muted);
+
     font-size: 13px;
+
     margin-bottom: 3px;
 }
 
 .dashboard-card strong {
     display: block;
+
     color: var(--color-dark);
+
     font-size: 24px;
 }
 
-/* Main Grid */
+
+/* =========================================
+   MAIN GRID
+   ========================================= */
 
 .dashboard-grid {
     display: grid;
+
     grid-template-columns: 4fr 1fr;
+
     gap: 20px;
 }
 
 .dashboard-panel {
     background: var(--color-white);
+
     border: 1px solid var(--color-border);
+
     border-radius: var(--radius-lg);
+
     box-shadow: var(--shadow-sm);
+
     padding: 25px;
 }
 
@@ -108,31 +143,380 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     gap: 15px;
 
     padding-bottom: 18px;
+
     margin-bottom: 5px;
 
     border-bottom: 1px solid var(--color-border-light);
 }
 
 .panel-header h2 {
+    margin: 0;
+
     font-size: 18px;
+
     color: var(--color-dark);
 }
 
 .panel-header a {
     color: var(--color-primary);
+
     font-size: 13px;
+
     font-weight: 700;
 }
 
-/* Booking Rows */
+
+/* =========================================
+   NOTIFICATIONS
+   ========================================= */
+
+.notifications-panel {
+    margin-top: 25px;
+}
+
+
+/* =========================================
+   NOTIFICATION COUNT
+   ========================================= */
+
+.notification-count {
+    min-width: 28px;
+    height: 28px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 8px;
+
+    background: var(--color-primary);
+
+    color: var(--color-white);
+
+    border-radius: 50%;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================
+   NOTIFICATION SCROLL AREA
+   ========================================= */
+
+.notifications-list {
+    display: flex;
+
+    flex-direction: column;
+
+    /*
+     * Approximately 2 notification cards
+     * are visible at one time.
+     */
+
+    max-height: 290px;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    padding-right: 8px;
+
+    scroll-behavior: smooth;
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        var(--color-border)
+        var(--color-border-light);
+}
+
+
+/* =========================================
+   NOTIFICATION SCROLLBAR
+   ========================================= */
+
+.notifications-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notifications-list::-webkit-scrollbar-track {
+    background: var(--color-border-light);
+
+    border-radius: 10px;
+}
+
+.notifications-list::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+
+    border-radius: 10px;
+}
+
+.notifications-list::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+}
+
+
+/* =========================================
+   NOTIFICATION ITEM
+   ========================================= */
+
+.notification-item {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+    /*
+     * Gives each notification enough height
+     * so approximately two are visible.
+     */
+
+    min-height: 125px;
+
+    box-sizing: border-box;
+
+    padding: 18px 0;
+
+    border-bottom: 1px solid var(--color-border-light);
+
+    transition: var(--transition-fast);
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+
+/* =========================================
+   NOTIFICATION HOVER
+   ========================================= */
+
+.notification-item:hover {
+    background: var(--color-bg);
+
+    padding-left: 8px;
+
+    padding-right: 8px;
+}
+
+
+/* =========================================
+   UNREAD NOTIFICATION
+   ========================================= */
+
+.notification-unread {
+    background: var(--color-primary-soft);
+
+    border-radius: var(--radius-md);
+
+    padding: 18px;
+
+    margin: 5px 0;
+}
+
+.notification-unread:hover {
+    background: var(--color-primary-soft);
+}
+
+
+/* =========================================
+   READ NOTIFICATION
+   ========================================= */
+
+.notification-read {
+    opacity: 0.75;
+}
+
+
+/* =========================================
+   NOTIFICATION ICON
+   ========================================= */
+
+.notification-icon {
+    width: 44px;
+    height: 44px;
+
+    flex: 0 0 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--color-white);
+
+    border: 1px solid var(--color-border);
+
+    border-radius: var(--radius-md);
+
+    font-size: 20px;
+}
+
+
+/* =========================================
+   NOTIFICATION CONTENT
+   ========================================= */
+
+.notification-content {
+    flex: 1;
+
+    min-width: 0;
+}
+
+.notification-title-row {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 5px;
+}
+
+.notification-title-row h3 {
+    margin: 0;
+
+    color: var(--color-dark);
+
+    font-size: 15px;
+
+    font-weight: 700;
+}
+
+.notification-content p {
+    margin: 0 0 6px;
+
+    color: var(--color-text);
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+.notification-content small {
+    display: block;
+
+    color: var(--color-muted);
+
+    font-size: 12px;
+}
+
+
+/* =========================================
+   NEW LABEL
+   ========================================= */
+
+.notification-new {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    padding: 3px 8px;
+
+    background: var(--color-primary);
+
+    color: var(--color-white);
+
+    border-radius: 20px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.4px;
+}
+
+
+/* =========================================
+   BOOKING REFERENCE
+   ========================================= */
+
+.notification-booking {
+    display: inline-block;
+
+    margin-top: 8px;
+
+    padding: 5px 9px;
+
+    background: var(--color-primary-soft);
+
+    color: var(--color-primary);
+
+    border-radius: var(--radius-sm);
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================
+   MARK AS READ
+   ========================================= */
+
+.notification-read-form {
+    margin-top: 10px;
+}
+
+.notification-read-button {
+    border: 1px solid var(--color-border);
+
+    background: var(--color-white);
+
+    color: var(--color-text);
+
+    padding: 7px 12px;
+
+    border-radius: var(--radius-sm);
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: var(--transition-fast);
+}
+
+.notification-read-button:hover {
+    background: var(--color-primary);
+
+    border-color: var(--color-primary);
+
+    color: var(--color-white);
+}
+
+
+/* =========================================
+   EMPTY NOTIFICATION MESSAGE
+   ========================================= */
+
+.notifications-panel .empty-message {
+    padding: 25px 0;
+}
+
+
+/* =========================================
+   BOOKING ROWS
+   ========================================= */
 
 .booking-row {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
+
     gap: 20px;
 
     padding: 18px 0;
@@ -146,55 +530,75 @@
 
 .booking-row strong {
     display: block;
+
     color: var(--color-dark);
+
     font-size: 14px;
 }
 
 .booking-row small {
     display: block;
+
     color: var(--color-muted);
+
     margin-top: 3px;
 }
 
-/* Status */
+
+/* =========================================
+   STATUS
+   ========================================= */
 
 .status {
     padding: 6px 12px;
+
     border-radius: 20px;
+
     font-size: 12px;
+
     font-weight: 700;
 }
 
 .status-pending {
     background: #fff4d6;
+
     color: #946200;
 }
 
 .status-confirmed {
     background: #e7f5ff;
+
     color: #1671a8;
 }
 
 .status-completed {
     background: #e8f8ef;
+
     color: #198754;
 }
 
 .status-progress {
     background: var(--color-primary-soft);
+
     color: var(--color-primary);
 }
 
 .status-cancelled {
     background: #f8d7da;
+
     color: #842029;
 }
 
-/* Quick Actions */
+
+/* =========================================
+   QUICK ACTIONS
+   ========================================= */
 
 .quick-action {
     display: flex;
+
     align-items: center;
+
     gap: 12px;
 
     padding: 15px 0;
@@ -202,7 +606,9 @@
     border-bottom: 1px solid var(--color-border-light);
 
     color: var(--color-text);
+
     font-size: 14px;
+
     font-weight: 600;
 
     transition: var(--transition-fast);
@@ -214,6 +620,7 @@
 
 .quick-action:hover {
     color: var(--color-primary);
+
     padding-left: 5px;
 }
 
@@ -222,17 +629,25 @@
     height: 35px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
+    flex-shrink: 0;
+
     background: var(--color-primary-soft);
+
     border-radius: var(--radius-sm);
 }
 
-/* Management statistics */
+
+/* =========================================
+   MANAGEMENT STATISTICS
+   ========================================= */
 
 .stat-row {
     display: flex;
+
     justify-content: space-between;
 
     padding: 16px 0;
@@ -252,7 +667,10 @@
     color: var(--color-dark);
 }
 
-/* Responsive */
+
+/* =========================================
+   RESPONSIVE — TABLET
+   ========================================= */
 
 @media (max-width: 900px) {
 
@@ -263,17 +681,33 @@
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
+
+    /*
+     * Keep approximately two notifications
+     * visible on tablet.
+     */
+
+    .notifications-list {
+        max-height: 290px;
+    }
 }
+
+
+/* =========================================
+   RESPONSIVE — MOBILE
+   ========================================= */
 
 @media (max-width: 600px) {
 
     .dashboard-content {
         width: min(100% - 32px, var(--container-width));
+
         padding-top: 25px;
     }
 
     .dashboard-header {
         align-items: flex-start;
+
         flex-direction: column;
     }
 
@@ -287,6 +721,84 @@
 
     .booking-row {
         align-items: flex-start;
+
         flex-direction: column;
+    }
+
+
+    /* =====================================
+       MOBILE NOTIFICATIONS
+       ===================================== */
+
+    .notifications-panel {
+        padding: 18px;
+    }
+
+    /*
+     * Keep two notification cards visible
+     * and scroll the rest internally.
+     */
+
+    .notifications-list {
+        max-height: 300px;
+
+        padding-right: 5px;
+    }
+
+    .notification-item {
+        gap: 10px;
+
+        min-height: 130px;
+
+        padding: 15px 0;
+    }
+
+    .notification-unread {
+        padding: 15px;
+    }
+
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+
+        flex: 0 0 40px;
+
+        font-size: 18px;
+    }
+
+    .notification-title-row {
+        align-items: flex-start;
+
+        flex-wrap: wrap;
+
+        gap: 6px;
+    }
+
+    .notification-title-row h3 {
+        font-size: 14px;
+    }
+
+    .notification-content p {
+        font-size: 13px;
+    }
+
+    .notification-content small {
+        font-size: 11px;
+    }
+
+    .notification-read-button {
+        width: 100%;
+
+        padding: 9px 12px;
+    }
+
+    .notification-booking {
+        font-size: 11px;
+    }
+
+    .notification-new {
+        font-size: 9px;
+
+        padding: 3px 7px;
     }
 }

@@ -52,25 +52,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              * CONFIRM BOOKING
              * pending + accepted payment -> booked
              * ------------------------------------------------------------ */
-            if ($action === 'confirm_booking') {
+           if ($action === 'confirm_booking') {
+
+                /*
+                |--------------------------------------------------------------------------
+                | GET CUSTOMER
+                |--------------------------------------------------------------------------
+                |
+                | We need the customer user_id so the notification is sent only
+                | to the customer who owns this booking.
+                |
+                */
+
+                $customerStmt = $pdo->prepare("
+                    SELECT user_id
+                    FROM bookings
+                    WHERE id = ?
+                    LIMIT 1
+                ");
+
+                $customerStmt->execute([
+                    $bookingId
+                ]);
+
+                $customerId = (int) $customerStmt->fetchColumn();
+
+
+                if ($customerId <= 0) {
+                    throw new Exception('Unable to identify the customer for this booking.');
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | CONFIRM BOOKING
+                |--------------------------------------------------------------------------
+                */
 
                 $stmt = $pdo->prepare("
                     UPDATE bookings
                     SET status = 'booked'
                     WHERE id = ?
-                      AND status = 'pending'
-                      AND assigned_assistant_id IS NULL
-                      AND payment_status IN ('partial', 'paid')
+                    AND status = 'pending'
+                    AND assigned_assistant_id IS NULL
+                    AND payment_status IN ('partial', 'paid')
                 ");
 
-                $stmt->execute([$bookingId]);
+                $stmt->execute([
+                    $bookingId
+                ]);
+
 
                 if ($stmt->rowCount() !== 1) {
-                    throw new Exception('This booking is no longer awaiting confirmation or its payment is not accepted.');
+
+                    throw new Exception(
+                        'This booking is no longer awaiting confirmation or its payment is not accepted.'
+                    );
+
                 }
 
-                $message     = 'Booking confirmed. It is now ready for service assistant assignment.';
-                $messageType = 'success';
+
+                /*
+                |--------------------------------------------------------------------------
+                | CUSTOMER NOTIFICATION
+                |--------------------------------------------------------------------------
+                */
+
+                createNotification(
+                    $pdo,
+                    $customerId,
+                    $bookingId,
+                    'booking_status',
+                    'Booking Confirmed',
+                    'Your Booking #'
+                        . $bookingId
+                        . ' has been confirmed by VEYRO. It is now waiting for service assistant assignment.'
+                );
+
+
+                $message =
+                    'Booking confirmed. It is now ready for service assistant assignment.';
+
+                $messageType =
+                    'success';
             }
 
             /* ------------------------------------------------------------
@@ -79,25 +143,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              * ------------------------------------------------------------ */
             elseif ($action === 'assign_assistant') {
 
-                $assistantId = (int) ($_POST['assistant_id'] ?? 0);
+                $assistantId =
+                    (int) ($_POST['assistant_id'] ?? 0);
+
 
                 if ($assistantId <= 0) {
-                    throw new Exception('Please select a service assistant.');
+
+                    throw new Exception(
+                        'Please select a service assistant.'
+                    );
+
                 }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | GET ASSISTANT
+                |--------------------------------------------------------------------------
+                */
 
                 $assistantStmt = $pdo->prepare("
                     SELECT user_id, name
                     FROM users
                     WHERE user_id = ?
-                      AND role_id = 2
+                    AND role_id = 2
                     LIMIT 1
                 ");
-                $assistantStmt->execute([$assistantId]);
-                $assistant = $assistantStmt->fetch(PDO::FETCH_ASSOC);
+
+                $assistantStmt->execute([
+                    $assistantId
+                ]);
+
+                $assistant =
+                    $assistantStmt->fetch(PDO::FETCH_ASSOC);
+
 
                 if (!$assistant) {
-                    throw new Exception('Selected service assistant is not valid.');
+
+                    throw new Exception(
+                        'Selected service assistant is not valid.'
+                    );
+
                 }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | GET CUSTOMER
+                |--------------------------------------------------------------------------
+                */
+
+                $customerStmt = $pdo->prepare("
+                    SELECT user_id
+                    FROM bookings
+                    WHERE id = ?
+                    LIMIT 1
+                ");
+
+                $customerStmt->execute([
+                    $bookingId
+                ]);
+
+                $customerId =
+                    (int) $customerStmt->fetchColumn();
+
+
+                if ($customerId <= 0) {
+
+                    throw new Exception(
+                        'Unable to identify the customer for this booking.'
+                    );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | ASSIGN SERVICE ASSISTANT
+                |--------------------------------------------------------------------------
+                */
 
                 $stmt = $pdo->prepare("
                     UPDATE bookings
@@ -105,19 +229,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         assigned_assistant_id = ?,
                         status = 'confirmed'
                     WHERE id = ?
-                      AND status = 'booked'
-                      AND assigned_assistant_id IS NULL
-                      AND payment_status IN ('partial', 'paid')
+                    AND status = 'booked'
+                    AND assigned_assistant_id IS NULL
+                    AND payment_status IN ('partial', 'paid')
                 ");
 
-                $stmt->execute([$assistantId, $bookingId]);
+                $stmt->execute([
+                    $assistantId,
+                    $bookingId
+                ]);
+
 
                 if ($stmt->rowCount() !== 1) {
-                    throw new Exception('This booking has already been assigned or is no longer ready for assignment.');
+
+                    throw new Exception(
+                        'This booking has already been assigned or is no longer ready for assignment.'
+                    );
+
                 }
 
-                $message     = 'Service assistant assigned successfully. The booking is now confirmed.';
-                $messageType = 'success';
+
+                /*
+                |--------------------------------------------------------------------------
+                | SERVICE ASSISTANT NOTIFICATION
+                |--------------------------------------------------------------------------
+                */
+
+                createNotification(
+                    $pdo,
+                    $assistantId,
+                    $bookingId,
+                    'appointment_assigned',
+                    'New Appointment Assigned',
+                    'Booking #'
+                        . $bookingId
+                        . ' has been assigned to you. Please check your appointment schedule.'
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | CUSTOMER NOTIFICATION
+                |--------------------------------------------------------------------------
+                */
+
+                createNotification(
+                    $pdo,
+                    $customerId,
+                    $bookingId,
+                    'booking_status',
+                    'Service Assistant Assigned',
+                    'A service assistant has been assigned to your Booking #'
+                        . $bookingId
+                        . '. Your appointment is now confirmed.'
+                );
+
+
+                $message =
+                    'Service assistant assigned successfully. The booking is now confirmed.';
+
+                $messageType =
+                    'success';
             }
             else {
                 throw new Exception('Invalid booking action.');
