@@ -429,7 +429,7 @@ foreach ($selectedServices as $service) {
 |
 */
 
-$depositAmount = 1,000.00;
+$depositAmount = 1000.00;
 
 
 /*
