@@ -17,10 +17,61 @@ $userRole = (int) ($_SESSION["role_id"] ?? 0);
 
 /*
 |--------------------------------------------------------------------------
-| Project Root
+| Project Root / Base URL
+|--------------------------------------------------------------------------
+| Automatically detects whether VEYRO is running:
+|
+| Local:
+| http://localhost/Vehicle_Service_Center/
+|
+| Hosting:
+| https://veyro.site/
+|
 |--------------------------------------------------------------------------
 */
-$basePath = "/Vehicle_Service_Center";
+
+$documentRoot = realpath(
+    $_SERVER['DOCUMENT_ROOT'] ?? ''
+);
+
+$projectRoot = realpath(
+    __DIR__ . '/..'
+);
+
+$basePath = '';
+
+if ($documentRoot && $projectRoot) {
+
+    $documentRoot = str_replace(
+        '\\',
+        '/',
+        $documentRoot
+    );
+
+    $projectRoot = str_replace(
+        '\\',
+        '/',
+        $projectRoot
+    );
+
+    if (
+        strpos(
+            $projectRoot,
+            $documentRoot
+        ) === 0
+    ) {
+
+        $relativePath = substr(
+            $projectRoot,
+            strlen($documentRoot)
+        );
+
+        $basePath = rtrim(
+            $relativePath,
+            '/'
+        );
+    }
+}
 
 
 /*
@@ -53,7 +104,6 @@ $profileImage = $basePath . "/public/images/profile.png";
 
         <!-- NAVIGATION -->
         <nav class="main-nav">
-            <nav class="main-nav">
 
                 <a
                     href="<?= $basePath ?>/index.php#home"

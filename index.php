@@ -1,6 +1,10 @@
+<?php
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -23,14 +27,21 @@
 
 <body>
 
-    <?php include 'includes/header.php'; ?>
-    <?php include 'public/hero.php'; ?>
-    <?php include 'public/quick-features.php'; ?>
-    <?php include 'public/services.php'; ?>
-    <?php include 'public/packages.php'; ?>
-    <?php include 'public/offers.php'; ?>
-    <?php include 'public/cta.php'; ?>
-    <?php include 'includes/footer.php'; ?>
+    <?php require_once __DIR__ . '/includes/header.php'; ?>
+
+    <?php require_once __DIR__ . '/public/hero.php'; ?>
+
+    <?php require_once __DIR__ . '/public/quick-features.php'; ?>
+
+    <?php require_once __DIR__ . '/public/services.php'; ?>
+
+    <?php require_once __DIR__ . '/public/packages.php'; ?>
+
+    <?php require_once __DIR__ . '/public/offers.php'; ?>
+
+    <?php require_once __DIR__ . '/public/cta.php'; ?>
+
+    <?php require_once __DIR__ . '/includes/footer.php'; ?>
     
 
     <!-- Your page content here -->
