@@ -68,7 +68,7 @@ if (!function_exists('getStatusClass')) {
                 return 'status-progress';
 
             case 'service_done':
-            case 'vehicle_handover':
+            case 'ready_to_handover':
                 return 'status-done';
 
             case 'completed':
@@ -138,7 +138,7 @@ if (!function_exists('getStatusStep')) {
             case 'service_done':
                 return 6;
 
-            case 'vehicle_handover':
+            case 'ready_to_handover':
                 return 7;
 
             case 'completed':
@@ -508,7 +508,7 @@ if (!function_exists('getStatusStep')) {
                             <div class="booking-status-line <?= $currentStep >= 7 ? 'active' : '' ?>"></div>
 
 
-                            <!-- VEHICLE HANDOVER -->
+                            <!-- Ready To Handover -->
 
                             <div class="booking-status-step <?= $currentStep >= 7 ? 'active' : '' ?>">
 
@@ -518,7 +518,7 @@ if (!function_exists('getStatusStep')) {
 
                                 </div>
 
-                                <span>Vehicle Handover</span>
+                                <span>Ready To Handover</span>
 
                             </div>
 

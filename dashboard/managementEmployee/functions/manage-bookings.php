@@ -424,43 +424,115 @@ try {
 
 
 <div class="booking-flow-guide">
+
     <div class="booking-flow-item">
         <span>1</span>
+
         <div>
             <strong>Payment Accepted</strong>
-            <small>Deposit/payment verified</small>
+
+            <small>
+                Initial deposit/payment verified
+            </small>
         </div>
     </div>
 
+
     <div class="booking-flow-arrow">→</div>
+
 
     <div class="booking-flow-item">
         <span>2</span>
+
         <div>
             <strong>Confirm Booking</strong>
-            <small>Management approves the appointment</small>
+
+            <small>
+                Management approves the appointment
+            </small>
         </div>
     </div>
 
+
     <div class="booking-flow-arrow">→</div>
+
 
     <div class="booking-flow-item">
         <span>3</span>
+
         <div>
             <strong>Assign Assistant</strong>
-            <small>Select the responsible assistant</small>
+
+            <small>
+                Select the responsible assistant
+            </small>
         </div>
     </div>
+
 
     <div class="booking-flow-arrow">→</div>
 
+
     <div class="booking-flow-item">
         <span>4</span>
+
         <div>
-            <strong>Confirmed</strong>
-            <small>Assistant can begin the service flow</small>
+            <strong>Service</strong>
+
+            <small>
+                Assistant completes the vehicle service
+            </small>
         </div>
     </div>
+
+
+    <div class="booking-flow-arrow">→</div>
+
+
+    <div class="booking-flow-item">
+        <span>5</span>
+
+        <div>
+            <strong>Ready to Handover</strong>
+
+            <small>
+                Vehicle service is completed
+            </small>
+        </div>
+    </div>
+
+
+    <div class="booking-flow-arrow">→</div>
+
+
+    <div class="booking-flow-item">
+        <span>6</span>
+
+        <div>
+            <strong>Remaining Payment</strong>
+
+            <small>
+                Management confirms final payment
+            </small>
+        </div>
+    </div>
+
+
+    <div class="booking-flow-arrow">→</div>
+
+
+    <div class="booking-flow-item">
+        <span>7</span>
+
+        <div>
+            <strong>Completed</strong>
+
+            <small>
+                Booking is fully completed
+            </small>
+        </div>
+    </div>
+
 </div>
 
 

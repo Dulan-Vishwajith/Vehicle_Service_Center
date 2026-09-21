@@ -5067,3 +5067,462 @@
     }
 
 }
+
+/* =========================================================
+   READY FOR HANDOVER — REMAINING PAYMENT
+   Management Employee Payment Page
+   ========================================================= */
+
+.ready-handover-section {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.ready-handover-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.ready-handover-header > div {
+    min-width: 0;
+}
+
+.ready-handover-header .section-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--color-primary);
+
+    font-size: 12px;
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.ready-handover-header h2 {
+    margin: 0 0 7px;
+
+    color: var(--color-dark);
+
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.ready-handover-header p {
+    margin: 0;
+
+    max-width: 760px;
+
+    color: var(--color-muted);
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   BOOKING COUNT
+   ========================================================= */
+
+.ready-handover-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    min-height: 34px;
+
+    padding: 7px 13px;
+
+    background: var(--color-primary-soft);
+
+    border: 1px solid var(--color-border);
+
+    border-radius: 20px;
+
+    color: var(--color-primary);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   CARD GRID
+   ========================================================= */
+
+.ready-handover-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   BOOKING CARD
+   ========================================================= */
+
+.ready-handover-card {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 20px;
+
+    background: var(--color-white);
+
+    border: 1px solid var(--color-border);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.ready-handover-card:hover {
+    border-color: var(--color-primary);
+
+    box-shadow: var(--shadow-md);
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
+
+.ready-handover-card-header {
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 18px;
+
+    padding-bottom: 15px;
+
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.ready-handover-card-header > div {
+    min-width: 0;
+}
+
+.ready-handover-card-header h3 {
+    margin: 0 0 5px;
+
+    color: var(--color-dark);
+
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.ready-handover-card-header p {
+    margin: 0;
+
+    color: var(--color-muted);
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   READY STATUS BADGE
+   ========================================================= */
+
+.ready-handover-status {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    padding: 7px 11px;
+
+    background: var(--color-primary-soft);
+
+    border: 1px solid var(--color-border);
+
+    border-radius: 20px;
+
+    color: var(--color-primary);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   DETAILS
+   ========================================================= */
+
+.ready-handover-details {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0;
+
+    margin-bottom: 20px;
+}
+
+.handover-detail-row {
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 11px 0;
+
+    border-bottom: 1px solid var(--color-border-light);
+
+    font-size: 13px;
+}
+
+.handover-detail-row:first-child {
+    padding-top: 0;
+}
+
+.handover-detail-row:last-child {
+    border-bottom: none;
+}
+
+.handover-detail-row strong {
+    flex-shrink: 0;
+
+    color: var(--color-dark);
+
+    font-weight: 700;
+}
+
+.handover-detail-row span {
+    color: var(--color-text);
+
+    text-align: right;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   REMAINING BALANCE
+   ========================================================= */
+
+.handover-detail-row.remaining-balance {
+    margin-top: 5px;
+
+    padding: 14px 15px;
+
+    background: var(--color-primary-soft);
+
+    border: 1px solid var(--color-border);
+
+    border-radius: var(--radius-sm);
+}
+
+.handover-detail-row.remaining-balance strong {
+    color: var(--color-dark);
+}
+
+.handover-detail-row.remaining-balance span {
+    color: var(--color-primary);
+
+    font-size: 15px;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   ACTION AREA
+   ========================================================= */
+
+.ready-handover-action {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    padding-top: 16px;
+
+    border-top: 1px solid var(--color-border-light);
+}
+
+.ready-handover-action form {
+    margin: 0;
+}
+
+
+/* =========================================================
+   CONFIRM PAYMENT BUTTON
+   ========================================================= */
+
+.ready-payment-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 40px;
+
+    padding: 10px 17px;
+
+    background: var(--color-primary);
+
+    border: 1px solid var(--color-primary);
+
+    border-radius: var(--radius-md);
+
+    color: var(--color-white);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.ready-payment-button:hover {
+    background: var(--color-dark);
+
+    border-color: var(--color-dark);
+
+    box-shadow: var(--shadow-sm);
+
+    transform: translateY(-1px);
+}
+
+.ready-payment-button:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .ready-handover-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .ready-handover-header {
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+    .ready-handover-count {
+        align-self: flex-start;
+    }
+
+    .ready-handover-header h2 {
+        font-size: 20px;
+    }
+
+    .ready-handover-card {
+        padding: 16px;
+    }
+
+    .ready-handover-card-header {
+        flex-direction: column;
+
+        gap: 10px;
+    }
+
+    .ready-handover-status {
+        align-self: flex-start;
+    }
+
+    .handover-detail-row {
+        flex-direction: column;
+
+        gap: 4px;
+    }
+
+    .handover-detail-row span {
+        text-align: left;
+    }
+
+    .ready-handover-action {
+        justify-content: stretch;
+    }
+
+    .ready-payment-button {
+        width: 100%;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .ready-handover-header h2 {
+        font-size: 18px;
+    }
+
+    .ready-handover-card {
+        padding: 14px;
+    }
+
+    .ready-handover-card-header h3 {
+        font-size: 16px;
+    }
+
+}

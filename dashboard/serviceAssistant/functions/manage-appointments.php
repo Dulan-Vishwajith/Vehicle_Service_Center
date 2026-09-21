@@ -96,8 +96,7 @@ if (!isset($pdo) || !isset($assistantId)) {
             'vehicle_arrived',
             'service_ongoing',
             'service_done',
-            'vehicle_handover',
-            'completed'
+            'ready_to_handover'
         ];
 
         if ($statusFilter !== '' && in_array($statusFilter, $allowedStatuses, true)) {
@@ -180,14 +179,9 @@ $actions = [
         'message' => 'Are you sure the service is finished?'
     ],
     'service_done' => [
-        'next_status' => 'vehicle_handover',
-        'button' => 'Hand Over Vehicle',
-        'message' => 'Are you sure you want to hand over the vehicle?'
-    ],
-    'vehicle_handover' => [
-        'next_status' => 'completed',
-        'button' => 'Complete Appointment',
-        'message' => 'Are you sure the vehicle handover is complete?'
+        'next_status' => 'ready_to_handover',
+        'button' => 'Ready to Handover',
+        'message' => 'Are you sure the service is completed and the vehicle is ready for handover?'
     ]
 ];
 
@@ -199,7 +193,7 @@ if (!isset($allowedStatuses)) {
         'vehicle_arrived',
         'service_ongoing',
         'service_done',
-        'vehicle_handover',
+        'ready_to_handover',
         'completed'
     ];
 }
