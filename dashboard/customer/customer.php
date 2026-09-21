@@ -52,6 +52,7 @@ $quickActions = [
 
 
 require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../includes/notifications.php';
 
 ?> 
  
@@ -76,6 +77,21 @@ require_once __DIR__ . '/../../config/database.php';
     <?php
         include __DIR__ . '/functions/customer-dashboard-cards.php';
     ?> 
+
+    <!-- Notifications -->
+    <?php
+
+    if (isset($_SESSION['user_id'])) {
+
+        renderNotifications(
+            $pdo,
+            (int) $_SESSION['user_id'],
+            10
+        );
+
+    }
+    ?>
+
  
     <!-- Dashboard Grid --> 
     <div class="dashboard-grid"> 

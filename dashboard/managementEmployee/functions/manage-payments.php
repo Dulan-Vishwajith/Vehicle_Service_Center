@@ -210,12 +210,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 | Activate payment status.
                 */
 
-                $updateBooking = $pdo->prepare("
-                    UPDATE bookings
-                    SET payment_status = ?
-                    WHERE id = ?
-                ");
-
                 $updateBooking->execute([
 
                     $newPaymentStatus,
@@ -223,6 +217,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $payment['booking_id']
 
                 ]);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | CUSTOMER NOTIFICATION
+                |--------------------------------------------------------------------------
+                | Notify the customer that their payment was successfully verified.
+                */
+
+                createNotification(
+                    $pdo,
+                    (int) $payment['user_id'],
+                    (int) $payment['booking_id'],
+                    'payment',
+                    'Payment Confirmed',
+                    'Your payment of Rs. '
+                        . number_format((float) $payment['amount'], 2)
+                        . ' for Booking #'
+                        . (int) $payment['booking_id']
+                        . ' has been confirmed.'
+                );
 
 
                 $paymentMessage =
@@ -281,6 +296,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $updateBooking->execute([
                     $payment['booking_id']
                 ]);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | CUSTOMER NOTIFICATION
+                |--------------------------------------------------------------------------
+                | Notify the customer that the payment was rejected.
+                */
+
+                createNotification(
+                    $pdo,
+                    (int) $payment['user_id'],
+                    (int) $payment['booking_id'],
+                    'payment',
+                    'Payment Rejected',
+                    'Your payment of Rs. '
+                        . number_format((float) $payment['amount'], 2)
+                        . ' for Booking #'
+                        . (int) $payment['booking_id']
+                        . ' was rejected. Please submit a new payment or replacement slip.'
+                );
 
 
                 $paymentMessage =

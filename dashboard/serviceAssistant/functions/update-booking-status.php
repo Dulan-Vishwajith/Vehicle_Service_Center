@@ -3,6 +3,7 @@
 session_start();
 
 require_once __DIR__ . '/../../../config/database.php';
+require_once __DIR__ . '/../../includes/notifications.php';
 
 
 $assistantId = (int) ($_SESSION['user_id'] ?? 0);
@@ -99,6 +100,164 @@ try {
         $statusFlow[$newStatus];
 
 
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | GET CUSTOMER
+    |--------------------------------------------------------------------------
+    |
+    | We need the customer user_id so the notification is sent
+    | only to the customer who owns this booking.
+    |
+    */
+
+    $customerStmt = $pdo->prepare("
+        SELECT user_id
+        FROM bookings
+        WHERE id = ?
+        AND assigned_assistant_id = ?
+        LIMIT 1
+    ");
+
+    $customerStmt->execute([
+
+        $bookingId,
+
+        $assistantId
+
+    ]);
+
+    $customerId = (int) $customerStmt->fetchColumn();
+
+
+    if ($customerId <= 0) {
+
+        header(
+            'Location: ../../dashboard.php?page=appointments'
+            . '&error=booking_not_found'
+        );
+
+        exit;
+
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CUSTOMER NOTIFICATION CONTENT
+    |--------------------------------------------------------------------------
+    */
+
+    $notificationTitle = '';
+    $notificationMessage = '';
+    $notificationType = 'booking_status';
+
+
+    switch ($newStatus) {
+
+        case 'service':
+
+            $notificationTitle =
+                'Service Started';
+
+            $notificationMessage =
+                'The service for your Booking #'
+                . $bookingId
+                . ' has now started.';
+
+            $notificationType =
+                'service';
+
+            break;
+
+
+        case 'vehicle_arrived':
+
+            $notificationTitle =
+                'Vehicle Arrived';
+
+            $notificationMessage =
+                'Your vehicle for Booking #'
+                . $bookingId
+                . ' has been marked as arrived at VEYRO Service Center.';
+
+            $notificationType =
+                'booking_status';
+
+            break;
+
+
+        case 'service_ongoing':
+
+            $notificationTitle =
+                'Service In Progress';
+
+            $notificationMessage =
+                'The service work for your Booking #'
+                . $bookingId
+                . ' is currently in progress.';
+
+            $notificationType =
+                'service';
+
+            break;
+
+
+        case 'service_done':
+
+            $notificationTitle =
+                'Service Completed';
+
+            $notificationMessage =
+                'The service work for your Booking #'
+                . $bookingId
+                . ' has been completed. Your vehicle is being prepared for handover.';
+
+            $notificationType =
+                'service';
+
+            break;
+
+
+        case 'vehicle_handover':
+
+            $notificationTitle =
+                'Vehicle Ready for Handover';
+
+            $notificationMessage =
+                'Your vehicle for Booking #'
+                . $bookingId
+                . ' is ready for handover.';
+
+            $notificationType =
+                'booking_status';
+
+            break;
+
+
+        case 'completed':
+
+            $notificationTitle =
+                'Booking Completed';
+
+            $notificationMessage =
+                'Your Booking #'
+                . $bookingId
+                . ' has been completed successfully. Thank you for choosing VEYRO.';
+
+            $notificationType =
+                'booking_status';
+
+            break;
+
+    }
+
+
+
+
+
     /*
     |--------------------------------------------------------------------------
     | UPDATE BOOKING STATUS
@@ -140,6 +299,34 @@ try {
     */
 
     if ($stmt->rowCount() === 1) {
+
+        /*
+        |--------------------------------------------------------------------------
+        | CREATE CUSTOMER NOTIFICATION
+        |--------------------------------------------------------------------------
+        |
+        | The notification is created only after the booking status
+        | was successfully changed.
+        |
+        */
+
+        if (
+            $customerId > 0
+            && !empty($notificationTitle)
+            && !empty($notificationMessage)
+        ) {
+
+            createNotification(
+                $pdo,
+                $customerId,
+                $bookingId,
+                $notificationType,
+                $notificationTitle,
+                $notificationMessage
+            );
+
+        }
+
 
         header(
             'Location: ../../dashboard.php?page=appointments'

@@ -5,6 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once '../config/database.php';
+require_once __DIR__ . '/../dashboard/includes/notifications.php';
 
 
 /*
@@ -979,7 +980,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
 
 
-            $paymentStmt->execute([
+           $paymentStmt->execute([
 
                 $bookingId,
 
@@ -994,6 +995,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'uploads/payment-slips/' . $filename
 
             ]);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | MANAGEMENT NOTIFICATION
+            |--------------------------------------------------------------------------
+            |
+            | Bank-deposit payments require Management Employee verification.
+            |
+            | Role 3 = Management Employee
+            |
+            */
+
+            notifyRole(
+                $pdo,
+                3,
+                $bookingId,
+                'payment_pending',
+                'New Payment Requires Verification',
+                'A bank deposit of Rs. '
+                    . number_format(
+                        (float) $pending['deposit_amount'],
+                        2
+                    )
+                    . ' for Booking #'
+                    . $bookingId
+                    . ' is waiting for payment verification.'
+            );
 
 
             $pdo->commit();

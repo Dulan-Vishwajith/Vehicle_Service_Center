@@ -6,6 +6,8 @@
 |--------------------------------------------------------------------------
 */
 
+require_once __DIR__ . '/../../includes/notifications.php';
+
 $bookingId = (int) ($_GET['booking_id'] ?? 0);
 
 $successMessage = '';
@@ -44,6 +46,7 @@ try {
     $stmt = $pdo->prepare("
         SELECT
             b.id,
+            b.user_id,
             b.vehicle_model,
             b.license_plate,
             b.status,
@@ -343,6 +346,35 @@ if (
                     ? $notes
                     : null
             ]);
+
+
+                        /*
+            |--------------------------------------------------------------------------
+            | CUSTOMER NOTIFICATION
+            |--------------------------------------------------------------------------
+            |
+            | Notify the customer that a replaced part has been added.
+            |
+            */
+
+            $notificationMessage =
+                'A replaced part has been added to your Booking #'
+                . $bookingId
+                . ': '
+                . $partName
+                . ' (Quantity: '
+                . $quantity
+                . ').';
+
+
+            createNotification(
+                $pdo,
+                (int) $booking['user_id'],
+                $bookingId,
+                'replaced_parts',
+                'Replaced Part Added',
+                $notificationMessage
+            );
 
 
             // Do not change bookings.total_price here.
