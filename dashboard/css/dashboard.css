@@ -749,39 +749,6 @@
     .dashboard-grid {
         grid-template-columns: minmax(0, 1fr);
     }
-<<<<<<< Updated upstream
-
-    /*
-     * Keep approximately two notifications
-     * visible on tablet.
-     */
-
-    .notifications-list {
-        max-height: 290px;
-    }
-=======
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-}
-
-
-/* =========================================
-   RESPONSIVE — MOBILE
-   ========================================= */
-
-@media (max-width: 600px) {
-
-    .dashboard-content {
-        width: min(100% - 32px, var(--container-width));
-
-        padding-top: 25px;
-    }
-
-    .dashboard-header {
-        align-items: flex-start;
-
-        flex-direction: column;
-=======
 
     .dashboard-panel {
         width: 100%;
@@ -820,7 +787,6 @@
         margin-bottom: 20px;
         gap: 14px;
         align-items: flex-start;
->>>>>>> Stashed changes
     }
 
     .dashboard-header h1 {
@@ -998,101 +964,7 @@
 
     .booking-row {
         align-items: flex-start;
-
         flex-direction: column;
-<<<<<<< Updated upstream
-    }
-<<<<<<< Updated upstream
-
-
-    /* =====================================
-       MOBILE NOTIFICATIONS
-       ===================================== */
-
-    .notifications-panel {
-        padding: 18px;
-    }
-
-    /*
-     * Keep two notification cards visible
-     * and scroll the rest internally.
-     */
-
-    .notifications-list {
-        max-height: 300px;
-
-        padding-right: 5px;
-    }
-
-    .notification-item {
-        gap: 10px;
-
-        min-height: 130px;
-        height: auto;
-
-        flex: 0 0 auto;
-
-        padding: 15px 0;
-    }
-
-    .notification-unread {
-        min-height: 145px;
-
-        height: auto;
-
-        padding: 15px;
-
-        box-sizing: border-box;
-    }
-
-    .notification-icon {
-        width: 40px;
-        height: 40px;
-
-        flex: 0 0 40px;
-
-        font-size: 18px;
-    }
-
-    .notification-title-row {
-        align-items: flex-start;
-
-        flex-wrap: wrap;
-
-        gap: 6px;
-    }
-
-    .notification-title-row h3 {
-        font-size: 14px;
-    }
-
-    .notification-content p {
-        font-size: 13px;
-    }
-
-    .notification-content small {
-        font-size: 11px;
-    }
-
-    .notification-read-button {
-        width: 100%;
-
-        padding: 9px 12px;
-    }
-
-    .notification-booking {
-        font-size: 11px;
-    }
-
-    .notification-new {
-        font-size: 9px;
-
-        padding: 3px 7px;
-    }
-}
-=======
-}
-=======
         gap: 10px;
     }
 }
@@ -1179,5 +1051,3 @@
         font-size: 11px;
     }
 }
->>>>>>> Stashed changes
->>>>>>> Stashed changes
