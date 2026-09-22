@@ -733,13 +733,23 @@
 
 @media (max-width: 900px) {
 
+    .dashboard-content,
+    .role-dashboard,
+    .dashboard-grid,
+    .dashboard-panel,
+    .notifications-panel {
+        min-width: 0;
+        max-width: 100%;
+    }
+
     .dashboard-cards {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .dashboard-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
+<<<<<<< Updated upstream
 
     /*
      * Keep approximately two notifications
@@ -749,6 +759,9 @@
     .notifications-list {
         max-height: 290px;
     }
+=======
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
 }
 
 
@@ -768,21 +781,228 @@
         align-items: flex-start;
 
         flex-direction: column;
+=======
+
+    .dashboard-panel {
+        width: 100%;
+    }
+}
+
+
+/* =========================================
+   RESPONSIVE — MOBILE DASHBOARD ONLY
+   ========================================= */
+
+@media screen and (max-width: 600px) {
+
+    /* Dashboard outer width */
+    .dashboard-wrapper {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .dashboard-content {
+        width: calc(100% - 24px);
+        max-width: none;
+        margin: 0 auto;
+        padding: 20px 0 35px;
+        overflow: visible;
+    }
+
+    .role-dashboard {
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* Dashboard heading */
+    .dashboard-header {
+        width: 100%;
+        margin-bottom: 20px;
+        gap: 14px;
+        align-items: flex-start;
+>>>>>>> Stashed changes
     }
 
     .dashboard-header h1 {
-        font-size: 27px;
+        font-size: 24px;
+        line-height: 1.2;
+        overflow-wrap: anywhere;
     }
 
+    .dashboard-header p {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .dashboard-header .btn,
+    .dashboard-header a {
+        width: 100%;
+        max-width: 100%;
+        min-height: 44px;
+    }
+
+    /* Statistics: 2 columns on phone */
     .dashboard-cards {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        width: 100%;
+        margin-bottom: 14px;
+    }
+
+    .dashboard-card {
+        width: 100%;
+        min-width: 0;
+        min-height: 82px;
+        padding: 12px;
+        gap: 9px;
+        overflow: hidden;
+    }
+
+    .card-icon {
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+        font-size: 16px;
+    }
+
+    .dashboard-card span {
+        font-size: 10px;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+    }
+
+    .dashboard-card strong {
+        font-size: 17px;
+        line-height: 1.2;
+    }
+
+    /* Notifications */
+    .notifications-panel {
+        width: 100%;
+        margin-top: 14px;
+        padding: 15px;
+        overflow: hidden;
+    }
+
+    .notifications-list {
+        width: 100%;
+        max-width: 100%;
+        max-height: 280px;
+        padding-right: 2px;
+        overflow-x: hidden;
+    }
+
+    .notification-item,
+    .notification-unread {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .notification-item {
+        gap: 9px;
+        padding: 12px 0;
+    }
+
+    .notification-unread {
+        padding: 12px;
+    }
+
+    .notification-icon {
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        font-size: 15px;
+    }
+
+    .notification-content {
+        min-width: 0;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+    }
+
+    .notification-title-row {
+        min-width: 0;
+        flex-wrap: wrap;
+    }
+
+    .notification-title-row h3,
+    .notification-content p,
+    .notification-content small {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    /* Main dashboard area becomes one column */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .dashboard-grid > .dashboard-panel {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        padding: 15px;
+        overflow: hidden;
+    }
+
+    /* Quick Actions becomes a full-width mobile panel */
+    .dashboard-grid > .dashboard-panel:last-child {
+        width: 100%;
+    }
+
+    .panel-header {
+        gap: 10px;
+        padding-bottom: 12px;
+        margin-bottom: 0;
+    }
+
+    .panel-header h2 {
+        font-size: 16px;
+    }
+
+    .quick-action {
+        width: 100%;
+        min-height: 50px;
+        padding: 9px 0;
+        gap: 9px;
+        font-size: 12px;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+    }
+
+    .quick-action span {
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        font-size: 14px;
+    }
+
+    /* Prevent wide tables/content from breaking the page */
+    .dashboard-panel table,
+    .dashboard-panel img,
+    .dashboard-panel iframe,
+    .dashboard-panel pre {
+        max-width: 100%;
+    }
+
+    .dashboard-panel img {
+        height: auto;
     }
 
     .booking-row {
         align-items: flex-start;
 
         flex-direction: column;
+<<<<<<< Updated upstream
     }
+<<<<<<< Updated upstream
 
 
     /* =====================================
@@ -870,3 +1090,94 @@
         padding: 3px 7px;
     }
 }
+=======
+}
+=======
+        gap: 10px;
+    }
+}
+
+
+/* =========================================
+   RESPONSIVE — SMALL MOBILE
+   ========================================= */
+
+@media screen and (max-width: 420px) {
+
+    .dashboard-content {
+        width: calc(100% - 20px);
+        padding-top: 16px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 22px;
+    }
+
+    .dashboard-header p {
+        font-size: 12px;
+    }
+
+    .dashboard-cards {
+        gap: 8px;
+    }
+
+    .dashboard-card {
+        min-height: 76px;
+        padding: 10px;
+        gap: 7px;
+    }
+
+    .card-icon {
+        width: 32px;
+        height: 32px;
+        flex-basis: 32px;
+        font-size: 14px;
+    }
+
+    .dashboard-card span {
+        font-size: 9px;
+    }
+
+    .dashboard-card strong {
+        font-size: 15px;
+    }
+
+    .dashboard-grid > .dashboard-panel,
+    .notifications-panel {
+        padding: 12px;
+    }
+}
+
+
+/* =========================================
+   RESPONSIVE — VERY SMALL MOBILE
+   ========================================= */
+
+@media screen and (max-width: 350px) {
+
+    .dashboard-content {
+        width: calc(100% - 16px);
+    }
+
+    .dashboard-cards {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dashboard-card {
+        padding: 8px;
+    }
+
+    .dashboard-card span {
+        font-size: 8px;
+    }
+
+    .dashboard-card strong {
+        font-size: 14px;
+    }
+
+    .quick-action {
+        font-size: 11px;
+    }
+}
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
