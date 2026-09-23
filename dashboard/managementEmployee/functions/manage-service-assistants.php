@@ -337,31 +337,40 @@ $stmt = $pdo->query("
         u.name,
         u.email,
         u.phone,
-
-        COUNT(b.id) AS current_assignments
+        COALESCE(ba.current_assignments, 0) AS current_assignments,
+        COALESCE(ar.average_rating, 0) AS average_rating,
+        COALESCE(ar.rating_count, 0) AS rating_count
 
     FROM users u
 
-    LEFT JOIN bookings b
-        ON b.assigned_assistant_id = u.user_id
-        AND b.status IN (
-            'pending',
-            'booked',
-            'confirmed',
-            'service'
-        )
+    INNER JOIN roles r
+        ON r.role_id = u.role_id
+        AND r.role_name = 'Service Assistant'
 
-    WHERE u.role_id = 2
+    LEFT JOIN (
+        SELECT
+            assigned_assistant_id,
+            COUNT(*) AS current_assignments
+        FROM bookings
+        WHERE status IN ('pending', 'booked', 'confirmed', 'service')
+        GROUP BY assigned_assistant_id
+    ) ba ON ba.assigned_assistant_id = u.user_id
 
-    GROUP BY u.user_id
+    LEFT JOIN (
+        SELECT
+            service_assistant_id,
+            ROUND(AVG(assistant_rating), 1) AS average_rating,
+            COUNT(assistant_rating) AS rating_count
+        FROM reviews
+        WHERE assistant_rating IS NOT NULL
+        GROUP BY service_assistant_id
+    ) ar ON ar.service_assistant_id = u.user_id
 
     ORDER BY u.name
 ");
 
-$assistants = $stmt->fetchAll();
-
+$assistants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
 
 <!-- =========================================================
      PAGE HEADER
@@ -572,6 +581,10 @@ $assistants = $stmt->fetchAll();
                     Phone
                 </div>
 
+                <div class="assistant-col-rating">
+                    Rating
+                </div>
+
                 <div class="assistant-col-assignments">
                     Current Assignments
                 </div>
@@ -632,6 +645,34 @@ $assistants = $stmt->fetchAll();
 
                         </div>
 
+                        <!-- Rating -->
+
+                        <div class="assistant-col-rating">
+
+                            <?php if ((int) $assistant['rating_count'] > 0): ?>
+
+                                <span class="assistant-rating-stars">
+                                    ★
+                                </span>
+
+                                <?= number_format(
+                                    (float) $assistant['average_rating'],
+                                    1
+                                ) ?>
+
+                                <span class="assistant-rating-count">
+                                    (<?= (int) $assistant['rating_count'] ?>)
+                                </span>
+
+                            <?php else: ?>
+
+                                <span class="assistant-no-rating">
+                                    No ratings
+                                </span>
+
+                            <?php endif; ?>
+
+                        </div>
 
                         <!-- Current Assignments -->
 

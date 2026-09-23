@@ -2476,6 +2476,7 @@
         minmax(120px, 1.1fr)
         minmax(170px, 1.5fr)
         minmax(110px, 1fr)
+        minmax(100px, 0.9fr)
         minmax(130px, 1.1fr)
         150px;
 
@@ -2559,6 +2560,7 @@
     white-space: nowrap;
 }
 
+
 .assistant-col-assignments {
     min-width: 0;
 
@@ -2579,6 +2581,45 @@
     white-space: nowrap;
 }
 
+/* =========================================================
+   ASSISTANT RATING
+========================================================= */
+
+.assistant-col-rating {
+    min-width: 0;
+
+    color: var(--color-dark);
+
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.assistant-rating-stars {
+    color: #f5b301;
+
+    font-size: 14px;
+
+    margin-right: 3px;
+}
+
+.assistant-rating-count {
+    color: var(--color-muted);
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    margin-left: 2px;
+}
+
+.assistant-no-rating {
+    color: var(--color-muted);
+
+    font-size: 11px;
+
+    font-weight: 500;
+}
 /* =========================================================
    ACTION LINKS
 ========================================================= */
