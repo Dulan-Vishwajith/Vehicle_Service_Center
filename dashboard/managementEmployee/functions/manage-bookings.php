@@ -320,11 +320,21 @@ $confirmedBookings = [];
 try {
 
     $stmt = $pdo->query("
-        SELECT user_id, name
-        FROM users
-        WHERE role_id = 2
-        ORDER BY name ASC
+        SELECT
+            u.user_id,
+            u.name,
+            COALESCE(ROUND(AVG(r.assistant_rating), 1), 0) AS assistant_rating,
+            COUNT(r.assistant_rating) AS rating_count
+        FROM users u
+        LEFT JOIN reviews r
+            ON r.service_assistant_id = u.user_id
+            AND r.assistant_rating IS NOT NULL
+        WHERE u.role_id = 2
+        GROUP BY u.user_id, u.name
+        ORDER BY u.name ASC
     ");
+
+$assistants = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $assistants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     /* Payment must already be accepted before management can confirm. */
@@ -678,6 +688,13 @@ try {
                                 <?php foreach ($assistants as $assistant): ?>
                                     <option value="<?= (int) $assistant['user_id'] ?>">
                                         <?= htmlspecialchars($assistant['name']) ?>
+
+                                        <?php if ((int) $assistant['rating_count'] > 0): ?>
+                                            — ★ <?= number_format((float) $assistant['assistant_rating'], 1) ?>
+                                            (<?= (int) $assistant['rating_count'] ?> reviews)
+                                        <?php else: ?>
+                                            — No ratings yet
+                                        <?php endif; ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
